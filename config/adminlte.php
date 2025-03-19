@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'COMMO',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>COMMO</b>',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -304,27 +304,223 @@ return [
             'url' => 'home/',
             'can' => 'home',
             'active' => ['home*'],
-            'icon' => 'fas fa-id-card',
+            'icon' => 'fas fa-home',
         ],
         [
             'text' => 'Policies',
             'url' => 'policies/',
             'can' => 'policies',
             'active' => ['policies*'],
-            'icon' => 'fas fa-id-card',
+            'icon' => 'fas fa-shield-alt',
             'submenu' => [
                 [
-                    'text' => 'Policies',
-                    'url' => '#',
+                    'text' => 'Client Sources',
+                    'route' => 'client-sources.show',
+                    'can' => 'client-sources',
+                    'active' => ['client-sources*'],
                 ],
                 [
-                    'text' => 'Client Sources',
-                    'url' => 'policies/client-sources',
+                    'text' => 'Counties',
+                    'route' => 'counties.show',
+                    'can' => 'counties',
+                    'active' => ['counties*'],
                 ],
+                [
+                    'text' => 'Enrollment Methods',
+                    'route' => 'enrollment-methods.show',
+                    'can' => 'enrollment-methods',
+                    'active' => ['enrollment-methods*'],
+                ],
+                [
+                    'text' => 'Policy Agent Number Types',
+                    'route' => 'policy-agent-number-types.show',
+                    'can' => 'policy-agent-number-types',
+                    'active' => ['policy-agent-number-types*'],
+                ],
+                [
+                    'text' => 'Policy Member Types',
+                    'route' => 'policy-member-types.show',
+                    'can' => 'policy-member-types',
+                    'active' => ['policy-member-types*'],
+                ],
+                [
+                    'text' => 'Policy Status',
+                    'route' => 'policy-status.show',
+                    'can' => 'policy-status',
+                    'active' => ['policy-status*'],
+                ],
+                [
+                    'text' => 'Relationships',
+                    'route' => 'relationships.show',
+                    'can' => 'relationships',
+                    'active' => ['relationships*'],
+                ]
             ]
 
         ],
-       
+        [
+            'text' => 'Customers',
+            'url' => 'customers/',
+            'can' => 'customers',
+            'active' => ['customers*'],
+            'icon' => 'fas fa-user-circle',
+            'submenu' => [                
+                [
+                    'text' => 'Customers',
+                    'route' => 'customers.show',
+                    'can' => 'customers',
+                    'active' => ['customers/customers*'],
+                ],
+                [
+                    'text' => 'Genders',
+                    'route' => 'genders.show',
+                    'can' => 'genders',
+                    'active' => ['genders*'],
+                ],[
+                    'text' => 'Marital Status',
+                    'route' => 'marital-status.show',
+                    'can' => 'marital-status',
+                    'active' => ['marital-status*'],
+                ],[
+                    'text' => 'Regions',
+                    'route' => 'regions.show',
+                    'can' => 'regions',
+                    'active' => ['regions*'],
+                ],[
+                    'text' => 'States',
+                    'route' => 'states.show',
+                    'can' => 'states',
+                    'active' => ['states*'],
+                ],[
+                    'text' => 'Suffixes',
+                    'route' => 'suffixes.show',
+                    'can' => 'suffixes',
+                    'active' => ['suffixes*'],
+                ],[
+                    'text' => 'Customer Status',
+                    'route' => 'customer-status.show',
+                    'can' => 'customer-status',
+                    'active' => ['customer-status*'],
+                ],[
+                    'text' => 'Phases',
+                    'route' => 'phases.show',
+                    'can' => 'phases',
+                    'active' => ['phases*'],
+                ],[
+                    'text' => 'Legal Basis',
+                    'route' => 'legal-basis.show',
+                    'can' => 'legal-basis',
+                    'active' => ['legal-basis*'],
+                ],[
+                    'text' => 'Registration Sources',
+                    'route' => 'registration-sources.show',
+                    'can' => 'registration-sources',
+                    'active' => ['registration-sources*'],
+                ]
+            ]
+
+        ],
+        [
+            'text' => 'Agents',
+            'url' => 'agents/',
+            'can' => 'agents',
+            'active' => ['agents*'],
+            'icon' => 'fas fa-headset',
+            'submenu' => [
+                [
+                    'text' => 'Agencies',
+                    'route' => 'agencies.show',
+                    'can' => 'agencies',
+                    'active' => ['agencies*'],
+                ],[
+                    'text' => 'Agency Codes',
+                    'route' => 'agency-codes.show',
+                    'can' => 'agency-codes',
+                    'active' => ['agency-codes*'],
+                ],[
+                    'text' => 'Contract Types',
+                    'route' => 'contract-types.show',
+                    'can' => 'contract-types',
+                    'active' => ['contract-types*'],
+                ],[
+                    'text' => 'Agent Status',
+                    'route' => 'agent-status.show',
+                    'can' => 'agent-status',
+                    'active' => ['agent-status*'],
+                ],[
+                    'text' => 'Agent Titles',
+                    'route' => 'agent-titles.show',
+                    'can' => 'agent-titles',
+                    'active' => ['agent-titles*'],
+                ],[
+                    'text' => 'Sales Regions',
+                    'route' => 'sales-regions.show',
+                    'can' => 'sales-regions',
+                    'active' => ['sales-regions*'],
+                ]
+            ]
+
+        ],
+        [
+            'text' => 'Products',
+            'url' => 'products/',
+            'can' => 'products',
+            'active' => ['products*'],
+            'icon' => 'fas fa-tags',
+            'submenu' => [
+                [
+                    'text' => 'Business Segments',
+                    'route' => 'business-segments.show',
+                    'can' => 'business-segments',
+                    'active' => ['business-segments*'],
+                ],[
+                    'text' => 'Business Types',
+                    'route' => 'business-types.show',
+                    'can' => 'business-types',
+                    'active' => ['business-types*'],
+                ],[
+                    'text' => 'Carriers',
+                    'route' => 'carriers.show',
+                    'can' => 'carriers',
+                    'active' => ['carriers*'],
+                ],[
+                    'text' => 'Plan Types',
+                    'route' => 'plan-types.show',
+                    'can' => 'plan-types',
+                    'active' => ['plan-types*'],
+                ],[
+                    'text' => 'Tiers',
+                    'route' => 'tiers.show',
+                    'can' => 'tiers',
+                    'active' => ['tiers*'],
+                ],[
+                    'text' => 'Types',
+                    'route' => 'types.show',
+                    'can' => 'types',
+                    'active' => ['types*'],
+                ]
+            ]
+
+        ],[
+            'text' => 'Reports',
+            'url' => 'reports/',
+            'can' => 'reports',
+            'active' => ['reports*'],
+            'icon' => 'fas fa-file'
+        ],[
+            'text' => 'Commissions',
+            'url' => 'commissions/',
+            'can' => 'commissions',
+            'active' => ['commissions*'],
+            'icon' => 'fas fa-receipt'
+        ],[
+            'text' => 'Users',
+            'url' => 'users/',
+            'can' => 'users',
+            'active' => ['users*'],
+            'icon' => 'fas fa-users'
+        ],
+        
     ],
 
     /*
@@ -399,13 +595,18 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => 'https://cdn.datatables.net/v/bs4/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-html5-3.0.2/b-print-3.0.2/datatables.min.js',
-                ],
+                ],                
+            ],
+        ],
+        'DefaultDatatable' => [
+            'active' => false,
+            'files' => [
                 [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '/js/datatables.js',
                 ],
-            ],
+            ]
         ],
         'Select2' => [
             'active' => false,

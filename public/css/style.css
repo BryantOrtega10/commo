@@ -1,0 +1,11 @@
+.min-w-100{
+    min-width: 100%;
+}
+
+input.search-icon:read-only {
+    background-image: url(../imgs/search.png);
+    background-color: #FFF;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+}

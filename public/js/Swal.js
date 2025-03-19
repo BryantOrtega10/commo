@@ -14,8 +14,8 @@ $(document).ready(function() {
             text: ` Do you really want to ${data_message.toLowerCase()}?`,
             showCloseButton: true,
             showCancelButton: true,
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
             confirmButtonColor: data_color
         }).then((result) => {
             if (result.value) {

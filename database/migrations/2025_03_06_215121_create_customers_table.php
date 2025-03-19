@@ -19,6 +19,7 @@ return new class extends Migration
             $table->index('fk_business_type');
 
             $table->string("first_name")->nullable();
+            $table->string("middle_initial")->nullable();            
             $table->string("last_name")->nullable();
             
             $table->bigInteger("fk_suffix")->unsigned()->nullable();
@@ -59,6 +60,10 @@ return new class extends Migration
             $table->bigInteger("fk_customer")->unsigned()->nullable();
             $table->foreign('fk_customer')->references('id')->on('customers')->onDelete('cascade');
             $table->index('fk_customer');
+
+            $table->bigInteger("fk_entry_user")->unsigned();
+            $table->foreign('fk_entry_user')->references('id')->on('users')->onDelete('cascade');
+            $table->index('fk_entry_user');
             
             $table->timestamps();
         });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +14,7 @@ class CustomersModel extends Model
     protected $fillable = [
         "fk_business_type",
         "first_name",
+        "middle_initial",
         "last_name",
         "fk_suffix",
         "date_birth",
@@ -26,6 +28,7 @@ class CustomersModel extends Model
         "city",
         "zip_code",
         "phone",
+        "phone_2",
         "fk_registration_s",
         "fk_customer",
     ];
@@ -33,6 +36,22 @@ class CustomersModel extends Model
     public function txtStatus(): Attribute {
         return Attribute::make(
             get: fn () => [0 => "Inactive", 1 => "Active"][$this->status]
+        );
+    }
+
+    public function txtAge(): Attribute {
+        return Attribute::make(
+            get: function () {
+                if(empty($this->date_birth)){
+                    return "";
+                }
+                $date_birth = new DateTime('2011-03-12');
+                $today = new DateTime();
+
+                $age = $date_birth->diff($today);
+
+                return $age->y;
+            } 
         );
     }
 
