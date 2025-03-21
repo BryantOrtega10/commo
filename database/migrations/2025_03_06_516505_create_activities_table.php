@@ -33,6 +33,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table("activities", function(Blueprint $table){
+            $table->dropForeign("activities_fk_customer_foreign");
+            $table->dropIndex("activities_fk_customer_index");
+        });
+
         Schema::dropIfExists('activities');
     }
 };

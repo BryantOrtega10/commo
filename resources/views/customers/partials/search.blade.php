@@ -26,7 +26,7 @@
     </form>
 </div>
 <div class="search-customer-table-container">
-    <table class="table table-striped datatable min-w-100" id="search-customer-table">
+    <table class="table table-striped min-w-100" id="search-customer-table">
         <thead>
             <tr>
                 <th>Name</th>

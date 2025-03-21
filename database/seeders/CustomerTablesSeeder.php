@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\BusinessSegmentsModel;
 use App\Models\BusinessTypesModel;
+use App\Models\CarriersModel;
 use App\Models\CountiesModel;
 use App\Models\CustomerStatusModel;
 use App\Models\GendersModel;
@@ -71,5 +73,12 @@ class CustomerTablesSeeder extends Seeder
         RegistrationSourcesModel::create(["name" => "Friends", "description" => "Friends", "sort_order" => "-1", "status" => "1"]);
         RegistrationSourcesModel::create(["name" => "Marketing campaign", "description" => "Marketing campaign", "sort_order" => "-1", "status" => "1"]);
         
+        CarriersModel::create(["name" => "Unknown", "description" => "Unknown", "sort_order" => "-1", "status" => "1"]);
+        CarriersModel::create(["name" => "Unknown2", "description" => "Unknown2", "sort_order" => "-1", "status" => "1"]);
+
+        BusinessSegmentsModel::create(["name" => "Unknown", "description" => "Unknown", "sort_order" => "-1", "status" => "1"]);
+        BusinessSegmentsModel::create(["name" => "Unknown2", "description" => "Unknown2", "sort_order" => "-1", "status" => "1"]);
+
+
     }
 }

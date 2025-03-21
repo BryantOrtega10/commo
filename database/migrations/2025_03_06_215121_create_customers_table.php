@@ -61,9 +61,23 @@ return new class extends Migration
             $table->foreign('fk_customer')->references('id')->on('customers')->onDelete('cascade');
             $table->index('fk_customer');
 
+            $table->bigInteger("fk_status")->unsigned();
+            $table->foreign('fk_status')->references('id')->on('customer_status')->onDelete('cascade');
+            $table->index('fk_status');
+
+            $table->bigInteger("fk_phase")->unsigned();
+            $table->foreign('fk_phase')->references('id')->on('phases')->onDelete('cascade');
+            $table->index('fk_phase');
+
+            $table->bigInteger("fk_legal_basis")->unsigned();
+            $table->foreign('fk_legal_basis')->references('id')->on('legal_basis')->onDelete('cascade');
+            $table->index('fk_legal_basis');
+
             $table->bigInteger("fk_entry_user")->unsigned();
             $table->foreign('fk_entry_user')->references('id')->on('users')->onDelete('cascade');
             $table->index('fk_entry_user');
+
+            
             
             $table->timestamps();
         });
@@ -94,7 +108,19 @@ return new class extends Migration
             $table->dropIndex("customers_fk_registration_s_index");
             
             $table->dropForeign("customers_fk_customer_foreign");
-            $table->dropIndex("customers_fk_customer_index");            
+            $table->dropIndex("customers_fk_customer_index");         
+            
+            $table->dropForeign("customers_fk_status_foreign");
+            $table->dropIndex("customers_fk_status_index");         
+            
+            $table->dropForeign("customers_fk_phase_foreign");
+            $table->dropIndex("customers_fk_phase_index");         
+
+            $table->dropForeign("customers_fk_legal_basis_foreign");
+            $table->dropIndex("customers_fk_legal_basis_index");    
+            
+            $table->dropForeign("customers_fk_entry_user_foreign");
+            $table->dropIndex("customers_fk_entry_user_index");    
 
         });
 

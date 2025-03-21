@@ -19,12 +19,6 @@ class CuidsModel extends Model
         "fk_customer",
     ];
 
-    public function txtStatus(): Attribute {
-        return Attribute::make(
-            get: fn () => [0 => "Inactive", 1 => "Active"][$this->status]
-        );
-    }
-
     public function carrier(){
         return $this->belongsTo(CarriersModel::class, "fk_carrier", "id");
     }

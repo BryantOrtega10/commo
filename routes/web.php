@@ -11,9 +11,11 @@ use App\Http\Controllers\CarriersController;
 use App\Http\Controllers\ClientSourcesController;
 use App\Http\Controllers\ContractTypeController;
 use App\Http\Controllers\CountiesController;
+use App\Http\Controllers\CuidsController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\CustomerStatusController;
 use App\Http\Controllers\EnrollmentMethodsController;
+use App\Http\Controllers\FilesController;
 use App\Http\Controllers\GendersController;
 use App\Http\Controllers\LegalBasisController;
 use App\Http\Controllers\MaritalStatusController;
@@ -31,6 +33,7 @@ use App\Http\Controllers\StatesController;
 use App\Http\Controllers\SuffixesController;
 use App\Http\Controllers\TiersController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 $crudRoutes = [
@@ -112,7 +115,18 @@ Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admi
         Route::post("/search", [CustomersController::class, 'search'])->name("customers.search");
         Route::get("/create", [CustomersController::class, 'showCreateForm'])->name("customers.create");
         Route::post("/create", [CustomersController::class, 'create']);
+        Route::get("/details/{id}", [CustomersController::class, 'showUpdateForm'])->name("customers.update");
+        Route::post("/details/{id}", [CustomersController::class, 'update']);
     });
+
+    Route::group(['prefix' => 'cuids'], function () {
+        Route::get("/{customerID}", [CuidsController::class, 'showCreateForm'])->name("cuids.create");
+        Route::post("/{customerID}", [CuidsController::class, 'create']);
+        Route::get("/update/{id}", [CuidsController::class, 'showUpdateForm'])->name("cuids.update");
+        Route::post("/update/{id}", [CuidsController::class, 'update']);
+        Route::post("/delete/{id}", [CuidsController::class, 'delete'])->name("cuids.delete");
+    });
+    
 });
 
 //Utils
@@ -125,4 +139,17 @@ Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin
     Route::group(['prefix' => 'counties'], function () {
         Route::get("/{id?}", [CountiesController::class, 'loadInfo'])->name("counties.loadInfo");
     });
+});
+
+Route::group([ 'prefix' => 'files', 'middleware' => ['auth', 'user-role:admin']],function () {
+    Route::post("/upload", [FilesController::class, 'uploadFile'])->name("files.upload");
+    Route::post("/remove/{id}", [FilesController::class, 'remove'])->name("files.delete");
+});
+
+
+Route::get("storage-link", function () {
+    File::link(
+        storage_path('app/public'),
+        public_path('storage')
+    );
 });

@@ -1,3 +1,7 @@
+.min-w-100 th{
+    white-space: nowrap;
+}
+
 .min-w-100{
     min-width: 100%;
 }
@@ -8,4 +12,19 @@ input.search-icon:read-only {
     background-repeat: no-repeat;
     background-position: right 10px center;
     cursor: pointer;
+}
+
+.file-item{
+    background: url(../imgs/arrow-return-right.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 2rem;
+}
+
+.dropzone {
+    border: 2px dashed #004D88;
+}
+
+.dropzone.dz-drag-hover {
+  border: 2px dashed #9a9a9a;
 }

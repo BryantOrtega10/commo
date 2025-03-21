@@ -29,16 +29,16 @@
                             @error('business_type')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
-                                </span>Y 
+                                </span>
                             @enderror
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3 col-12 first-group-name-row">
+                    <div class="col-12 first-group-name-row @if(old('business_type') == "1" || old('business_type') == null) col-md-3 @else col-md-6 @endif">
                         <div class="form-group">
-                            <label for="first_name" id="first-group-name-label">First Name (*):</label>
-                            <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" placeholder="First Name:" value="{{ old('first_name') }}">
+                            <label for="first_name" id="first-group-name-label">@if(old('business_type') == "1" || old('business_type') == null) First Name (*): @else Group Name (*): @endif</label>
+                            <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" placeholder="@if(old('business_type') == "1" || old('business_type') == null) First Name @else Group Name @endif" value="{{ old('first_name') }}">
                             @error('first_name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -48,8 +48,8 @@
                     </div>
                     <div class="col-md-3 col-12">
                         <div class="form-group">
-                            <label for="middle_initial" id="middle-group-label">Middle Initial:</label>
-                            <input type="text" class="form-control @error('middle_initial') is-invalid @enderror" id="middle_initial" name="middle_initial" placeholder="Middle Initial:" value="{{ old('middle_initial') }}">
+                            <label for="middle_initial" id="middle-group-label">@if(old('business_type') == "1" || old('business_type') == null) Middle Initial: @else Group Contact: @endif</label>
+                            <input type="text" class="form-control @error('middle_initial') is-invalid @enderror" id="middle_initial" name="middle_initial" placeholder="@if(old('business_type') == "1" || old('business_type') == null) Middle Initial @else Group Contact @endif" value="{{ old('middle_initial') }}">
                             @error('middle_initial')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -57,7 +57,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-3 col-12 for-individual">
+                    <div class="col-md-3 col-12 for-individual @if(old('business_type') == "2") d-none @endif">
                         <div class="form-group">
                             <label for="last_name">Last Name (*):</label>
                             <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" placeholder="Last Name:" value="{{ old('last_name') }}">
@@ -68,7 +68,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-3 col-12 for-individual">
+                    <div class="col-md-3 col-12 for-individual @if(old('business_type') == "2") d-none @endif">
                         <div class="form-group">
                             <label for="suffix">Suffix:</label>
                             <select id="suffix" name="suffix" class="form-control @error('suffix') is-invalid @enderror">
@@ -83,7 +83,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-3 col-12 for-individual">
+                    <div class="col-md-3 col-12 for-individual @if(old('business_type') == "2") d-none @endif">
                         <div class="form-group">
                             <label for="date_birth">Date of Birth (*):</label>
                             <input type="date" class="form-control @error('date_birth') is-invalid @enderror" id="date_birth" name="date_birth" placeholder="Date of Birth:" value="{{ old('date_birth') }}">
@@ -94,7 +94,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-3 col-12 for-individual">
+                    <div class="col-md-3 col-12 for-individual @if(old('business_type') == "2") d-none @endif">
                         <div class="form-group">
                             <label for="ssn">SSN:</label>
                             <input type="text" class="form-control @error('ssn') is-invalid @enderror" id="ssn" name="ssn" placeholder="SSN:" value="{{ old('ssn') }}">
@@ -105,7 +105,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-3 col-12 for-individual">
+                    <div class="col-md-3 col-12 for-individual @if(old('business_type') == "2") d-none @endif">
                         <div class="form-group">
                             <label for="gender">Gender:</label>
                             <select id="gender" name="gender" class="form-control @error('gender') is-invalid @enderror">
@@ -120,7 +120,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-3 col-12 for-individual">
+                    <div class="col-md-3 col-12 for-individual @if(old('business_type') == "2") d-none @endif">
                         <div class="form-group">
                             <label for="matiral_status">Marital Status:</label>
                             <select id="matiral_status" name="matiral_status" class="form-control @error('matiral_status') is-invalid @enderror">
@@ -260,6 +260,51 @@
                                 @endforeach                                
                             </select>
                             @error('registration_source')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <div class="form-group">
+                            <label for="status">Status:</label>
+                            <select id="status" name="status" class="form-control @error('customer_status') is-invalid @enderror">
+                                @foreach ($customer_statuses as $customer_status)
+                                    <option value="{{$customer_status->id}}" @if (old('status') == $customer_status->id) selected @endif>{{$customer_status->name}}</option>
+                                @endforeach                                
+                            </select>
+                            @error('status')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <div class="form-group">
+                            <label for="phase">Phase:</label>
+                            <select id="phase" name="phase" class="form-control @error('phase') is-invalid @enderror">
+                                @foreach ($phases as $phase)
+                                    <option value="{{$phase->id}}" @if (old('phase') == $phase->id) selected @endif>{{$phase->name}}</option>
+                                @endforeach                                
+                            </select>
+                            @error('phase')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <div class="form-group">
+                            <label for="legal_basis">Legal Basis:</label>
+                            <select id="legal_basis" name="legal_basis" class="form-control @error('legal_basis') is-invalid @enderror">
+                                @foreach ($legal_basis_m as $legal_basis)
+                                    <option value="{{$legal_basis->id}}" @if (old('legal_basis') == $legal_basis->id) selected @endif>{{$legal_basis->name}}</option>
+                                @endforeach                                
+                            </select>
+                            @error('legal_basis')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

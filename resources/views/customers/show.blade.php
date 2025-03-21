@@ -9,8 +9,8 @@
         <div class="col-md-9">
             <h1>Customers</h1>
         </div>
-        <div class="text-right col-md-2">
-            <a href="{{route('customers.create')}}" class="btn btn-primary"><i class="fas fa-plus"></i>
+        <div class="text-right col-md-3">
+            <a href="{{ route('customers.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i>
                 Enter a New Customer</a>
         </div>
     </div>
@@ -28,7 +28,7 @@
         </div>
     @endif
 
-    <div class="card">
+    <div class="card card-light">
         <div class="card-header">
             Search filters
         </div>
@@ -41,16 +41,14 @@
                                 <div class="form-group">
                                     <label for="customer_id">Customer Id:</label>
                                     <input type="text" class="form-control" id="customer_id" name="customer_id"
-                                        placeholder="Customer Id:"
-                                        value="{{ old('customer_id') }}">
+                                        placeholder="Customer Id:" value="{{ old('customer_id') }}">
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
                                 <div class="form-group">
                                     <label for="first_name">First/Group Name:</label>
                                     <input type="text" class="form-control" id="first_name" name="first_name"
-                                        placeholder="First/Group Name:"
-                                        value="{{ old('first_name') }}">
+                                        placeholder="First/Group Name:" value="{{ old('first_name') }}">
                                 </div>
                             </div>
 
@@ -58,8 +56,7 @@
                                 <div class="form-group">
                                     <label for="date_birth">Date of Birth:</label>
                                     <input type="text" class="form-control" id="date_birth" name="date_birth"
-                                        placeholder="Date of Birth:"
-                                        value="{{ old('date_birth') }}">
+                                        placeholder="Date of Birth:" value="{{ old('date_birth') }}">
                                 </div>
                             </div>
 
@@ -75,8 +72,7 @@
                                 <div class="form-group">
                                     <label for="phone">Phone:</label>
                                     <input type="text" class="form-control" id="phone" name="phone"
-                                        placeholder="Phone:"
-                                        value="{{ old('phone') }}">
+                                        placeholder="Phone:" value="{{ old('phone') }}">
                                 </div>
                             </div>
 
@@ -97,7 +93,8 @@
                                         <option value=""></option>
                                         @foreach ($business_types as $business_type)
                                             <option value="{{ $business_type->id }}"
-                                                @if (old('business_type') == $business_type->id) selected @endif>{{ $business_type->name }}
+                                                @if (old('business_type') == $business_type->id) selected @endif>
+                                                {{ $business_type->name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -292,6 +289,60 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label for="status">Status:</label>
+                                    <select id="status" name="status"
+                                        class="form-control @error('customer_status') is-invalid @enderror">
+                                        @foreach ($customer_statuses as $customer_status)
+                                            <option value="{{ $customer_status->id }}"
+                                                @if (old('status') == $customer_status->id) selected @endif>
+                                                {{ $customer_status->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('status')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label for="phase">Phase:</label>
+                                    <select id="phase" name="phase"
+                                        class="form-control @error('phase') is-invalid @enderror">
+                                        @foreach ($phases as $phase)
+                                            <option value="{{ $phase->id }}"
+                                                @if (old('phase') == $phase->id) selected @endif>{{ $phase->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('phase')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label for="legal_basis">Legal Basis:</label>
+                                    <select id="legal_basis" name="legal_basis"
+                                        class="form-control @error('legal_basis') is-invalid @enderror">
+                                        @foreach ($legal_basis_m as $legal_basis)
+                                            <option value="{{ $legal_basis->id }}"
+                                                @if (old('legal_basis') == $legal_basis->id) selected @endif>
+                                                {{ $legal_basis->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('legal_basis')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                         <div class="text-center">
                             <a href="#" class="show-more">Show more fields</a>
@@ -313,7 +364,7 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th width="500">Customer</th>
+                        <th>Customer</th>
                         <th>Date of Birth</th>
                         <th>Address</th>
                         <th>Phone</th>
@@ -325,8 +376,12 @@
                     @foreach ($customers as $customer)
                         <tr>
                             <td>{{ $customer->id }}</td>
-                            <td width="500">{{ $customer->first_name }} {{ $customer->last_name }}</td>
-                            <td>{{ date('m/d/Y', strtotime($customer->date_birth)) }}</td>
+                            <td><a href="{{route('customers.update',['id' => $customer->id])}}" class="text-nowrap">{{ $customer->first_name }} {{ $customer->last_name }}</a></td>
+                            <td>
+                                @isset($customer->date_birth)
+                                    {{ date('m/d/Y', strtotime($customer->date_birth)) }}
+                                @endisset
+                            </td>
                             <td>{{ $customer->address }}</td>
                             <td>{{ $customer->phone }}</td>
                             <td>{{ $customer->email }}</td>

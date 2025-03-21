@@ -664,6 +664,26 @@ return [
                 ],
             ],
         ],
+        'Dropzone' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/files/dropzone-upload-files.js',
+                ],
+            ]
+        ],
         'web' => [
             'active' => true,
             'files' => [
