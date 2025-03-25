@@ -1,37 +1,46 @@
 <?php
 
-use App\Http\Controllers\AgenciesController;
-use App\Http\Controllers\AgencyCodesController;
-use App\Http\Controllers\AgentStatusController;
-use App\Http\Controllers\AgentTitlesController;
+
+use App\Http\Controllers\Agents\AgentsControllers;
+
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\BusinessSegmentsController;
-use App\Http\Controllers\BusinessTypesController;
-use App\Http\Controllers\CarriersController;
-use App\Http\Controllers\ClientSourcesController;
-use App\Http\Controllers\ContractTypeController;
-use App\Http\Controllers\CountiesController;
-use App\Http\Controllers\CuidsController;
-use App\Http\Controllers\CustomersController;
-use App\Http\Controllers\CustomerStatusController;
-use App\Http\Controllers\EnrollmentMethodsController;
-use App\Http\Controllers\FilesController;
-use App\Http\Controllers\GendersController;
-use App\Http\Controllers\LegalBasisController;
-use App\Http\Controllers\MaritalStatusController;
-use App\Http\Controllers\MemberTypesController;
-use App\Http\Controllers\PhasesController;
-use App\Http\Controllers\PlanTypesController;
-use App\Http\Controllers\PolicyAgentNumberTypesController;
-use App\Http\Controllers\PolicyStatusController;
-use App\Http\Controllers\ProductTypesController;
-use App\Http\Controllers\RegionsController;
-use App\Http\Controllers\RegistrationSourcesController;
-use App\Http\Controllers\RelationshipsController;
-use App\Http\Controllers\SalesRegionController;
-use App\Http\Controllers\StatesController;
-use App\Http\Controllers\SuffixesController;
-use App\Http\Controllers\TiersController;
+
+use App\Http\Controllers\MultiTable\AgenciesController;
+use App\Http\Controllers\MultiTable\AgencyCodesController;
+use App\Http\Controllers\MultiTable\AgentStatusController;
+use App\Http\Controllers\MultiTable\AgentTitlesController;
+use App\Http\Controllers\MultiTable\BusinessSegmentsController;
+use App\Http\Controllers\MultiTable\BusinessTypesController;
+use App\Http\Controllers\MultiTable\CarriersController;
+use App\Http\Controllers\MultiTable\ClientSourcesController;
+use App\Http\Controllers\MultiTable\ContractTypeController;
+use App\Http\Controllers\MultiTable\CustomerStatusController;
+use App\Http\Controllers\MultiTable\EnrollmentMethodsController;
+use App\Http\Controllers\MultiTable\GendersController;
+use App\Http\Controllers\MultiTable\LegalBasisController;
+use App\Http\Controllers\MultiTable\MaritalStatusController;
+use App\Http\Controllers\MultiTable\MemberTypesController;
+use App\Http\Controllers\MultiTable\PhasesController;
+use App\Http\Controllers\MultiTable\PlanTypesController;
+use App\Http\Controllers\MultiTable\PolicyAgentNumberTypesController;
+use App\Http\Controllers\MultiTable\PolicyStatusController;
+use App\Http\Controllers\MultiTable\ProductTypesController;
+use App\Http\Controllers\MultiTable\RegionsController;
+use App\Http\Controllers\MultiTable\RegistrationSourcesController;
+use App\Http\Controllers\MultiTable\RelationshipsController;
+use App\Http\Controllers\MultiTable\SalesRegionController;
+use App\Http\Controllers\MultiTable\StatesController;
+use App\Http\Controllers\MultiTable\SuffixesController;
+use App\Http\Controllers\MultiTable\TiersController;
+
+use App\Http\Controllers\Customers\CuidsController;
+use App\Http\Controllers\Customers\CustomersController;
+use App\Http\Controllers\MultiTable\AdminFeesController;
+
+use App\Http\Controllers\Policies\CountiesController;
+
+use App\Http\Controllers\Utils\FilesController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -63,7 +72,8 @@ $crudRoutes = [
         'contract-types' => ContractTypeController::class,
         'agent-status' => AgentStatusController::class,
         'agent-titles' => AgentTitlesController::class,
-        'sales-regions' => SalesRegionController::class
+        'sales-regions' => SalesRegionController::class,
+        'admin-fees' => AdminFeesController::class
     ],
     "products" => [
         'business-segments' => BusinessSegmentsController::class,
@@ -128,6 +138,20 @@ Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admi
     });
     
 });
+
+Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']],function () {
+    Route::group(['prefix' => 'agents'], function () {
+        Route::get("/", [AgentsControllers::class, 'show'])->name("agents.show");
+        Route::post("/search", [AgentsControllers::class, 'search'])->name("agents.search");
+        Route::get("/create", [AgentsControllers::class, 'showCreateForm'])->name("agents.create");
+        Route::post("/create", [AgentsControllers::class, 'create']);
+        Route::get("/details/{id}", [AgentsControllers::class, 'showUpdateForm'])->name("agents.update");
+        Route::post("/details/{id}", [AgentsControllers::class, 'update']);
+    });
+});
+
+
+
 
 //Utils
 Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin']],function () {
