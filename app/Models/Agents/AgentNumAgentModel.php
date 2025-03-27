@@ -17,7 +17,7 @@ class AgentNumAgentModel extends Model
 
     public function txtType(): Attribute {
         return Attribute::make(
-            get: fn () => [0 => "Agent Base", 1 => "Mentor Agent", 2 => "Override"][$this->type]
+            get: fn () => [1 => "Mentor Agent", 2 => "Override"][$this->type]
         );
     }
 

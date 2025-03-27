@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\Agents\AgentNumbersController;
 use App\Http\Controllers\Agents\AgentsControllers;
 
 use App\Http\Controllers\Auth\LoginController;
@@ -122,6 +122,7 @@ foreach($crudRoutes as $routeGroup => $subRoutes){
 Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin']],function () {
     Route::group(['prefix' => 'customers'], function () {
         Route::get("/", [CustomersController::class, 'show'])->name("customers.show");
+        Route::post("/datatable", [CustomersController::class, 'datatableAjax'])->name("customers.datatable");
         Route::post("/search", [CustomersController::class, 'search'])->name("customers.search");
         Route::get("/create", [CustomersController::class, 'showCreateForm'])->name("customers.create");
         Route::post("/create", [CustomersController::class, 'create']);
@@ -147,6 +148,13 @@ Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']
         Route::post("/create", [AgentsControllers::class, 'create']);
         Route::get("/details/{id}", [AgentsControllers::class, 'showUpdateForm'])->name("agents.update");
         Route::post("/details/{id}", [AgentsControllers::class, 'update']);
+    });
+    Route::group(['prefix' => 'agent-numbers'], function () {
+        Route::get("/{id}", [AgentNumbersController::class, 'showCreateForm'])->name("agent_numbers.create");
+        Route::post("/{id}", [AgentNumbersController::class, 'create']);
+        Route::get("/update/{id}", [AgentNumbersController::class, 'showUpdateModalForm'])->name("agent_numbers.updateModal");
+        Route::post("/update/{id}", [AgentNumbersController::class, 'update']);
+        Route::post("/delete/{id}", [AgentNumbersController::class, 'delete'])->name("agent_numbers.delete");
     });
 });
 

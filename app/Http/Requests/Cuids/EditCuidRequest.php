@@ -36,7 +36,7 @@ class EditCuidRequest extends FormRequest
     {
         throw new HttpResponseException(
             redirect()->back()
-                ->withErrors($validator, 'editCUIDForm')  // <- clave personalizada
+                ->withErrors($validator, 'editCUIDForm')
                 ->withInput()
         );
     }

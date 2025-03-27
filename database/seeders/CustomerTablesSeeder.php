@@ -2,19 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\BusinessSegmentsModel;
-use App\Models\BusinessTypesModel;
-use App\Models\CarriersModel;
-use App\Models\CountiesModel;
-use App\Models\CustomerStatusModel;
-use App\Models\GendersModel;
-use App\Models\LegalBasisModel;
-use App\Models\MaritalStatusModel;
-use App\Models\PhasesModel;
-use App\Models\RegionsModel;
-use App\Models\RegistrationSourcesModel;
-use App\Models\StatesModel;
-use App\Models\SuffixesModel;
+use App\Models\MultiTable\BusinessSegmentsModel;
+use App\Models\MultiTable\BusinessTypesModel;
+use App\Models\MultiTable\CarriersModel;
+use App\Models\Policies\CountiesModel;
+use App\Models\MultiTable\CustomerStatusModel;
+use App\Models\MultiTable\GendersModel;
+use App\Models\MultiTable\LegalBasisModel;
+use App\Models\MultiTable\MaritalStatusModel;
+use App\Models\MultiTable\PhasesModel;
+use App\Models\MultiTable\RegionsModel;
+use App\Models\MultiTable\RegistrationSourcesModel;
+use App\Models\MultiTable\StatesModel;
+use App\Models\MultiTable\SuffixesModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

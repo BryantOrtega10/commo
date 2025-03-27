@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('agent_num_x_agent', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger("type")->comment("0 - Agent Base, 1 - Mentor Agent, 2 - Override")->nullable()->default(0);
+            $table->tinyInteger("type")->comment("1 - Mentor Agent, 2 - Override")->nullable()->default(1);
             
             $table->bigInteger("fk_agent_number")->unsigned()->nullable();
             $table->foreign('fk_agent_number')->references('id')->on('agent_numbers')->onDelete('cascade');

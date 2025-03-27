@@ -4,6 +4,11 @@
     @isset($customer_id)
         <input type="hidden" name="customer_id" value="{{$customer_id}}" />
     @endisset
+    
+    @isset($agent_id)
+        <input type="hidden" name="agent_id" value="{{$agent_id}}" />
+    @endisset
+    
     <div class="dz-message needsclick">    
         <img src="{{asset('imgs/upload.png')}}"><br>
         Drop your files here or <b>Browse</b> <br>

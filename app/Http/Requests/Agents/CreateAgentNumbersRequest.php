@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Cuids;
+namespace App\Http\Requests\Agents;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\ValidationException;
 
-class CreateCuidRequest extends FormRequest
+class CreateAgentNumbersRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +24,15 @@ class CreateCuidRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cuid' => 'required',
-            'carrier' => 'nullable',
-            'business_segment' => 'nullable',
-            'validation_date' => 'nullable',
-            'validation_note' => 'nullable',
-            'customerID' => 'required',
+            'number' => 'required',
+            'agency_code' => 'nullable',
+            'carrier' => 'required',
+            'agent_title' => 'nullable',
+            'agent_status' => 'nullable',
+            'agency' => 'nullable',
+            'contract_rate' => 'required',
+            'admin_fee' => 'nullable',
+            'notes' => 'nullable',
         ];
     }
 
@@ -38,7 +40,7 @@ class CreateCuidRequest extends FormRequest
     {
         throw new HttpResponseException(
             redirect()->back()
-                ->withErrors($validator, 'addNewCuidForm')
+                ->withErrors($validator, 'addNewAgentNumberForm')  
                 ->withInput()
         );
     }

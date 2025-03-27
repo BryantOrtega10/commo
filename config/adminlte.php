@@ -300,6 +300,10 @@ return [
 
     'menu' => [
         [
+            'type' => 'sidebar-menu-search',
+            'text' => 'Search menu',
+        ],
+        [
             'text' => 'Home',
             'url' => 'home/',
             'can' => 'home',
@@ -427,6 +431,12 @@ return [
             'active' => ['agents*'],
             'icon' => 'fas fa-headset',
             'submenu' => [
+                [
+                    'text' => 'Agent',
+                    'route' => 'agents.show',
+                    'can' => 'agents',
+                    'active' => ['agents/agents*'],
+                ],
                 [
                     'text' => 'Agencies',
                     'route' => 'agencies.show',

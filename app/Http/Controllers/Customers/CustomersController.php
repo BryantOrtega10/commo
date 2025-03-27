@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\customers\CreateCustomerRequest;
+use App\Http\Requests\Customers\CreateCustomerRequest;
 use App\Models\Customers\CuidsModel;
 use App\Models\Customers\CustomersModel;
 use App\Models\MultiTable\BusinessSegmentsModel;
@@ -136,6 +136,167 @@ class CustomersController extends Controller
             "phases" => $phases,
             "legal_basis_m" => $legal_basis_m,
         ]);
+    }
+
+    public function datatableAjax(Request $request)
+    {
+        $customers = CustomersModel::select("customers.*");
+
+        if ($request->has("business_type") && !empty($request->input("business_type"))) {
+            $customers->where("fk_business_type", "=", $request->input("business_type"));
+        }
+
+        if ($request->has("first_name") && !empty($request->input("first_name"))) {
+            $customers->where("first_name", "LIKE", "%" . $request->input("first_name") . "%");
+        }
+
+        if ($request->has("middle_initial") && !empty($request->input("middle_initial"))) {
+            $customers->where("middle_initial", "LIKE", "%" . $request->input("middle_initial") . "%");
+        }
+
+        if ($request->has("last_name") && !empty($request->input("last_name"))) {
+            $customers->where("last_name", "LIKE", "%" . $request->input("last_name") . "%");
+        }
+
+        if ($request->has("suffix") && !empty($request->input("suffix"))) {
+            $customers->where("fk_suffix", "=", $request->input("business_type"));
+        }
+
+        if ($request->has("date_birth") && !empty($request->input("date_birth"))) {
+            $customers->where("date_birth", "LIKE", "%" . $request->input("date_birth") . "%");
+        }
+
+        if ($request->has("ssn") && !empty($request->input("ssn"))) {
+            $customers->where("ssn", "LIKE", "%" . $request->input("ssn") . "%");
+        }
+
+        if ($request->has("gender") && !empty($request->input("gender"))) {
+            $customers->where("fk_gender", "=", $request->input("business_type"));
+        }
+
+        if ($request->has("matiral_status") && !empty($request->input("matiral_status"))) {
+            $customers->where("fk_matiral_status", "=", $request->input("business_type"));
+        }
+
+        if ($request->has("email") && !empty($request->input("email"))) {
+            $customers->where("email", "LIKE", "%" . $request->input("email") . "%");
+        }
+
+        if ($request->has("address") && !empty($request->input("address"))) {
+            $customers->where("address", "LIKE", "%" . $request->input("address") . "%");
+        }
+
+        if ($request->has("address_2") && !empty($request->input("address_2"))) {
+            $customers->where("address_2", "LIKE", "%" . $request->input("address_2") . "%");
+        }
+
+        if ($request->has("county") && !empty($request->input("county"))) {
+            $customers->where("fk_county", "=", $request->input("county"));
+        }
+
+        if ($request->has("city") && !empty($request->input("city"))) {
+            $customers->where("city", "LIKE", "%" . $request->input("city") . "%");
+        }
+
+        if ($request->has("zip_code") && !empty($request->input("zip_code"))) {
+            $customers->where("zip_code", "LIKE", "%" . $request->input("zip_code") . "%");
+        }
+
+        if ($request->has("phone") && !empty($request->input("phone"))) {
+            $customers->where("phone", "LIKE", "%" . $request->input("phone") . "%");
+        }
+
+        if ($request->has("phone_2") && !empty($request->input("phone_2"))) {
+            $customers->where("phone_2", "LIKE", "%" . $request->input("phone_2") . "%");
+        }
+
+        if ($request->has("registration_source") && !empty($request->input("registration_source"))) {
+            $customers->where("fk_registration_source", "=", $request->input("registration_source"));
+        }
+
+        if ($request->has("status") && !empty($request->input("status"))) {
+            $customers->where("fk_status", "=", $request->input("status"));
+        }
+
+        if ($request->has("phase") && !empty($request->input("phase"))) {
+            $customers->where("fk_phase", "=", $request->input("phase"));
+        }
+
+        if ($request->has("legal_basis") && !empty($request->input("legal_basis"))) {
+            $customers->where("fk_legal_basis", "=", $request->input("legal_basis"));
+        }
+
+        if ($request->has('search') && $request->input('search')['value']) {
+            $searchTxt = $request->input('search')['value'];
+            $customers->where(function($query) use ($searchTxt) {
+                $query->where("id","like","%{$searchTxt}%")
+                      ->orWhere("first_name","like","%{$searchTxt}%")
+                      ->orWhere("last_name","like","%{$searchTxt}%")
+                      ->orWhere("address","like","%{$searchTxt}%")
+                      ->orWhere("phone","like","%{$searchTxt}%")
+                      ->orWhere("email","like","%{$searchTxt}%")
+                      ->orWhereRaw("DATE_FORMAT(date_birth, '%m/%d/%Y') like '%{$searchTxt}%'")
+                      ->orWhereRaw("TIMESTAMPDIFF(YEAR, date_birth, CURDATE()) like '%{$searchTxt}%'");
+            });
+        }
+
+        if ($request->has('order')) {
+            $column = $request->input('order')[0]['column'];
+            $direction = $request->input('order')[0]['dir'];
+            switch ($column) {
+                case '1':
+                    $customers->orderBy("id",$direction);
+                    break;
+                case '2':
+                    $customers->orderByRaw("CONCAT(first_name,' ',last_name) $direction");
+                    break;
+                case '3':
+                    $customers->orderBy("date_birth",$direction);
+                    break;
+                case '5':
+                    $customers->orderBy("address",$direction);
+                    break;
+                case '6':
+                    $customers->orderBy("phone",$direction);
+                    break;
+                case '7':
+                    $customers->orderBy("email",$direction);
+                    break;
+                case '8':
+                    $customers->orderByRaw("TIMESTAMPDIFF(YEAR, date_birth, CURDATE()) $direction");
+                    break;
+            }
+        }
+        
+        $totalRecords = $customers->count();
+        $customers = $customers->skip($request->input('start'))
+                            ->take($request->input('length'))
+                            ->get();
+
+        $filteredRecords = array();
+
+        foreach($customers as $customer){            
+            $filteredRecord = array();
+            $filteredRecord["id"] = $customer->id;
+            $filteredRecord["customer"]["text"] = $customer->first_name." ".$customer->last_name;
+            $filteredRecord["customer"]["href"] = route('customers.update',['id' => $customer->id]);
+            $filteredRecord["date_birth"] = ($customer->date_birth ? date('m/d/Y', strtotime($customer->date_birth)) : "");
+            $filteredRecord["address"] = $customer->address;
+            $filteredRecord["phone"] = $customer->phone;
+            $filteredRecord["email"] = $customer->email;
+            $filteredRecord["age"] = $customer->txt_age;
+            array_push($filteredRecords, $filteredRecord);
+        }
+       
+
+        return response()->json([
+            'draw' => intval($request->input('draw')),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecords,
+            'data' => $filteredRecords
+        ]);
+
+        
     }
 
     public function search(Request $request)

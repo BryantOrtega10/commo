@@ -55,11 +55,15 @@ return new class extends Migration
             $table->index('fk_contract_type');
 
             $table->string("company_EIN")->nullable();
-            $table->string("agent_notes")->nullable();
+            $table->text("agent_notes")->nullable();
             
             $table->bigInteger("fk_entry_user")->unsigned();
             $table->foreign('fk_entry_user')->references('id')->on('users')->onDelete('cascade');
             $table->index('fk_entry_user');
+
+            $table->bigInteger("fk_user")->unsigned();
+            $table->foreign('fk_user')->references('id')->on('users')->onDelete('cascade');
+            $table->index('fk_user');
 
             $table->timestamps();
         });
@@ -85,6 +89,9 @@ return new class extends Migration
 
             $table->dropForeign("agents_fk_entry_user_foreign");
             $table->dropIndex("agents_fk_entry_user_index");
+
+            $table->dropForeign("agents_fk_user_foreign");
+            $table->dropIndex("agents_fk_user_index");
         });
 
         Schema::dropIfExists('agents');

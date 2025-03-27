@@ -24,6 +24,9 @@ class FilesController extends Controller
         if ($request->has("customer_id")) {
             $subFolder = "customers";
         }
+        if ($request->has("agent_id")) {
+            $subFolder = "agents";
+        }
 
         $file_name =  time() . "_" . $file->getClientOriginalName();
         $file->move(public_path("storage/" . $subFolder), $file_name);
@@ -33,6 +36,9 @@ class FilesController extends Controller
         $fileDB->route = $file_name;
         if ($request->has("customer_id")) {
             $fileDB->fk_customer = $request->input("customer_id");
+        }
+        if ($request->has("agent_id")) {
+            $fileDB->fk_agent = $request->input("agent_id");
         }
         $fileDB->save();
 
@@ -50,6 +56,9 @@ class FilesController extends Controller
         $folder = "";
         if(isset($fileDB->fk_customer)){
             $folder = "customers/";
+        }
+        if(isset($fileDB->fk_agent)){
+            $folder = "agents/";
         }
         $fileFinal = $folder . $fileDB->route;
         

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('agent_numbers', function (Blueprint $table) {
             $table->id();
 
-            $table->integer("agent_number");
+            $table->integer("number");
             
             $table->bigInteger("fk_agency_code")->unsigned()->nullable();
             $table->foreign('fk_agency_code')->references('id')->on('agency_codes')->onDelete('cascade');
@@ -44,6 +44,10 @@ return new class extends Migration
             
             $table->text("notes")->nullable();
 
+            $table->bigInteger("fk_agent")->unsigned();
+            $table->foreign('fk_agent')->references('id')->on('agents')->onDelete('cascade');
+            $table->index('fk_agent');
+            
             $table->bigInteger("fk_entry_user")->unsigned();
             $table->foreign('fk_entry_user')->references('id')->on('users')->onDelete('cascade');
             $table->index('fk_entry_user');
@@ -76,6 +80,9 @@ return new class extends Migration
 
             $table->dropForeign("agent_numbers_fk_admin_fee_foreign");
             $table->dropIndex("agent_numbers_fk_admin_fee_index");
+
+            $table->dropForeign("agent_numbers_fk_agent_foreign");
+            $table->dropIndex("agent_numbers_fk_agent_index");
 
             $table->dropForeign("agent_numbers_fk_entry_user_foreign");
             $table->dropIndex("agent_numbers_fk_entry_user_index");

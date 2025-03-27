@@ -80,7 +80,7 @@
                                 <div class="form-group">
                                     <label for="address">Address:</label>
                                     <input type="text" class="form-control" id="address" name="address"
-                                        placeholder="Address:" value="{{ old('address', $searchfields['address'] ?? '') }}">
+                                        placeholder="Address:" value="{{ old('address') }}">
                                 </div>
                             </div>
                         </div>
@@ -98,11 +98,6 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('business_type')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -111,11 +106,6 @@
                                     <input type="text" class="form-control @error('middle_initial') is-invalid @enderror"
                                         id="middle_initial" name="middle_initial" placeholder="Middle Initial:"
                                         value="{{ old('middle_initial') }}">
-                                    @error('middle_initial')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -124,11 +114,6 @@
                                     <input type="text" class="form-control @error('last_name') is-invalid @enderror"
                                         id="last_name" name="last_name" placeholder="Last Name:"
                                         value="{{ old('last_name') }}">
-                                    @error('last_name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -143,11 +128,6 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('suffix')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -162,11 +142,6 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('gender')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -181,11 +156,6 @@
                                                 {{ $matiral_status->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('matiral_status')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -193,11 +163,6 @@
                                     <label for="email">Email:</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                         id="email" name="email" placeholder="Email:" value="{{ old('email') }}">
-                                    @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -206,11 +171,6 @@
                                     <input type="text" class="form-control @error('address_2') is-invalid @enderror"
                                         id="address_2" name="address_2" placeholder="Address 2:"
                                         value="{{ old('address_2') }}">
-                                    @error('address_2')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -225,11 +185,6 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('county')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -237,11 +192,6 @@
                                     <label for="city">City:</label>
                                     <input type="text" class="form-control @error('city') is-invalid @enderror"
                                         id="city" name="city" placeholder="City:" value="{{ old('city') }}">
-                                    @error('city')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -250,11 +200,6 @@
                                     <input type="text" class="form-control @error('zip_code') is-invalid @enderror"
                                         id="zip_code" name="zip_code" placeholder="Zip Code:"
                                         value="{{ old('zip_code') }}">
-                                    @error('zip_code')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -263,11 +208,6 @@
                                     <input type="tel" class="form-control @error('phone_2') is-invalid @enderror"
                                         id="phone_2" name="phone_2" placeholder="Phone 2:"
                                         value="{{ old('phone_2') }}">
-                                    @error('phone_2')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -282,11 +222,6 @@
                                                 {{ $registration_source->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('registration_source')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -294,17 +229,13 @@
                                     <label for="status">Status:</label>
                                     <select id="status" name="status"
                                         class="form-control @error('customer_status') is-invalid @enderror">
+                                        <option value=""></option>
                                         @foreach ($customer_statuses as $customer_status)
                                             <option value="{{ $customer_status->id }}"
                                                 @if (old('status') == $customer_status->id) selected @endif>
                                                 {{ $customer_status->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('status')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -312,17 +243,13 @@
                                     <label for="phase">Phase:</label>
                                     <select id="phase" name="phase"
                                         class="form-control @error('phase') is-invalid @enderror">
+                                        <option value=""></option>
                                         @foreach ($phases as $phase)
                                             <option value="{{ $phase->id }}"
                                                 @if (old('phase') == $phase->id) selected @endif>{{ $phase->name }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('phase')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -330,17 +257,13 @@
                                     <label for="legal_basis">Legal Basis:</label>
                                     <select id="legal_basis" name="legal_basis"
                                         class="form-control @error('legal_basis') is-invalid @enderror">
+                                        <option value=""></option>
                                         @foreach ($legal_basis_m as $legal_basis)
                                             <option value="{{ $legal_basis->id }}"
                                                 @if (old('legal_basis') == $legal_basis->id) selected @endif>
                                                 {{ $legal_basis->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('legal_basis')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -360,7 +283,7 @@
 
     <div class="card">
         <div class="card-body">
-            <table class="table table-striped datatable min-w-100">
+            <table class="table table-striped datatable min-w-100" data-url="{{ route('customers.datatable') }}">
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -376,7 +299,8 @@
                     @foreach ($customers as $customer)
                         <tr>
                             <td>{{ $customer->id }}</td>
-                            <td><a href="{{route('customers.update',['id' => $customer->id])}}" class="text-nowrap">{{ $customer->first_name }} {{ $customer->last_name }}</a></td>
+                            <td><a href="{{ route('customers.update', ['id' => $customer->id]) }}"
+                                    class="text-nowrap">{{ $customer->first_name }} {{ $customer->last_name }}</a></td>
                             <td>
                                 @isset($customer->date_birth)
                                     {{ date('m/d/Y', strtotime($customer->date_birth)) }}
@@ -428,29 +352,6 @@
 @stop
 
 @section('js')
-    <script>
-        $(document).ready(function() {
-            $("body").on("click", ".show-more", function(e) {
-                e.preventDefault();
-                if ($(".another-fields").hasClass("d-none")) {
-                    $(this).html("Show less fields");
-                    $(".another-fields").removeClass("d-none")
-                } else {
-                    $(this).html("Show more fields");
-                    $(".another-fields").addClass("d-none")
-                }
-            })
-
-            $('.datatable').DataTable({
-                layout: {
-                    topStart: {
-                        buttons: [
-                            'copy', 'excel', 'pdf'
-                        ]
-                    }
-                },
-                scrollX: true
-            });
-        });
-    </script>
+    <script src="/js/utils/show-more.js"></script>
+    <script src="/js/customers/datatable.js"></script>
 @stop

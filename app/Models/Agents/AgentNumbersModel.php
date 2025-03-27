@@ -16,7 +16,7 @@ class AgentNumbersModel extends Model
     protected $table = "agent_numbers";
 
     protected $fillable = [
-        "agent_number",
+        "number",
         "fk_agency_code",
         "fk_carrier",
         "fk_agent_title",
@@ -25,6 +25,7 @@ class AgentNumbersModel extends Model
         "contract_rate",
         "fk_admin_fee",
         "notes",
+        "fk_agent",
         "fk_entry_user",
     ];
 
@@ -58,6 +59,19 @@ class AgentNumbersModel extends Model
         return $this->belongsTo(AdminFeesModel::class, "fk_admin_fee", "id");
     }
     
+    public function agent()
+    {
+        return $this->belongsTo(AgentsModel::class, "fk_agent", "id");
+    }
+
+    public function override_agent(){
+        return $this->hasOne(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type","=", 2);
+    }
+
+    public function mentor_agent(){
+        return $this->hasOne(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type", "=", 1);
+    }
+
     public function entry_user()
     {
         return $this->belongsTo(User::class, "fk_entry_user", "id");
