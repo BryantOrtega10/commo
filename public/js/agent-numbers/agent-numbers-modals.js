@@ -4,7 +4,7 @@ $.ajaxSetup({
     }
 });
 $(document).ready(function(e) {
-    $("body").on("click", ".add-cuid", function(e) {
+    $("body").on("click", ".add-agent-number", function(e) {
         e.preventDefault()
         $("#addNewAgentNumberModal").remove();
         $.ajax({

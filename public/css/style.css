@@ -12,6 +12,7 @@ input.search-icon:read-only {
     background-repeat: no-repeat;
     background-position: right 10px center;
     cursor: pointer;
+    padding-right: 28px;
 }
 
 .file-item{

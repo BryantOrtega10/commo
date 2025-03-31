@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Customers;
 
+use App\Models\Customers\CustomersModel;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateCustomerRequest extends FormRequest
 {
@@ -21,6 +23,13 @@ class CreateCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        $ignoreSSN = "";
+        if(request()->route('id') !== null){
+            $customers = CustomersModel::find(request()->route('id'));
+            $ignoreSSN = $customers->ssn;
+        }
+
         return [
             'business_type' => 'required',
             'first_name' => 'required',
@@ -28,7 +37,7 @@ class CreateCustomerRequest extends FormRequest
             'last_name' => 'requiredif:business_type,1',
             'suffix' => 'nullable',
             'date_birth' => 'requiredif:business_type,1',
-            'ssn' => 'nullable|unique:customers,ssn',
+            'ssn' => ['nullable', Rule::unique('customers','ssn')->ignore($ignoreSSN, 'ssn')],
             'gender' => 'nullable',
             'matiral_status' => 'nullable',
             'address' => 'nullable',
@@ -40,7 +49,11 @@ class CreateCustomerRequest extends FormRequest
             'phone' => ['required', 'max:10', 'not_regex:/^1/'],
             'phone_2' => 'nullable',
             'registration_source' => 'nullable',
-            'referring_customer_id' => 'nullable',
+            'referring_customer_id' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value === request()->route('id')) {
+                    $fail('The :attribute cannot be the same customer');
+                }
+            }],
             'contact_agent_id' => 'nullable',
             'status' => 'nullable',
             'phase' => 'nullable',

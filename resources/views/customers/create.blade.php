@@ -326,7 +326,7 @@
                     <div class="col-md-3 col-12">
                         <div class="form-group">
                             <label for="contact_agent">Contact Agent:</label>
-                            <input type="text" readonly class="search-icon form-control @error('contact_agent') is-invalid @enderror" id="contact_agent" name="contact_agent" placeholder="Contact Agent:" value="{{ old('contact_agent') }}">
+                            <input type="text" readonly data-id="contact_agent_id" class="search-agent-input search-icon form-control @error('contact_agent') is-invalid @enderror" id="contact_agent" name="contact_agent" placeholder="Contact Agent:" value="{{ old('contact_agent') }}">
                             @error('contact_agent')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -343,10 +343,12 @@
         </form>
     </div>
     @include('customers.partials.searchModal')
+    @include('agents.partials.searchModal')
 @stop
 
 @section('js')
 <script src="/js/customers/search-customer.js"></script>
 <script src="/js/counties/load-county-info.js"></script>
 <script src="/js/customers/change-business-type.js"></script>
+<script src="/js/customers/search-agents.js"></script>
 @stop

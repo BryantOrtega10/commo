@@ -2,6 +2,7 @@
 
 namespace App\Models\Customers;
 
+use App\Models\Agents\AgentsModel;
 use App\Models\MultiTable\BusinessTypesModel;
 use App\Models\MultiTable\CustomerStatusModel;
 use App\Models\MultiTable\GendersModel;
@@ -45,6 +46,7 @@ class CustomersModel extends Model
         "fk_status",
         "fk_phase",
         "fk_legal_basis",
+        "fk_agent",
         "fk_entry_user"
     ];
 
@@ -108,6 +110,10 @@ class CustomersModel extends Model
 
     public function legal_basis(){
         return $this->belongsTo(LegalBasisModel::class,"fk_legal_basis","id");
+    }
+
+    public function agent(){
+        return $this->belongsTo(AgentsModel::class,"fk_agent","id");
     }
 
     public function entry_user(){

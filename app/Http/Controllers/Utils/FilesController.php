@@ -27,6 +27,10 @@ class FilesController extends Controller
         if ($request->has("agent_id")) {
             $subFolder = "agents";
         }
+        if ($request->has("agent_number_id")) {
+            $subFolder = "agent_numbers";
+        }
+
 
         $file_name =  time() . "_" . $file->getClientOriginalName();
         $file->move(public_path("storage/" . $subFolder), $file_name);
@@ -40,6 +44,10 @@ class FilesController extends Controller
         if ($request->has("agent_id")) {
             $fileDB->fk_agent = $request->input("agent_id");
         }
+        if ($request->has("agent_number_id")) {
+            $fileDB->fk_agent_number = $request->input("agent_number_id");
+        }
+
         $fileDB->save();
 
         return response()->json([
@@ -59,6 +67,9 @@ class FilesController extends Controller
         }
         if(isset($fileDB->fk_agent)){
             $folder = "agents/";
+        }
+        if(isset($fileDB->fk_agent)){
+            $folder = "agent_numbers/";
         }
         $fileFinal = $folder . $fileDB->route;
         

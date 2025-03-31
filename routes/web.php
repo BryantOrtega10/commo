@@ -143,6 +143,8 @@ Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admi
 Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']],function () {
     Route::group(['prefix' => 'agents'], function () {
         Route::get("/", [AgentsControllers::class, 'show'])->name("agents.show");
+        Route::post("/", [AgentsControllers::class, 'show']);
+        Route::post("/datatable", [AgentsControllers::class, 'datatableAjax'])->name("agents.datatable");
         Route::post("/search", [AgentsControllers::class, 'search'])->name("agents.search");
         Route::get("/create", [AgentsControllers::class, 'showCreateForm'])->name("agents.create");
         Route::post("/create", [AgentsControllers::class, 'create']);
@@ -153,8 +155,11 @@ Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']
         Route::get("/{id}", [AgentNumbersController::class, 'showCreateForm'])->name("agent_numbers.create");
         Route::post("/{id}", [AgentNumbersController::class, 'create']);
         Route::get("/update/{id}", [AgentNumbersController::class, 'showUpdateModalForm'])->name("agent_numbers.updateModal");
-        Route::post("/update/{id}", [AgentNumbersController::class, 'update']);
+        Route::post("/update/{id}", [AgentNumbersController::class, 'updateModal']);
         Route::post("/delete/{id}", [AgentNumbersController::class, 'delete'])->name("agent_numbers.delete");
+
+        Route::get("/details/{id}", [AgentNumbersController::class, 'showUpdateForm'])->name("agent_numbers.update");
+        Route::post("/details/{id}", [AgentNumbersController::class, 'updateForm']);
     });
 });
 

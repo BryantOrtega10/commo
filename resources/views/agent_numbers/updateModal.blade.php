@@ -159,7 +159,7 @@
                                         <option value=""></option>
                                         @foreach ($agents as $agent)
                                             <option value="{{ $agent->id }}"
-                                                @if (old('mentor_agent_'.$i) == $agent->id) selected @endif>
+                                                @if (old('mentor_agent_'.$i, $mentorAgents[$i-1] ?? null) == $agent->id) selected @endif>
                                                     {{ $agent->id }} - {{$agent->first_name}} {{$agent->last_name}}
                                             </option>
                                         @endforeach
@@ -182,7 +182,7 @@
                                         <option value=""></option>
                                         @foreach ($agents as $agent)
                                             <option value="{{ $agent->id }}"
-                                                @if (old('override_agent_'.$i) == $agent->id) selected @endif>
+                                                @if (old('override_agent_'.$i, $overrideAgents[$i-1] ?? null) == $agent->id) selected @endif>
                                                     {{ $agent->id }} - {{$agent->first_name}} {{$agent->last_name}}
                                             </option>
                                         @endforeach

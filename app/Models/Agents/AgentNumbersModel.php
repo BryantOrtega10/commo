@@ -9,6 +9,7 @@ use App\Models\MultiTable\AgentStatusModel;
 use App\Models\MultiTable\AgentTitlesModel;
 use App\Models\MultiTable\CarriersModel;
 use App\Models\User;
+use App\Models\Utils\FilesModel;
 use Illuminate\Database\Eloquent\Model;
 
 class AgentNumbersModel extends Model
@@ -72,8 +73,20 @@ class AgentNumbersModel extends Model
         return $this->hasOne(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type", "=", 1);
     }
 
+    public function override_agents(){
+        return $this->hasMany(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type","=", 2);
+    }
+
+    public function mentor_agents(){
+        return $this->hasMany(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type", "=", 1);
+    }
+
     public function entry_user()
     {
         return $this->belongsTo(User::class, "fk_entry_user", "id");
+    }
+
+    public function files(){
+        return $this->hasMany(FilesModel::class, "fk_agent_number","id");
     }
 }

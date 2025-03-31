@@ -435,7 +435,7 @@ return [
                     'text' => 'Agent',
                     'route' => 'agents.show',
                     'can' => 'agents',
-                    'active' => ['agents/agents*'],
+                    'active' => ['agents/agents*','agents/agent-numbers*'],
                 ],
                 [
                     'text' => 'Agencies',

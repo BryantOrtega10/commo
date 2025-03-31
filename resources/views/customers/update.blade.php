@@ -394,10 +394,10 @@
                         <div class="form-group">
                             <label for="referring_customer">Referring Customer:</label>
                             <input type="text" readonly data-id="referring_customer_id"
-                                class="search-customer-input search-icon form-control @error('referring_customer') is-invalid @enderror"
+                                class="search-customer-input search-icon form-control @error('referring_customer_id') is-invalid @enderror"
                                 id="referring_customer" name="referring_customer" placeholder="Referring Customer:"
                                 value="{{ old('referring_customer', isset($customer->fk_customer) ? $customer->customer->first_name . ' ' . $customer->customer->last_name : '') }}">
-                            @error('referring_customer')
+                            @error('referring_customer_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -409,17 +409,16 @@
                     <div class="col-md-3 col-12">
                         <div class="form-group">
                             <label for="contact_agent">Contact Agent:</label>
-                            <input type="text" readonly
-                                class="search-icon form-control @error('contact_agent') is-invalid @enderror"
+                            <input type="text" readonly data-id="contact_agent_id" class="search-agent-input search-icon form-control @error('contact_agent_id') is-invalid @enderror"
                                 id="contact_agent" name="contact_agent" placeholder="Contact Agent:"
-                                value="{{ old('contact_agent', isset($customer->fk_contact_agent) ? $customer->contact_agent->first_name . ' ' . $customer->contact_agent->first_name : '') }}">
-                            @error('contact_agent')
+                                value="{{ old('contact_agent', isset($customer->fk_agent) ? $customer->agent->first_name . ' ' . $customer->agent->last_name : '') }}">
+                            @error('contact_agent_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
                             <input type="hidden" readonly id="contact_agent_id" name="contact_agent_id"
-                                value="{{ old('contact_agent_id', $customer->fk_contact_agent ?? '') }}">
+                                value="{{ old('contact_agent_id', $customer->fk_agent ?? '') }}">
                         </div>
                     </div>
                 </div>
@@ -534,6 +533,7 @@
 
 
     @include('customers.partials.searchModal')
+    @include('agents.partials.searchModal')
     <div class="py-5"></div>
 
 @stop
@@ -553,6 +553,7 @@
     </script>
     <script src="/js/cuids/cuid-modals.js"></script>
     <script src="/js/customers/search-customer.js"></script>
+    <script src="/js/customers/search-agents.js"></script>
     <script src="/js/counties/load-county-info.js"></script>
     <script src="/js/customers/change-business-type.js"></script>
     @if ($errors->addNewCuidForm->any())

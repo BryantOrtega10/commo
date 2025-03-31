@@ -8,6 +8,10 @@
     @isset($agent_id)
         <input type="hidden" name="agent_id" value="{{$agent_id}}" />
     @endisset
+
+    @isset($agent_number_id)
+        <input type="hidden" name="agent_number_id" value="{{$agent_number_id}}" />
+    @endisset
     
     <div class="dz-message needsclick">    
         <img src="{{asset('imgs/upload.png')}}"><br>

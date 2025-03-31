@@ -272,8 +272,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <input type="submit" class="btn btn-outline-primary mr-3" value="Search" /><button
-                            type="reset" class="btn btn-secondary"><i class="fas fa-redo"></i></button>
+                        <input type="submit" class="btn btn-outline-primary mr-3" value="Search" />
+                        <a href="{{route('customers.show')}}"
+                            class="btn btn-secondary"><i class="fas fa-redo"></i></a>
                     </div>
                 </div>
             </div>

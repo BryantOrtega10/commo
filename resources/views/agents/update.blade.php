@@ -19,6 +19,17 @@
 @stop
 
 @section('content')
+    @if (session('message'))
+        <div class="alert alert-success">
+            {{ session('message') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="card">
         <form action="{{ route('agents.update', ['id' => $agent->id]) }}" method="post">
             @csrf
@@ -401,7 +412,7 @@
         </div>
         <div class="card-body px-3 py-3">
             <a href="{{ route('agent_numbers.create', ['id' => $agent->id]) }}"
-                class="btn btn-outline-success mb-3 add-cuid">Add New</a>
+                class="btn btn-outline-success mb-3 add-agent-number">Add New</a>
             <table class="table table-striped min-w-100" id="agent-numbers-table">
                 <thead>
                     <tr>
@@ -416,7 +427,8 @@
                 <tbody>
                     @foreach ($agent->agent_numbers as $agent_number)
                         <tr>
-                            <td>{{ $agent_number->number }}</td>
+                            <td><a href="{{ route('agent_numbers.update', ['id' => $agent_number->id]) }}">{{ $agent_number->number }}</a>                                
+                                </td>
                             <td>{{ $agent_number->carrier?->name }}</td>
                             <td>{{ $agent_number->agency?->name }}</td>
                             <td>{{ $agent_number->agency_code?->name }}</td>

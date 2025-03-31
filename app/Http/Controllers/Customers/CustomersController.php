@@ -113,6 +113,8 @@ class CustomersController extends Controller
 
         $customers = $customers->get();
 
+        session()->flashInput($request->all());
+
         $business_types = BusinessTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $matiral_statuses = MaritalStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $suffixes = SuffixesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
@@ -303,20 +305,68 @@ class CustomersController extends Controller
     {
 
         $customers = CustomersModel::select("customers.*");
-
-        if ($request->has("email") && !empty($request->input("email"))) {
-            $customers = $customers->where("email", "LIKE", "%" . $request->input("email") . "%");
+        if ($request->has('search') && $request->input('search')['value']) {
+            $searchTxt = $request->input('search')['value'];
+            $customers->where(function ($query) use ($searchTxt) {
+                $query->where("customers.first_name", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.last_name", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.email", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.phone", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.id", "like", "%{$searchTxt}%");
+            });
         }
 
-        if ($request->has("phone") && !empty($request->input("phone"))) {
-            $customers = $customers->where("phone", "LIKE", "%" . $request->input("phone") . "%");
+
+
+
+        if ($request->has('order')) {
+            $column = $request->input('order')[0]['column'];
+            $direction = $request->input('order')[0]['dir'];
+            switch ($column) {
+                case '0':
+                    $customers->orderBy("id", $direction);
+                    break;
+                case '1':
+                    $customers->orderByRaw("CONCAT(first_name,' ',last_name) $direction");
+                    break;
+                case '2':
+                    $customers->orderBy("email", $direction);
+                    break;
+                case '3':
+                    $customers->orderBy("phone", $direction);
+                    break;
+            }
         }
 
-        $customers = $customers->get();
 
-        return view('customers.partials.search', [
-            "customers" => $customers
+        $totalRecords = $customers->count();
+        $customers = $customers->skip($request->input('start'))
+            ->take($request->input('length'))
+            ->get();
+
+        $filteredRecords = array();
+
+        foreach ($customers as $customer) {
+
+            $filteredRecord = array();
+
+            $filteredRecord["id"] = $customer->id;
+            $filteredRecord["name"] = "$customer->first_name $customer->last_name";
+            $filteredRecord["email"] = $customer->email;
+            $filteredRecord["phone"] = $customer->phone;
+            $filteredRecord["actions"]["name"] = "$customer->first_name $customer->last_name";
+            $filteredRecord["actions"]["id"] = $customer->id;
+            array_push($filteredRecords, $filteredRecord);
+        }
+
+
+        return response()->json([
+            'draw' => intval($request->input('draw')),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecords,
+            'data' => $filteredRecords
         ]);
+
     }
 
     public function showCreateForm()
@@ -372,7 +422,7 @@ class CustomersController extends Controller
         $customer->fk_status = $request->input("status");
         $customer->fk_phase = $request->input("phase");
         $customer->fk_legal_basis = $request->input("legal_basis");
-        //$customer->fk_contact_agent = $request->input('contact_agent_id'); TO DO
+        $customer->fk_agent = $request->input('contact_agent_id'); 
         $customer->fk_entry_user = $entry_user->id;
         $customer->save();
 
@@ -455,7 +505,7 @@ class CustomersController extends Controller
         $customer->fk_status = $request->input("status");
         $customer->fk_phase = $request->input("phase");
         $customer->fk_legal_basis = $request->input("legal_basis");
-        //$customer->fk_contact_agent = $request->input('contact_agent_id'); TO DO
+        $customer->fk_agent = $request->input('contact_agent_id');
         $customer->save();
 
         return redirect(route('customers.show'))->with('message', 'Customer updated successfully');

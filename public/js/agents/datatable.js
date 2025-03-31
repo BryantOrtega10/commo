@@ -5,16 +5,6 @@ $.ajaxSetup({
 });
 
 $(document).ready(function() {
-    $("body").on("click", ".show-more", function(e) {
-        e.preventDefault();
-        if ($(".another-fields").hasClass("d-none")) {
-            $(this).html("Show less fields");
-            $(".another-fields").removeClass("d-none")
-        } else {
-            $(this).html("Show more fields");
-            $(".another-fields").addClass("d-none")
-        }
-    })
 
     $(".datatable").DataTable({
         pageLength: 50,
@@ -32,53 +22,81 @@ $(document).ready(function() {
             url: $(".datatable").data("url"), // URL de la API o endpoint que devuelve los datos
             type: "POST", // Método HTTP, puede ser POST o GET
             data: function(d) {
-                d.business_type = $("#business_type").val();
                 d.first_name = $("#first_name").val();
-                d.middle_initial = $("#middle_initial").val();
                 d.last_name = $("#last_name").val();
-                d.suffix = $("#suffix").val();
-                d.date_birth = $("#date_birth").val();
-                d.ssn = $("#ssn").val();
-                d.gender = $("#gender").val();
-                d.matiral_status = $("#matiral_status").val();
+                d.agent_number = $("#agent_number").val();
+                d.agency_code = $("#agency_code").val();
                 d.email = $("#email").val();
-                d.address = $("#address").val();
-                d.address_2 = $("#address_2").val();
-                d.county = $("#county").val();
-                d.city = $("#city").val();
-                d.zip_code = $("#zip_code").val();
                 d.phone = $("#phone").val();
-                d.phone_2 = $("#phone_2").val();
-                d.registration_source = $("#registration_source").val();
-                d.status = $("#status").val();
-                d.phase = $("#phase").val();
-                d.legal_basis = $("#legal_basis").val();
+                d.contract_type = $("#contract_type").val();
+                d.agent_title = $("#agent_title").val();
+                d.agent_status = $("#agent_status").val();
+                d.carrier = $("#carrier").val();
+                d.contract_date_from = $("#contract_date_from").val();
+                d.contract_date_to = $("#contract_date_to").val();
+                d.mentor_agent = $("#mentor_agent").val();
+                d.override_agent = $("#override_agent").val();
             },
         },
         columns: [{
-                data: 'id'
+                data: 'agent_id'
             },
             {
-                data: 'customer',
+                data: 'agent',
                 render: function (data, type, row) {
                     return `<a href="${data.href}">${data.text}</a>`;
                 },
             },
             {
-                data: 'date_birth'
+                data: 'agent_title'
             },
             {
-                data: 'address'
+                data: 'agent_status'
             },
             {
-                data: 'phone'
+                data: 'contract_type'
+            },
+            {
+                data: 'agency_code'
+            },
+            {
+                data: 'agent_number',
+                render: function (data, type, row) {
+                    return `<a href="${data.href}">${data.text}</a>`;
+                },
+            },
+            {
+                data: 'carrier'
+            },
+            {
+                data: 'override_agents',
+                render: function (data, type, row) {
+                    let html = '';
+                    data.items.forEach(override_agent => {
+                        html += `<div class="agents">${override_agent}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: 'mentor_agents',
+                render: function (data, type, row) {
+                    let html = '';
+                    data.items.forEach(override_agent => {
+                        html += `<div class="agents">${override_agent}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: 'contract_date'
             },
             {
                 data: 'email'
             },
             {
-                data: 'age'
-            }
+                data: 'phone'
+            },
         ],
     });
 });
