@@ -25,10 +25,15 @@ class UserRoleMiddleware
         }
         switch(strtolower(Auth::user()->role)){
             case 'admin':
-                return redirect(route('dashboard'));
+                return redirect(route('client-sources.show'));
                 break;
+
+            case 'agent':
+                return redirect(route('leads.show'));
+                break;
+
             default:
-                return redirect(route('dashboard'));
+                return redirect(route('home'));
                 break;
         }
         return redirect('/');

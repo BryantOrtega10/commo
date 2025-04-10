@@ -35,10 +35,12 @@ use App\Http\Controllers\MultiTable\TiersController;
 
 use App\Http\Controllers\Customers\CuidsController;
 use App\Http\Controllers\Customers\CustomersController;
+use App\Http\Controllers\Leads\ActivitiesController;
+use App\Http\Controllers\Leads\LeadsController;
 use App\Http\Controllers\MultiTable\AdminFeesController;
 
 use App\Http\Controllers\Policies\CountiesController;
-
+use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Utils\FilesController;
 
 use Illuminate\Support\Facades\Auth;
@@ -88,7 +90,6 @@ $crudRoutes = [
 Auth::routes(['login' => false]);
 
 Route::get('/', function () {
-
     if (Auth::check()){
         switch(strtolower(Auth::user()->role)){
             case 'admin':
@@ -98,7 +99,6 @@ Route::get('/', function () {
     }
     return view('auth.login');
 })->name('login');
-
 Route::post('/login', [LoginController::class, 'login']);
 
 foreach($crudRoutes as $routeGroup => $subRoutes){
@@ -123,7 +123,6 @@ Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admi
     Route::group(['prefix' => 'customers'], function () {
         Route::get("/", [CustomersController::class, 'show'])->name("customers.show");
         Route::post("/datatable", [CustomersController::class, 'datatableAjax'])->name("customers.datatable");
-        Route::post("/search", [CustomersController::class, 'search'])->name("customers.search");
         Route::get("/create", [CustomersController::class, 'showCreateForm'])->name("customers.create");
         Route::post("/create", [CustomersController::class, 'create']);
         Route::get("/details/{id}", [CustomersController::class, 'showUpdateForm'])->name("customers.update");
@@ -164,19 +163,47 @@ Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']
 });
 
 
+Route::group([ 'prefix' => 'leads', 'middleware' => ['auth', 'user-role:agent']],function () {
+    Route::get("/", [LeadsController::class, 'show'])->name("leads.show");
+    Route::post("/datatable", [LeadsController::class, 'datatableAjax'])->name("leads.datatable");
+    Route::get("/create", [LeadsController::class, 'showCreateForm'])->name("leads.create");
+    Route::post("/create", [LeadsController::class, 'create']);
+    
+    Route::get("/details/{id}", [LeadsController::class, 'showDetailsForm'])->name("leads.details");
+    Route::post("/details/{id}", [LeadsController::class, 'updateDetails']);
+
+
+    Route::get("/update/{id}", [LeadsController::class, 'showUpdateForm'])->name("leads.update");
+    Route::post("/update/{id}", [LeadsController::class, 'update']);
+
+    Route::group(['prefix' => 'activity'], function () {
+        Route::get("/{idLead}/{type}", [ActivitiesController::class, 'showActivityModal'])->name("leads.activityModal");
+        Route::post("/{idLead}", [ActivitiesController::class, 'createActivity'])->name("leads.createActivity");
+    });
+
+    
+
+});
+
 
 
 //Utils
-Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
     Route::group(['prefix' => 'customers'], function () {
         Route::post("/search", [CustomersController::class, 'search'])->name("customers.search");
     });
 });
-Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
     Route::group(['prefix' => 'counties'], function () {
         Route::get("/{id?}", [CountiesController::class, 'loadInfo'])->name("counties.loadInfo");
     });
 });
+
+Route::group([ 'prefix' => 'users', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
+    Route::post("/change-password", [UsersController::class, 'changePassword'])->name("users.changePassword");
+});
+
+
 
 Route::group([ 'prefix' => 'files', 'middleware' => ['auth', 'user-role:admin']],function () {
     Route::post("/upload", [FilesController::class, 'uploadFile'])->name("files.upload");

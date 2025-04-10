@@ -17,39 +17,39 @@ return new class extends Migration
             $table->integer("number");
             
             $table->bigInteger("fk_agency_code")->unsigned()->nullable();
-            $table->foreign('fk_agency_code')->references('id')->on('agency_codes')->onDelete('cascade');
+            $table->foreign('fk_agency_code')->references('id')->on('agency_codes');
             $table->index('fk_agency_code');
 
             $table->bigInteger("fk_carrier")->unsigned()->nullable();
-            $table->foreign('fk_carrier')->references('id')->on('carriers')->onDelete('cascade');
+            $table->foreign('fk_carrier')->references('id')->on('carriers');
             $table->index('fk_carrier');
 
             $table->bigInteger("fk_agent_title")->unsigned()->nullable();
-            $table->foreign('fk_agent_title')->references('id')->on('agent_titles')->onDelete('cascade');
+            $table->foreign('fk_agent_title')->references('id')->on('agent_titles');
             $table->index('fk_agent_title');
 
             $table->bigInteger("fk_agent_status")->unsigned()->nullable();
-            $table->foreign('fk_agent_status')->references('id')->on('agent_status')->onDelete('cascade');
+            $table->foreign('fk_agent_status')->references('id')->on('agent_status');
             $table->index('fk_agent_status');
 
             $table->bigInteger("fk_agency")->unsigned()->nullable()->comment("Pay to agency");
-            $table->foreign('fk_agency')->references('id')->on('agencies')->onDelete('cascade');
+            $table->foreign('fk_agency')->references('id')->on('agencies');
             $table->index('fk_agency');
 
             $table->double("contract_rate");
 
             $table->bigInteger("fk_admin_fee")->unsigned()->nullable();
-            $table->foreign('fk_admin_fee')->references('id')->on('admin_fees')->onDelete('cascade');
+            $table->foreign('fk_admin_fee')->references('id')->on('admin_fees');
             $table->index('fk_admin_fee');
             
             $table->text("notes")->nullable();
 
             $table->bigInteger("fk_agent")->unsigned();
-            $table->foreign('fk_agent')->references('id')->on('agents')->onDelete('cascade');
+            $table->foreign('fk_agent')->references('id')->on('agents');
             $table->index('fk_agent');
             
             $table->bigInteger("fk_entry_user")->unsigned();
-            $table->foreign('fk_entry_user')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('fk_entry_user')->references('id')->on('users');
             $table->index('fk_entry_user');
 
             $table->timestamps();

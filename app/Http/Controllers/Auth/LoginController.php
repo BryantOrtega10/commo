@@ -34,6 +34,10 @@ class LoginController extends Controller
                 return route('client-sources.show');
                 break;
     
+            case 'agent':
+                return route('leads.show');
+                break;
+    
             default:
                 return route('client-sources.show');
                 break;

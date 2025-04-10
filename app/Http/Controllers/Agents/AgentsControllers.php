@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Agents;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Agents\CreateAgentRequest;
+use App\Http\Requests\Agents\EditAgentRequest;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\Agents\AgentsModel;
 use App\Models\MultiTable\AdminFeesModel;
@@ -549,5 +550,43 @@ class AgentsControllers extends Controller
             "agents" => $agents,
             "selectedAgentNumber" => $selectedAgentNumber
         ]);
+    }
+
+    public function update($id, EditAgentRequest $request)
+    {
+        $agent = AgentsModel::find($id);
+        $agent_user = User::find($agent->fk_user);
+        $agent_user->name = $request->input("first_name") . " " . $request->input("last_name");
+        $agent_user->email = $request->input("email");
+        $agent_user->save();
+
+        $agent->first_name = $request->input("first_name");
+        $agent->last_name = $request->input("last_name");
+        $agent->date_birth = $request->input("date_birth");
+        $agent->ssn = $request->input("ssn");
+        $agent->fk_gender = $request->input("gender");
+        $agent->email = $request->input("email");
+        $agent->phone = $request->input("phone");
+        $agent->phone_2 = $request->input("phone_2");
+        $agent->address = $request->input("address");
+        $agent->address_2 = $request->input("address_2");
+        $agent->fk_state = $request->input("state");
+        $agent->city = $request->input("city");
+        $agent->zip_code = $request->input("zip_code");
+        $agent->national_producer = $request->input("national_producer");
+        $agent->license_number = $request->input("license_number");
+        $agent->fk_sales_region = $request->input("sales_region");
+        $agent->has_CMS = $request->has("has_CMS");
+        $agent->CMS_date = $request->input("CMS_date");
+        $agent->has_marketplace_cert = $request->has("has_marketplace_cert");
+        $agent->marketplace_cert_date = $request->input("marketplace_cert_date");
+        $agent->contract_date = $request->input("contract_date");
+        $agent->payroll_emp_ID = $request->input("payroll_emp_ID");
+        $agent->fk_contract_type = $request->input("contract_type");
+        $agent->company_EIN = $request->input("company_EIN");
+        $agent->agent_notes = $request->input("agent_notes");
+        $agent->save();
+
+        return redirect(route('agents.show'))->with('message', 'Agent updated successfully');
     }
 }

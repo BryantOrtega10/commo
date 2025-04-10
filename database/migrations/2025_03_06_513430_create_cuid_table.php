@@ -16,18 +16,18 @@ return new class extends Migration
             $table->string("name");
             
             $table->bigInteger("fk_carrier")->unsigned()->nullable();
-            $table->foreign('fk_carrier')->references('id')->on('carriers')->onDelete('cascade');
+            $table->foreign('fk_carrier')->references('id')->on('carriers');
             $table->index('fk_carrier');
 
             $table->bigInteger("fk_business_segment")->unsigned()->nullable();
-            $table->foreign('fk_business_segment')->references('id')->on('business_segments')->onDelete('cascade');
+            $table->foreign('fk_business_segment')->references('id')->on('business_segments');
             $table->index('fk_business_segment');
 
             $table->date("validation_date")->nullable();
             $table->text("validation_note")->nullable();
 
             $table->bigInteger("fk_customer")->unsigned()->nullable();
-            $table->foreign('fk_customer')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('fk_customer')->references('id')->on('customers');
             $table->index('fk_customer');
 
             $table->timestamps();

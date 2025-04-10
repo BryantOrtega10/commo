@@ -151,6 +151,8 @@
                                 @endif
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         @for ($i = 1; $i <= 5; $i++)
                             <div class="col-md-4 col-12">
                                 <div class="form-group">
@@ -172,8 +174,34 @@
                                     @endif
                                 </div>
                             </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="start_date_ment_{{$i}}">Start Date:</label>
+                                    <input type="date" class="form-control @if ($errors->addNewAgentNumberForm->has('start_date_ment_'.$i)) is-invalid @endif"
+                                        id="start_date_ment_{{$i}}" name="start_date_ment_{{$i}}" placeholder="Start Date:" value="{{ old('start_date_ment_'.$i) }}">
+                                    @if ($errors->addNewAgentNumberForm->has('start_date_ment_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->addNewAgentNumberForm->first('start_date_ment_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="end_date_ment_{{$i}}">End Date:</label>
+                                    <input type="date" class="form-control @if ($errors->addNewAgentNumberForm->has('end_date_ment_'.$i)) is-invalid @endif"
+                                        id="end_date_ment_{{$i}}" name="end_date_ment_{{$i}}" placeholder="End Date:" value="{{ old('end_date_ment_'.$i) }}">
+                                    @if ($errors->addNewAgentNumberForm->has('end_date_ment_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->addNewAgentNumberForm->first('end_date_ment_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            
                         @endfor
-
+                    </div>
+                    <div class="row">
                         @for ($i = 1; $i <= 5; $i++)
                             <div class="col-md-4 col-12">
                                 <div class="form-group">
@@ -195,7 +223,33 @@
                                     @endif
                                 </div>
                             </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="start_date_over_{{$i}}">Start Date:</label>
+                                    <input type="date" class="form-control @if ($errors->addNewAgentNumberForm->has('start_date_over_'.$i)) is-invalid @endif"
+                                        id="start_date_over_{{$i}}" name="start_date_over_{{$i}}" placeholder="Start Date:" value="{{ old('start_date_over_'.$i) }}">
+                                    @if ($errors->addNewAgentNumberForm->has('start_date_over_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->addNewAgentNumberForm->first('start_date_over_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="end_date_over_{{$i}}">End Date:</label>
+                                    <input type="date" class="form-control @if ($errors->addNewAgentNumberForm->has('end_date_over_'.$i)) is-invalid @endif"
+                                        id="end_date_over_{{$i}}" name="end_date_over_{{$i}}" placeholder="End Date:" value="{{ old('end_date_over_'.$i) }}">
+                                    @if ($errors->addNewAgentNumberForm->has('end_date_over_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->addNewAgentNumberForm->first('end_date_over_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
                         @endfor
+                    </div>
+                    <div class="row">
 
                         <div class="col-md-12 col-12">
                             <div class="form-group">

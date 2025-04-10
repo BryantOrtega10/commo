@@ -21,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $agent_permissions = [
+            'leads',
+            'my-settlements'
+        ];
+
         $admin_permissions = [
             'home',
             'policies',
@@ -48,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
             'registration-sources',
             'agencies',
             'agency-codes',
-            'agent-contract-types',
+            'contract-types',
             'agent-status',
             'agent-titles',
             'sales-regions',
@@ -57,7 +62,8 @@ class AppServiceProvider extends ServiceProvider
             'carriers',
             'plan-types',
             'product-tiers',
-            'product-types'
+            'product-types',
+            'admin-fees'
         ];
         
         foreach ($admin_permissions as $admin_permission) {
@@ -65,5 +71,13 @@ class AppServiceProvider extends ServiceProvider
                 return (strtolower($user->role) == 'admin');
             });
         }
+
+        foreach ($agent_permissions as $agent_permission) {
+            Gate::define($agent_permission, function (User $user) {
+                return (strtolower($user->role) == 'agent');
+            });
+        }
+
+        
     }
 }

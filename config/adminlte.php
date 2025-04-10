@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>COMMO</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '',
+    'logo_img' => 'imgs/logo120.png',
+    'logo_img_class' => '',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'COMMO',
 
     /*
     |--------------------------------------------------------------------------
@@ -136,7 +136,7 @@ return [
     'usermenu_enabled' => true,
     'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
@@ -191,12 +191,12 @@ return [
     */
 
     'classes_body' => '',
-    'classes_brand' => '',
+    'classes_brand' => 'text-center',
     'classes_brand_text' => '',
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar' => 'sidebar-light-primary elevation-2',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
@@ -302,6 +302,13 @@ return [
         [
             'type' => 'sidebar-menu-search',
             'text' => 'Search menu',
+        ],
+        [
+            'text' => 'Leads',
+            'can' => 'leads',
+            'route' => 'leads.show',
+            'active' => ['leads*'],
+            'icon' => 'fas fa-user-circle',
         ],
         [
             'text' => 'Home',
@@ -436,6 +443,12 @@ return [
                     'route' => 'agents.show',
                     'can' => 'agents',
                     'active' => ['agents/agents*','agents/agent-numbers*'],
+                ]
+                ,[
+                    'text' => 'Admin Fees',
+                    'route' => 'admin-fees.show',
+                    'can' => 'admin-fees',
+                    'active' => ['admin-fees*'],
                 ],
                 [
                     'text' => 'Agencies',
@@ -703,6 +716,21 @@ return [
                     'location' => 'css/style.css',
                 ],
             ],
+        ],
+        'Quill' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js'
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css'
+                ]
+            ]
         ],
     ],
 

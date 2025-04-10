@@ -20,7 +20,7 @@ return new class extends Migration
             $table->tinyInteger("priority")->nullable()->comment("1 - Low, 2 - Mid, 3 - High");
             
             $table->bigInteger("fk_customer")->unsigned()->nullable();
-            $table->foreign('fk_customer')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('fk_customer')->references('id')->on('customers');
             $table->index('fk_customer');
 
             $table->timestamps();

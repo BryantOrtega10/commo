@@ -150,6 +150,8 @@
                                 @endif
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         @for ($i = 1; $i <= 5; $i++)
                             <div class="col-md-4 col-12">
                                 <div class="form-group">
@@ -159,7 +161,7 @@
                                         <option value=""></option>
                                         @foreach ($agents as $agent)
                                             <option value="{{ $agent->id }}"
-                                                @if (old('mentor_agent_'.$i, $mentorAgents[$i-1] ?? null) == $agent->id) selected @endif>
+                                                @if (old('mentor_agent_'.$i, $mentorAgents[$i-1]["id"] ?? null) == $agent->id) selected @endif>
                                                     {{ $agent->id }} - {{$agent->first_name}} {{$agent->last_name}}
                                             </option>
                                         @endforeach
@@ -171,8 +173,34 @@
                                     @endif
                                 </div>
                             </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="start_date_ment_{{$i}}">Start Date:</label>
+                                    <input type="date" class="form-control @if ($errors->editAgentNumberForm->has('start_date_ment_'.$i)) is-invalid @endif"
+                                        id="start_date_ment_{{$i}}" name="start_date_ment_{{$i}}" placeholder="Start Date:" value="{{ old('start_date_ment_'.$i, $mentorAgents[$i-1]["start_date"] ?? null) }}">
+                                    @if ($errors->editAgentNumberForm->has('start_date_ment_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->editAgentNumberForm->first('start_date_ment_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="end_date_ment_{{$i}}">End Date:</label>
+                                    <input type="date" class="form-control @if ($errors->editAgentNumberForm->has('end_date_ment_'.$i)) is-invalid @endif"
+                                        id="end_date_ment_{{$i}}" name="end_date_ment_{{$i}}" placeholder="End Date:" value="{{ old('end_date_ment_'.$i, $mentorAgents[$i-1]["end_date"] ?? null) }}">
+                                    @if ($errors->editAgentNumberForm->has('end_date_ment_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->editAgentNumberForm->first('end_date_ment_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            
                         @endfor
-
+                    </div>
+                    <div class="row">
                         @for ($i = 1; $i <= 5; $i++)
                             <div class="col-md-4 col-12">
                                 <div class="form-group">
@@ -182,7 +210,7 @@
                                         <option value=""></option>
                                         @foreach ($agents as $agent)
                                             <option value="{{ $agent->id }}"
-                                                @if (old('override_agent_'.$i, $overrideAgents[$i-1] ?? null) == $agent->id) selected @endif>
+                                                @if (old('override_agent_'.$i, $overrideAgents[$i-1]["id"] ?? null) == $agent->id) selected @endif>
                                                     {{ $agent->id }} - {{$agent->first_name}} {{$agent->last_name}}
                                             </option>
                                         @endforeach
@@ -194,8 +222,33 @@
                                     @endif
                                 </div>
                             </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="start_date_over_{{$i}}">Start Date:</label>
+                                    <input type="date" class="form-control @if ($errors->editAgentNumberForm->has('start_date_over_'.$i)) is-invalid @endif"
+                                        id="start_date_over_{{$i}}" name="start_date_over_{{$i}}" placeholder="Start Date:" value="{{ old('start_date_over_'.$i, $overrideAgents[$i-1]["start_date"] ?? null) }}">
+                                    @if ($errors->editAgentNumberForm->has('start_date_over_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->editAgentNumberForm->first('start_date_over_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="end_date_over_{{$i}}">End Date:</label>
+                                    <input type="date" class="form-control @if ($errors->editAgentNumberForm->has('end_date_over_'.$i)) is-invalid @endif"
+                                        id="end_date_over_{{$i}}" name="end_date_over_{{$i}}" placeholder="End Date:" value="{{ old('end_date_over_'.$i, $overrideAgents[$i-1]["end_date"] ?? null) }}">
+                                    @if ($errors->editAgentNumberForm->has('end_date_over_'.$i))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->editAgentNumberForm->first('end_date_over_'.$i) }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
                         @endfor
-
+                    </div>
+                    <div class="row">
                         <div class="col-md-12 col-12">
                             <div class="form-group">
                                 <label for="notes">Agent # Notes:</label>

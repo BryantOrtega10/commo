@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string("ssn")->nullable();
 
             $table->bigInteger("fk_gender")->unsigned()->nullable();
-            $table->foreign('fk_gender')->references('id')->on('genders')->onDelete('cascade');
+            $table->foreign('fk_gender')->references('id')->on('genders');
             $table->index('fk_gender');
             
             $table->string("email")->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string("address_2")->nullable();
 
             $table->bigInteger("fk_state")->unsigned()->nullable();
-            $table->foreign('fk_state')->references('id')->on('states')->onDelete('cascade');
+            $table->foreign('fk_state')->references('id')->on('states');
             $table->index('fk_state');
 
             $table->string("city")->nullable();
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string("license_number")->nullable();
 
             $table->bigInteger("fk_sales_region")->unsigned()->nullable();
-            $table->foreign('fk_sales_region')->references('id')->on('sales_regions')->onDelete('cascade');
+            $table->foreign('fk_sales_region')->references('id')->on('sales_regions');
             $table->index('fk_sales_region');
 
             $table->boolean("has_CMS")->nullable()->default(false);
@@ -51,18 +51,18 @@ return new class extends Migration
             $table->string("payroll_emp_ID")->nullable();
 
             $table->bigInteger("fk_contract_type")->unsigned()->nullable();
-            $table->foreign('fk_contract_type')->references('id')->on('contract_types')->onDelete('cascade');
+            $table->foreign('fk_contract_type')->references('id')->on('contract_types');
             $table->index('fk_contract_type');
 
             $table->string("company_EIN")->nullable();
             $table->text("agent_notes")->nullable();
             
             $table->bigInteger("fk_entry_user")->unsigned();
-            $table->foreign('fk_entry_user')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('fk_entry_user')->references('id')->on('users');
             $table->index('fk_entry_user');
 
             $table->bigInteger("fk_user")->unsigned();
-            $table->foreign('fk_user')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('fk_user')->references('id')->on('users');
             $table->index('fk_user');
 
             $table->timestamps();

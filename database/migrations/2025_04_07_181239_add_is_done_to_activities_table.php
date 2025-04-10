@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->foreign('fk_agent')->references('id')->on('agents');
-            $table->index('fk_agent');
+        Schema::table('activities', function (Blueprint $table) {
+            $table->boolean("isDone")->nullable()->default(false);
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->dropForeign("customers_fk_agent_foreign");
-            $table->dropIndex("customers_fk_agent_index");
+        Schema::table('activities', function (Blueprint $table) {
+            $table->dropColumn("isDone");
         });
     }
 };

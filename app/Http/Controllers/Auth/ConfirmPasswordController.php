@@ -33,7 +33,11 @@ class ConfirmPasswordController extends Controller
             case 'admin':
                 return route('client-sources.show');
                 break;
-    
+
+            case 'agent':
+                return route('leads.show');
+                break;
+        
             default:
                 return route('client-sources.show');
                 break;

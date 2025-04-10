@@ -16,11 +16,11 @@ return new class extends Migration
             $table->tinyInteger("type")->comment("1 - Mentor Agent, 2 - Override")->nullable()->default(1);
             
             $table->bigInteger("fk_agent_number")->unsigned()->nullable();
-            $table->foreign('fk_agent_number')->references('id')->on('agent_numbers')->onDelete('cascade');
+            $table->foreign('fk_agent_number')->references('id')->on('agent_numbers');
             $table->index('fk_agent_number');
             
             $table->bigInteger("fk_agent")->unsigned()->nullable();
-            $table->foreign('fk_agent')->references('id')->on('agents')->onDelete('cascade');
+            $table->foreign('fk_agent')->references('id')->on('agents');
             $table->index('fk_agent');
 
             $table->timestamps();

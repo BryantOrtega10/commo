@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("name");
             $table->text("route");
             $table->bigInteger("fk_customer")->unsigned()->nullable();
-            $table->foreign('fk_customer')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('fk_customer')->references('id')->on('customers');
             $table->index('fk_customer');
             $table->timestamps();
         });

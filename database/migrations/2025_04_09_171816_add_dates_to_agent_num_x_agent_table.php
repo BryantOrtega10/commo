@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->foreign('fk_agent')->references('id')->on('agents');
-            $table->index('fk_agent');
+        Schema::table('agent_num_x_agent', function (Blueprint $table) {
+            $table->date("start_date")->nullable();
+            $table->date("end_date")->nullable();
         });
     }
 
@@ -22,9 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->dropForeign("customers_fk_agent_foreign");
-            $table->dropIndex("customers_fk_agent_index");
+        Schema::table('agent_num_x_agent', function (Blueprint $table) {
+            $table->dropColumn("start_date");
+            $table->dropColumn("end_date");
         });
     }
 };

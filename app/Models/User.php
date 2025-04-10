@@ -22,7 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'image'
+        'image',
+        'change_password'
     ];
 
     /**
@@ -46,5 +47,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function adminlte_image(){
+        if(isset($this->image)){
+            return $this->image;
+        }
+        else{
+            return '/imgs/no-user-image.png';
+        }
     }
 }

@@ -13,6 +13,8 @@ class AgentNumAgentModel extends Model
         "type",
         "fk_agent_number",
         "fk_agent",
+        "start_date",
+        "end_date",
     ];
 
     public function txtType(): Attribute {

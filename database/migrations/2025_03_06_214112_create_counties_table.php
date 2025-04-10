@@ -19,11 +19,11 @@ return new class extends Migration
             $table->tinyInteger("status")->default(1)->comment("0 Inactive, 1 Active")->nullable();
 
             $table->bigInteger("fk_state")->unsigned()->nullable();
-            $table->foreign('fk_state')->references('id')->on('states')->onDelete('cascade');
+            $table->foreign('fk_state')->references('id')->on('states');
             $table->index('fk_state');
             
             $table->bigInteger("fk_region")->unsigned()->nullable();
-            $table->foreign('fk_region')->references('id')->on('regions')->onDelete('cascade');
+            $table->foreign('fk_region')->references('id')->on('regions');
             $table->index('fk_region');
             
             $table->timestamps();
