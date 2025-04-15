@@ -8,6 +8,7 @@ use App\Http\Requests\Leads\UpdateDetailsRequest;
 use App\Http\Requests\Leads\UpdateLeadRequest;
 use App\Models\Agents\AgentsModel;
 use App\Models\Customers\ActivitiesModel;
+use App\Models\Customers\ActivityLogsModel;
 use App\Models\Customers\CustomersModel;
 use App\Models\MultiTable\CustomerStatusModel;
 use App\Models\MultiTable\GendersModel;
@@ -230,7 +231,11 @@ class LeadsController extends Controller
     public function showDetailsForm($id){
 
         $lead = CustomersModel::find($id);
-        $activities = ActivitiesModel::where("fk_customer","=",$id)->orderBy("updated_at","DESC")->get();
+        $activityLogs = ActivityLogsModel::whereHas("activity", function($query) use($id) {
+                                                $query->where("fk_customer","=",$id);
+                                           })
+                                           ->orderBy("updated_at","DESC")->get();
+
         $tasks = ActivitiesModel::where("fk_customer","=",$id)
                                 ->whereNotNull("task_name")
                                 ->where("isDone","=",false)
@@ -250,14 +255,23 @@ class LeadsController extends Controller
             }
         }
 
+        $activitySelected = null;
+        if ($errors->detailsActivityForm->any()) {
+            if ($errors->hasBag('detailsActivityForm')) {
+                $activityId = session()->getOldInput('activityId');
+                $activitySelected = ActivitiesModel::find($activityId);
+            }
+        }
+
         return view('leads.details', [
             "lead" => $lead,
-            "activities" => $activities,
+            "activityLogs" => $activityLogs,
             "tasks" => $tasks,
             "customer_statuses" => $customer_statuses,
             "phases" => $phases,
             "legal_basis_m" => $legal_basis_m,
-            'typeActivity' => $typeActivity
+            'typeActivity' => $typeActivity,
+            'activitySelected' => $activitySelected
         ]);
 
     }

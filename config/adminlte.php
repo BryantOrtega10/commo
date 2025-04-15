@@ -138,7 +138,7 @@ return [
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => true,
     'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -310,6 +310,13 @@ return [
             'active' => ['leads*'],
             'icon' => 'fas fa-user-circle',
         ],
+        [
+            'text' => 'My Settlements',
+            'can' => 'my-settlements',
+            'route' => 'my-settlements.show',
+            'active' => ['my-settlements*'],
+            'icon' => 'fas fa-wallet',
+        ],        
         [
             'text' => 'Home',
             'url' => 'home/',

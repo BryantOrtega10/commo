@@ -148,9 +148,9 @@
                     <div class="card card-light bt-int h-50-int">
                         <div class="card-header">Tasks</div>
                         <div class="card-body overflow-y-s">
-                            @foreach ($activities as $activity)
+                            @foreach ($tasks as $task)
                                 <div class="card">
-                                    <div class="card-body rounded border-left border-3 @switch($activity->priority)
+                                    <div class="card-body rounded border-left border-3 @switch($task->priority)
                                         @case(1)
                                             border-success
                                             @break
@@ -165,14 +165,14 @@
                                     @endswitch">
                                         <div class="row">
                                             <div class="col-6">
-                                                {{$activity->task_name}}
+                                                {{$task->task_name}}
                                             </div>
                                             <div class="col-4">
-                                                <span class="text-primary">Expiration:</span> {{ date('m/d/Y H:i', strtotime($activity->expiration_date)) }}<br>
-                                                <span class="text-primary">Remaining:</span> {{$activity->txt_remaining }}
+                                                <span class="text-primary">Expiration:</span> {{ date('m/d/Y H:i', strtotime($task->expiration_date)) }}<br>
+                                                <span class="text-primary">Remaining:</span> {{$task->txt_remaining }}
                                             </div>
                                             <div class="col-2">
-                                                <a href="#" class="btn btn-outline-primary">Details</a>
+                                                <a href="{{route('leads.activityDetailsModal',['id' => $task->id])}}" class="btn btn-outline-primary activity-details">Details</a>
                                             </div>
                                         </div>
                                     </div>
@@ -183,42 +183,23 @@
                     <div class="card card-light bt-int h-50-int">
                         <div class="card-header">Latest activities</div>
                         <div class="card-body overflow-y-s">
-                            @foreach ($activities as $activity)
+                            @foreach ($activityLogs as $activityLog)
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-9">
                                                 <b class="text-primary">Description:</b><br>
-                                                @switch($activity->type)
-                                                    @case(1)
-                                                        A note has been created
-                                                    @break
-
-                                                    @case(2)
-                                                        An email was sent created
-                                                    @break
-
-                                                    @case(3)
-                                                        A call has been created
-                                                    @break
-
-                                                    @case(4)
-                                                        A meeting has been created
-                                                    @break
-
-                                                    @case(5)
-                                                        A task has been created
-                                                    @break
-                                                @endswitch. <br>
-                                                @if (strlen(strip_tags($activity->description)) > 50)
-                                                    {{ substr(strip_tags($activity->description), 0, 50) }}...
+                                                {{$activityLog->description}}
+                                                <br>
+                                                @if (strlen(strip_tags($activityLog->activity->description)) > 50)
+                                                    {{ substr(strip_tags($activityLog->activity->description), 0, 50) }}...
                                                 @else
-                                                    {{ strip_tags($activity->description) }}
+                                                    {{ strip_tags($activityLog->activity->description) }}
                                                 @endif
                                             </div>
                                             <div class="col-3 text-right">
-                                                {{ date('m/d/Y H:i', strtotime($activity->created_at)) }}<br>
-                                                <a href="#" class="btn btn-outline-primary">Details</a>
+                                                {{ date('m/d/Y H:i', strtotime($activityLog->created_at)) }}<br>
+                                                <a href="{{route('leads.activityDetailsModal',['id' => $activityLog->fk_activity])}}" class="btn btn-outline-primary activity-details">Details</a>
                                             </div>
                                         </div>
                                     </div>
@@ -266,9 +247,15 @@
 
 
     @if ($errors->addActivityForm->any())
-        @include('leads.partials.activityModal', [
+        @include('activities.partials.activityModal', [
             'type' => $typeActivity,
             'idLead' => $lead->id,
+        ])
+    @endif
+
+    @if ($errors->detailsActivityForm->any())
+        @include('activities.partials.activityDetailsModal', [
+           'activity' => $activitySelected
         ])
     @endif
 
@@ -286,7 +273,7 @@
     </script>
 
 
-    @if ($errors->addActivityForm->any())
+    @if ($errors->addActivityForm->any() || $errors->detailsActivityForm->any())
         <script>
             const quill = new Quill('#description', {
                 theme: 'snow'

@@ -37,6 +37,7 @@ use App\Http\Controllers\Customers\CuidsController;
 use App\Http\Controllers\Customers\CustomersController;
 use App\Http\Controllers\Leads\ActivitiesController;
 use App\Http\Controllers\Leads\LeadsController;
+use App\Http\Controllers\Leads\MySettlementsController;
 use App\Http\Controllers\MultiTable\AdminFeesController;
 
 use App\Http\Controllers\Policies\CountiesController;
@@ -94,6 +95,9 @@ Route::get('/', function () {
         switch(strtolower(Auth::user()->role)){
             case 'admin':
                 return redirect(route('client-sources.show'));
+                break;
+            case 'agent':
+                return redirect(route('leads.show'));
                 break;
         }
     }
@@ -168,22 +172,24 @@ Route::group([ 'prefix' => 'leads', 'middleware' => ['auth', 'user-role:agent']]
     Route::post("/datatable", [LeadsController::class, 'datatableAjax'])->name("leads.datatable");
     Route::get("/create", [LeadsController::class, 'showCreateForm'])->name("leads.create");
     Route::post("/create", [LeadsController::class, 'create']);
-    
     Route::get("/details/{id}", [LeadsController::class, 'showDetailsForm'])->name("leads.details");
     Route::post("/details/{id}", [LeadsController::class, 'updateDetails']);
-
-
     Route::get("/update/{id}", [LeadsController::class, 'showUpdateForm'])->name("leads.update");
     Route::post("/update/{id}", [LeadsController::class, 'update']);
 
     Route::group(['prefix' => 'activity'], function () {
         Route::get("/{idLead}/{type}", [ActivitiesController::class, 'showActivityModal'])->name("leads.activityModal");
         Route::post("/{idLead}", [ActivitiesController::class, 'createActivity'])->name("leads.createActivity");
+        Route::get("/modal/details/{id}", [ActivitiesController::class, 'showActivityDetailsModal'])->name("leads.activityDetailsModal");
+        Route::post("/modal/details/{id}", [ActivitiesController::class, 'update']);
+        
     });
-
-    
-
 });
+
+Route::group([ 'prefix' => 'my-settlements', 'middleware' => ['auth', 'user-role:agent']],function () {
+    Route::get("/", [MySettlementsController::class, 'show'])->name("my-settlements.show");
+});
+
 
 
 
@@ -201,6 +207,9 @@ Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin
 
 Route::group([ 'prefix' => 'users', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
     Route::post("/change-password", [UsersController::class, 'changePassword'])->name("users.changePassword");
+    Route::get("/my-profile", [UsersController::class, 'showProfileForm'])->name("users.profile");
+    Route::post("/my-profile", [UsersController::class, 'updateProfile']);
+    
 });
 
 

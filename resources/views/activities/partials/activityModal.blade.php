@@ -80,14 +80,14 @@
                                 <div class="form-group">
                                     <label for="priority">Priority:</label>
                                     <select id="priority" name="priority"
-                                        class="form-control @if ($errors->addNewCuidForm->has('priority')) is-invalid @endif">
+                                        class="form-control @if ($errors->addActivityForm->has('priority')) is-invalid @endif">
                                             <option value="1" @if (old('priority') == "1") selected @endif>Low</option>
                                             <option value="2" @if (old('priority') == "2") selected @endif>Medium</option>
                                             <option value="3" @if (old('priority') == "3") selected @endif>High</option>                                        
                                     </select>
-                                    @if ($errors->addNewCuidForm->has('priority'))
+                                    @if ($errors->addActivityForm->has('priority'))
                                         <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->addNewCuidForm->first('priority') }}</strong>
+                                            <strong>{{ $errors->addActivityForm->first('priority') }}</strong>
                                         </span>
                                     @endif
                                 </div>

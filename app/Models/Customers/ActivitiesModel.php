@@ -74,4 +74,8 @@ class ActivitiesModel extends Model
     public function customer(){
         return $this->belongsTo(CustomersModel::class, "fk_customer", "id");
     }
+
+    public function activityLogs(){
+        return $this->hasMany(ActivityLogsModel::class, "fk_activity", "id");
+    }
 }

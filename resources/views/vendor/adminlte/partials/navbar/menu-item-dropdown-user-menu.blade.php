@@ -61,17 +61,17 @@
         @endif
 
         {{-- User menu footer --}}
-        <li class="user-footer">
-            @if($profile_url)
-                <a href="{{ $profile_url }}" class="nav-link btn btn-default btn-flat d-inline-block">
-                    <i class="fa fa-fw fa-user text-lightblue"></i>
+        @if($profile_url)
+            <li class="pt-3">
+                <a href="{{ $profile_url }}" class="btn btn-light btn-block text-left btn-flat mb-2">
                     {{ __('adminlte::menu.profile') }}
                 </a>
-            @endif
-            <a class="btn btn-default btn-flat float-right @if(!$profile_url) btn-block @endif"
+            </li>
+        @endif
+        <li class="pb-2">
+            <a class="btn btn-danger btn-block btn-flat text-left"
                href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fa fa-fw fa-power-off text-red"></i>
-                {{ __('adminlte::adminlte.log_out') }}
+                   {{ __('adminlte::adminlte.log_out') }}
             </a>
             <form id="logout-form" action="{{ $logout_url }}" method="POST" style="display: none;">
                 @if(config('adminlte.logout_method'))

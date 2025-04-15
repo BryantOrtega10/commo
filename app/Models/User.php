@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -50,11 +51,15 @@ class User extends Authenticatable
     }
 
     public function adminlte_image(){
-        if(isset($this->image)){
-            return $this->image;
+        if(isset($this->image)){            
+            return Storage::url('users/' . $this->image);
         }
         else{
             return '/imgs/no-user-image.png';
         }
+    }
+
+    public function adminlte_profile_url(){
+        return route('users.profile');
     }
 }
