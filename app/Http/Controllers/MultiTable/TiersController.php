@@ -13,7 +13,7 @@ class TiersController extends MultipleTableController
         parent::__construct(
             TiersModel::class,  //model
             "layouts",  //baseView
-            "tiers",  //baseRoute
+            "product-tiers",  //baseRoute
             "Tiers",  //pluralTitle
             "Tier"  //singularTitle
         );

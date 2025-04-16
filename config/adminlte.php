@@ -499,6 +499,12 @@ return [
             'icon' => 'fas fa-tags',
             'submenu' => [
                 [
+                    'text' => 'Products',
+                    'route' => 'products.show',
+                    'can' => 'products',
+                    'active' => ['products/products*'],
+                ],
+                [
                     'text' => 'Business Segments',
                     'route' => 'business-segments.show',
                     'can' => 'business-segments',
@@ -519,15 +525,15 @@ return [
                     'can' => 'plan-types',
                     'active' => ['plan-types*'],
                 ],[
-                    'text' => 'Tiers',
-                    'route' => 'tiers.show',
-                    'can' => 'tiers',
-                    'active' => ['tiers*'],
+                    'text' => 'Product Tiers',
+                    'route' => 'product-tiers.show',
+                    'can' => 'product-tiers',
+                    'active' => ['product-tiers*'],
                 ],[
-                    'text' => 'Types',
-                    'route' => 'types.show',
-                    'can' => 'types',
-                    'active' => ['types*'],
+                    'text' => 'Product Types',
+                    'route' => 'product-types.show',
+                    'can' => 'product-types',
+                    'active' => ['product-types*'],
                 ]
             ]
 

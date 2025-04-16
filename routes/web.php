@@ -41,6 +41,7 @@ use App\Http\Controllers\Leads\MySettlementsController;
 use App\Http\Controllers\MultiTable\AdminFeesController;
 
 use App\Http\Controllers\Policies\CountiesController;
+use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Utils\FilesController;
 
@@ -83,8 +84,8 @@ $crudRoutes = [
         'business-types' => BusinessTypesController::class,
         'carriers' => CarriersController::class,
         'plan-types' => PlanTypesController::class,
-        'tiers' => TiersController::class,
-        'types' =>ProductTypesController::class
+        'product-tiers' => TiersController::class,
+        'product-types' =>ProductTypesController::class
     ]
 ];
 
@@ -190,7 +191,16 @@ Route::group([ 'prefix' => 'my-settlements', 'middleware' => ['auth', 'user-role
     Route::get("/", [MySettlementsController::class, 'show'])->name("my-settlements.show");
 });
 
-
+Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:admin']],function () {
+    Route::group(['prefix' => 'products'], function () {
+        Route::get("/", [ProductsController::class, 'show'])->name("products.show");
+        Route::post("/datatable", [ProductsController::class, 'datatableAjax'])->name("products.datatable");
+        Route::get("/create", [ProductsController::class, 'showCreateForm'])->name("products.create");
+        Route::post("/create", [ProductsController::class, 'create']);
+        Route::get("/update/{id}", [ProductsController::class, 'showUpdateForm'])->name("products.update");
+        Route::post("/update/{id}", [ProductsController::class, 'update']);
+    });
+});
 
 
 //Utils

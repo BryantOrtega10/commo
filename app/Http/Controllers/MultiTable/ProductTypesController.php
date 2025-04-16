@@ -13,7 +13,7 @@ class ProductTypesController extends MultipleTableController
         parent::__construct(
             ProductTypesModel::class,  //model
             "layouts",  //baseView
-            "types",  //baseRoute
+            "product-types",  //baseRoute
             "Types",  //pluralTitle
             "Type"  //singularTitle
         );
