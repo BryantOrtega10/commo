@@ -253,7 +253,7 @@
         ])
     @endif
 
-    @if ($errors->detailsActivityForm->any())
+    @if ($errors->detailsActivityForm->any() || $activitySelected !== null)
         @include('activities.partials.activityDetailsModal', [
            'activity' => $activitySelected
         ])
@@ -264,6 +264,7 @@
 
 @section('js')
     <script src="/js/leads/modals.js"></script>
+    <script src="/js/leads/myNotifications.js"></script>
     <script>
         $(document).ready(() => {
             $('[data-toggle="tooltip"]').tooltip({
@@ -273,7 +274,7 @@
     </script>
 
 
-    @if ($errors->addActivityForm->any() || $errors->detailsActivityForm->any())
+    @if ($errors->addActivityForm->any() || $errors->detailsActivityForm->any() || $activitySelected !== null)
         <script>
             const quill = new Quill('#description', {
                 theme: 'snow'

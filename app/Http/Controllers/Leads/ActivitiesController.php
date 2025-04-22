@@ -7,6 +7,7 @@ use App\Http\Requests\Leads\CreateActivityRequest;
 use App\Http\Requests\Leads\UpdateActivityRequest;
 use App\Models\Customers\ActivitiesModel;
 use App\Models\Customers\ActivityLogsModel;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -92,4 +93,13 @@ class ActivitiesController extends Controller
 
         return redirect(route('leads.details',['id' => $activity->fk_customer]))->with('message', 'Activity updated successfully');
     }
+
+    public function myNotifications(){
+        $user = Auth::user();
+        $notifications = User::find($user->id)->unreadNotifications;
+      
+        return response()->json($notifications);
+    }
+
+    
 }

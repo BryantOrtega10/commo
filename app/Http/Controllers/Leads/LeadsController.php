@@ -18,6 +18,8 @@ use App\Models\MultiTable\PhasesModel;
 use App\Models\MultiTable\RegistrationSourcesModel;
 use App\Models\MultiTable\SuffixesModel;
 use App\Models\Policies\CountiesModel;
+use App\Models\User;
+use App\Notifications\AgentTasksNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ViewErrorBag;
@@ -228,8 +230,10 @@ class LeadsController extends Controller
         return redirect(route('leads.show'))->with('message', 'Lead created successfully');
     }
 
-    public function showDetailsForm($id){
+    public function showDetailsForm($id, Request $request){
 
+        $user = Auth::user();
+        $user = User::find($user->id);
         $lead = CustomersModel::find($id);
         $activityLogs = ActivityLogsModel::whereHas("activity", function($query) use($id) {
                                                 $query->where("fk_customer","=",$id);
@@ -255,6 +259,7 @@ class LeadsController extends Controller
             }
         }
 
+       
         $activitySelected = null;
         if ($errors->detailsActivityForm->any()) {
             if ($errors->hasBag('detailsActivityForm')) {
@@ -262,6 +267,22 @@ class LeadsController extends Controller
                 $activitySelected = ActivitiesModel::find($activityId);
             }
         }
+        if($request->has("idActivity")){
+            $activityId = $request->input("idActivity");
+            $activitySelected = ActivitiesModel::find($activityId);
+            //Change notification state
+
+            $user->unreadNotifications()
+            ->where('type', AgentTasksNotification::class)
+            ->where('data->activity_id', $activitySelected->id)
+            ->get() 
+            ->each(function ($notification) {
+                $notification->markAsRead();
+            });
+
+        }
+        
+
 
         return view('leads.details', [
             "lead" => $lead,

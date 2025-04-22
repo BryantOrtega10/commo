@@ -169,6 +169,9 @@ Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']
 
 
 Route::group([ 'prefix' => 'leads', 'middleware' => ['auth', 'user-role:agent']],function () {
+
+    
+
     Route::get("/", [LeadsController::class, 'show'])->name("leads.show");
     Route::post("/datatable", [LeadsController::class, 'datatableAjax'])->name("leads.datatable");
     Route::get("/create", [LeadsController::class, 'showCreateForm'])->name("leads.create");
@@ -183,6 +186,9 @@ Route::group([ 'prefix' => 'leads', 'middleware' => ['auth', 'user-role:agent']]
         Route::post("/{idLead}", [ActivitiesController::class, 'createActivity'])->name("leads.createActivity");
         Route::get("/modal/details/{id}", [ActivitiesController::class, 'showActivityDetailsModal'])->name("leads.activityDetailsModal");
         Route::post("/modal/details/{id}", [ActivitiesController::class, 'update']);
+
+        Route::get("/notifications", [ActivitiesController::class, 'myNotifications'])->name("leads.notifications");
+        Route::post("/notifications", [ActivitiesController::class, 'myNotifications'])->name("leads.notifications");
         
     });
 });
