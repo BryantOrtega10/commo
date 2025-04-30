@@ -462,13 +462,23 @@
                         <th>Carrier</th>
                         <th>Prod. Type</th>
                         <th>Plan Description</th>
-                        <th>App Number</th>
+                        <th>App Id</th>
                         <th>Contract #</th>
                         <th>Orig Eff.</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- TO DO --}}
+                    @foreach ($customer->policies as $policy)
+                        <tr>
+                            <td><a href="{{route('policies.update', ['id' => $policy->id])}}">{{$policy->id}}</a></td>
+                            <td>{{$policy->product?->carrier?->name}}</td>
+                            <td>{{$policy->product?->product_type?->name}}</td>
+                            <td><a href="{{route('products.update', ['id' => $policy->fk_product])}}">{{$policy->fk_product}}</a></td>
+                            <td>{{$policy->application_id}}</td>
+                            <td>{{$policy->contract_id}}</td>
+                            <td>{{($policy->original_effective_date ? date('m/d/Y', strtotime($policy->original_effective_date)) : "")}}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

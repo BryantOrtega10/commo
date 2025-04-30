@@ -66,7 +66,7 @@
                                         placeholder="Phone:" value="{{ old('phone') }}">
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="row another-fields d-none">
                             <div class="col-md-3 col-12">
@@ -125,7 +125,7 @@
                                     </select>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="text-center">
                             <a href="#" class="show-more">Show more fields</a>
@@ -133,8 +133,7 @@
                     </div>
                     <div class="col-md-2">
                         <input type="submit" class="btn btn-outline-primary mr-3" value="Search" />
-                        <a href="{{route('leads.show')}}"
-                            class="btn btn-secondary"><i class="fas fa-redo"></i></a>
+                        <a href="{{ route('leads.show') }}" class="btn btn-secondary"><i class="fas fa-redo"></i></a>
                     </div>
                 </div>
             </div>
@@ -163,7 +162,7 @@
                             <td>{{ $lead->phone }}</td>
                             <td>{{ $lead->status?->name }}</td>
                             <td><a href="{{ route('leads.details', ['id' => $lead->id]) }}"
-                                class="btn btn-outline-primary">View</a></td>
+                                    class="btn btn-outline-primary">View</a></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -176,6 +175,7 @@
 @stop
 
 @section('js')
+    <script src="/js/leads/myNotifications.js"></script>
     <script src="/js/utils/show-more.js"></script>
     <script src="/js/leads/datatable.js"></script>
     @if ($change_pass || $errors->addActivityForm->any())

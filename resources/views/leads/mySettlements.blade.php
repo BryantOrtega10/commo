@@ -74,7 +74,7 @@
 @stop
 
 @section('js')
-    
+    <script src="/js/leads/myNotifications.js"></script>
     <script src="/js/leads/mySettlementsDatatable.js"></script>
-    
+
 @stop

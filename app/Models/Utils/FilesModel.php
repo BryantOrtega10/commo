@@ -5,6 +5,7 @@ namespace App\Models\Utils;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\Agents\AgentsModel;
 use App\Models\Customers\CustomersModel;
+use App\Models\Policies\PoliciesModel;
 use Illuminate\Database\Eloquent\Model;
 
 class FilesModel extends Model
@@ -16,7 +17,8 @@ class FilesModel extends Model
         "route",
         "fk_customer",
         "fk_agent",
-        "fk_agent_number"
+        "fk_agent_number",
+        "fk_policy"
     ];
 
     public function customer(){
@@ -30,4 +32,10 @@ class FilesModel extends Model
     public function agent_number(){
         return $this->belongsTo(AgentNumbersModel::class, "fk_agent_number", "id");
     }
+
+    public function policy(){
+        return $this->belongsTo(PoliciesModel::class, "fk_policy", "id");
+    }
+
+    
 }

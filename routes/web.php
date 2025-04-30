@@ -41,6 +41,7 @@ use App\Http\Controllers\Leads\MySettlementsController;
 use App\Http\Controllers\MultiTable\AdminFeesController;
 
 use App\Http\Controllers\Policies\CountiesController;
+use App\Http\Controllers\Policies\PoliciesController;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Utils\FilesController;
@@ -51,11 +52,8 @@ use Illuminate\Support\Facades\Route;
 
 $crudRoutes = [
     "policies" => [
-        'client-sources' => ClientSourcesController::class,
         'counties' => CountiesController::class,
         'enrollment-methods' => EnrollmentMethodsController::class,
-        'policy-agent-number-types' => PolicyAgentNumberTypesController::class,
-        'policy-member-types' => MemberTypesController::class,
         'policy-status' => PolicyStatusController::class,
         'relationships' => RelationshipsController::class
     ],
@@ -208,11 +206,29 @@ Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:admin
     });
 });
 
+Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin']],function () {
+    Route::group(['prefix' => 'policies'], function () {
+        Route::get("/", [PoliciesController::class, 'show'])->name("policies.show");
+        Route::post("/datatable", [PoliciesController::class, 'datatableAjax'])->name("policies.datatable");
+        Route::get("/create", [PoliciesController::class, 'showCreateForm'])->name("policies.create");
+        Route::post("/create", [PoliciesController::class, 'create']);
+        Route::get("/details/{id}", [PoliciesController::class, 'showUpdateForm'])->name("policies.update");
+        Route::post("/details/{id}", [PoliciesController::class, 'update']);
+    });
+});
+
 
 //Utils
 Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
     Route::group(['prefix' => 'customers'], function () {
         Route::post("/search", [CustomersController::class, 'search'])->name("customers.search");
+        Route::post("/search/subscribers", [CustomersController::class, 'searchSubscribers'])->name("customers.searchSubscribers");
+        
+    });
+});
+Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
+    Route::group(['prefix' => 'products'], function () {
+        Route::get("/details/{id?}", [ProductsController::class, 'loadInfo'])->name("products.loadInfo");
     });
 });
 Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
@@ -230,7 +246,7 @@ Route::group([ 'prefix' => 'users', 'middleware' => ['auth', 'user-role:admin|ag
 
 
 
-Route::group([ 'prefix' => 'files', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'files', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
     Route::post("/upload", [FilesController::class, 'uploadFile'])->name("files.upload");
     Route::post("/remove/{id}", [FilesController::class, 'remove'])->name("files.delete");
 });

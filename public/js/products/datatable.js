@@ -19,8 +19,8 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: $(".datatable").data("url"), // URL de la API o endpoint que devuelve los datos
-            type: "POST", // Método HTTP, puede ser POST o GET
+            url: $(".datatable").data("url"), 
+            type: "POST", 
             data: function(d) {
                 d.description = $("#description").val();
                 d.carrier = $("#carrier").val();

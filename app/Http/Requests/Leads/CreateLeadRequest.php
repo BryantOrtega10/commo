@@ -35,7 +35,7 @@ class CreateLeadRequest extends FormRequest
             'date_birth' => 'nullable',
             'ssn' => ['nullable', Rule::unique('customers','ssn')->ignore($ignoreSSN, 'ssn')],
             'email' => 'required',
-            'phone' => ['required', 'max:10', 'not_regex:/^1/'],
+            'phone' => ['required', 'max:10', 'not_regex:/^1/', Rule::unique('customers','phone')],
             'registration_source' => 'nullable',
             'referring_customer_id' => ['nullable', function ($attribute, $value, $fail) {
                 if ($value === request()->route('id')) {

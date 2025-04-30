@@ -12,7 +12,11 @@
     @isset($agent_number_id)
         <input type="hidden" name="agent_number_id" value="{{$agent_number_id}}" />
     @endisset
-    
+
+    @isset($policy_id)
+        <input type="hidden" name="policy_id" value="{{$policy_id}}" />
+    @endisset
+        
     <div class="dz-message needsclick">    
         <img src="{{asset('imgs/upload.png')}}"><br>
         Drop your files here or <b>Browse</b> <br>

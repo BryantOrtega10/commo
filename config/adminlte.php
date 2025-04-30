@@ -332,10 +332,10 @@ return [
             'icon' => 'fas fa-shield-alt',
             'submenu' => [
                 [
-                    'text' => 'Client Sources',
-                    'route' => 'client-sources.show',
-                    'can' => 'client-sources',
-                    'active' => ['client-sources*'],
+                    'text' => 'Policies',
+                    'route' => 'policies.show',
+                    'can' => 'policies',
+                    'active' => ['policies/policies*'],
                 ],
                 [
                     'text' => 'Counties',
@@ -348,18 +348,6 @@ return [
                     'route' => 'enrollment-methods.show',
                     'can' => 'enrollment-methods',
                     'active' => ['enrollment-methods*'],
-                ],
-                [
-                    'text' => 'Policy Agent Number Types',
-                    'route' => 'policy-agent-number-types.show',
-                    'can' => 'policy-agent-number-types',
-                    'active' => ['policy-agent-number-types*'],
-                ],
-                [
-                    'text' => 'Policy Member Types',
-                    'route' => 'policy-member-types.show',
-                    'can' => 'policy-member-types',
-                    'active' => ['policy-member-types*'],
                 ],
                 [
                     'text' => 'Policy Status',

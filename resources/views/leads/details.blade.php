@@ -58,7 +58,8 @@
                 @csrf
                 <div class="card h-100-int">
                     <div class="card-body border-top border-primary rounded border-3 ">
-                        <div class="text-right"><a href="{{route('leads.update',['id' => $lead->id])}}" class="btn btn-outline-primary"><i class="fas fa-user-edit"></i></a></div>
+                        <div class="text-right"><a href="{{ route('leads.update', ['id' => $lead->id]) }}"
+                                class="btn btn-outline-primary"><i class="fas fa-user-edit"></i></a></div>
                         <div class="text-center">
                             <div class="circle-initials">
                                 {{ strtoupper(substr($lead->first_name, 0, 1)) }}{{ strtoupper(substr($lead->last_name, 0, 1)) }}
@@ -150,7 +151,8 @@
                         <div class="card-body overflow-y-s">
                             @foreach ($tasks as $task)
                                 <div class="card">
-                                    <div class="card-body rounded border-left border-3 @switch($task->priority)
+                                    <div
+                                        class="card-body rounded border-left border-3 @switch($task->priority)
                                         @case(1)
                                             border-success
                                             @break
@@ -165,14 +167,16 @@
                                     @endswitch">
                                         <div class="row">
                                             <div class="col-6">
-                                                {{$task->task_name}}
+                                                {{ $task->task_name }}
                                             </div>
                                             <div class="col-4">
-                                                <span class="text-primary">Expiration:</span> {{ date('m/d/Y H:i', strtotime($task->expiration_date)) }}<br>
-                                                <span class="text-primary">Remaining:</span> {{$task->txt_remaining }}
+                                                <span class="text-primary">Expiration:</span>
+                                                {{ date('m/d/Y H:i', strtotime($task->expiration_date)) }}<br>
+                                                <span class="text-primary">Remaining:</span> {{ $task->txt_remaining }}
                                             </div>
                                             <div class="col-2">
-                                                <a href="{{route('leads.activityDetailsModal',['id' => $task->id])}}" class="btn btn-outline-primary activity-details">Details</a>
+                                                <a href="{{ route('leads.activityDetailsModal', ['id' => $task->id]) }}"
+                                                    class="btn btn-outline-primary activity-details">Details</a>
                                             </div>
                                         </div>
                                     </div>
@@ -189,7 +193,7 @@
                                         <div class="row">
                                             <div class="col-9">
                                                 <b class="text-primary">Description:</b><br>
-                                                {{$activityLog->description}}
+                                                {{ $activityLog->description }}
                                                 <br>
                                                 @if (strlen(strip_tags($activityLog->activity->description)) > 50)
                                                     {{ substr(strip_tags($activityLog->activity->description), 0, 50) }}...
@@ -199,7 +203,8 @@
                                             </div>
                                             <div class="col-3 text-right">
                                                 {{ date('m/d/Y H:i', strtotime($activityLog->created_at)) }}<br>
-                                                <a href="{{route('leads.activityDetailsModal',['id' => $activityLog->fk_activity])}}" class="btn btn-outline-primary activity-details">Details</a>
+                                                <a href="{{ route('leads.activityDetailsModal', ['id' => $activityLog->fk_activity]) }}"
+                                                    class="btn btn-outline-primary activity-details">Details</a>
                                             </div>
                                         </div>
                                     </div>
@@ -255,7 +260,7 @@
 
     @if ($errors->detailsActivityForm->any() || $activitySelected !== null)
         @include('activities.partials.activityDetailsModal', [
-           'activity' => $activitySelected
+            'activity' => $activitySelected,
         ])
     @endif
 

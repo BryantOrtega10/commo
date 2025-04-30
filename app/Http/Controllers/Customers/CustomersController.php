@@ -19,6 +19,7 @@ use App\Models\MultiTable\SuffixesModel;
 use App\Models\Policies\CountiesModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ViewErrorBag;
 
 class CustomersController extends Controller
@@ -511,5 +512,74 @@ class CustomersController extends Controller
         return redirect(route('customers.show'))->with('message', 'Customer updated successfully');
     }
 
+    public function searchSubscribers(Request $request)
+    {
+        $customers = CustomersModel::select("customers.*")->whereHas("status", function($query){
+            $query->whereRaw("LOWER(name) = 'customer'");
+        });
+
+        if ($request->has('search') && $request->input('search')['value']) {
+            $searchTxt = $request->input('search')['value'];
+            $customers->where(function ($query) use ($searchTxt) {
+                $query->where("customers.first_name", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.last_name", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.email", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.phone", "like", "%{$searchTxt}%")
+                    ->orWhere("customers.id", "like", "%{$searchTxt}%");
+            });
+        }
+
+
+
+
+        if ($request->has('order')) {
+            $column = $request->input('order')[0]['column'];
+            $direction = $request->input('order')[0]['dir'];
+            switch ($column) {
+                case '0':
+                    $customers->orderBy("id", $direction);
+                    break;
+                case '1':
+                    $customers->orderByRaw("CONCAT(first_name,' ',last_name) $direction");
+                    break;
+                case '2':
+                    $customers->orderBy("email", $direction);
+                    break;
+                case '3':
+                    $customers->orderBy("phone", $direction);
+                    break;
+            }
+        }
+
+
+        $totalRecords = $customers->count();
+        $customers = $customers->skip($request->input('start'))
+            ->take($request->input('length'))
+            ->get();
+
+        $filteredRecords = array();
+
+        foreach ($customers as $customer) {
+
+            $filteredRecord = array();
+
+            $filteredRecord["id"] = $customer->id;
+            $filteredRecord["name"] = "$customer->first_name $customer->last_name";
+            $filteredRecord["email"] = $customer->email;
+            $filteredRecord["phone"] = $customer->phone;
+            $filteredRecord["actions"]["name"] = "$customer->first_name $customer->last_name";
+            $filteredRecord["actions"]["id"] = $customer->id;
+            array_push($filteredRecords, $filteredRecord);
+        }
+
+
+        return response()->json([
+            'draw' => intval($request->input('draw')),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecords,
+            'data' => $filteredRecords
+        ]);
+
+    }
 
 }

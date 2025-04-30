@@ -10,7 +10,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('leads.show') }}">Leads</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('leads.details',['id' => $lead->id]) }}">Details</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('leads.details', ['id' => $lead->id]) }}">Details</a></li>
             <li class="breadcrumb-item active" aria-current="page">Edit Lead</li>
         </ol>
     </nav>
@@ -32,8 +32,7 @@
             @csrf
             <div class="card-body">
                 <div class="row">
-                    <div
-                        class="col-12 col-md-3">
+                    <div class="col-12 col-md-3">
                         <div class="form-group">
                             <label for="first_name">First Name (*):</label>
                             <input type="text" class="form-control @error('first_name') is-invalid @enderror"
@@ -120,8 +119,8 @@
                             <select id="gender" name="gender"
                                 class="form-control @error('gender') is-invalid @enderror">
                                 @foreach ($genders as $gender)
-                                    <option value="{{ $gender->id }}"
-                                        @if (old('gender', $lead->fk_gender) == $gender->id) selected @endif>{{ $gender->name }}</option>
+                                    <option value="{{ $gender->id }}" @if (old('gender', $lead->fk_gender) == $gender->id) selected @endif>
+                                        {{ $gender->name }}</option>
                                 @endforeach
                             </select>
                             @error('gender')
@@ -409,8 +408,7 @@
 @stop
 
 @section('js')
-    
+    <script src="/js/leads/myNotifications.js"></script>
     <script src="/js/customers/search-customer.js"></script>
     <script src="/js/counties/load-county-info.js"></script>
-    
 @stop

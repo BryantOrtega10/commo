@@ -278,4 +278,19 @@ class ProductsController extends Controller
 
         return redirect(route('products.show'))->with('message', 'Product updated successfully');
     }
+
+    public function loadInfo($id = null){
+        if($id){
+            $product = ProductsModel::find($id);
+            return response()->json([
+                "carrier" => $product->carrier?->name,
+                "plan_type" => $product->plan_type?->name,
+                "product_type" => $product->product_type?->name,
+                "tier" => $product->tier?->name,
+                "business_segment" => $product->business_segment?->name,
+                "business_type" => $product->business_type?->name,
+            ]);
+        }
+        return response()->json([]);
+    }
 }

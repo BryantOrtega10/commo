@@ -8,7 +8,7 @@ use App\Models\MultipleTableModel;
 class EnrollmentMethodsModel extends MultipleTableModel
 {
     //
-    protected $table = "enrrollment_methods";
+    protected $table = "enrollment_methods";
 
     
 }

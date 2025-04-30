@@ -12,6 +12,7 @@ use App\Models\MultiTable\PhasesModel;
 use App\Models\MultiTable\RegistrationSourcesModel;
 use App\Models\MultiTable\SuffixesModel;
 use App\Models\Policies\CountiesModel;
+use App\Models\Policies\PoliciesModel;
 use App\Models\User;
 use App\Models\Utils\FilesModel;
 use DateTime;
@@ -49,12 +50,6 @@ class CustomersModel extends Model
         "fk_agent",
         "fk_entry_user"
     ];
-
-    public function txtStatus(): Attribute {
-        return Attribute::make(
-            get: fn () => [0 => "Inactive", 1 => "Active"][$this->status]
-        );
-    }
 
     public function txtAge(): Attribute {
         return Attribute::make(
@@ -127,5 +122,12 @@ class CustomersModel extends Model
     public function cuids(){
         return $this->hasMany(CuidsModel::class, "fk_customer","id");
     }
-    
+
+    public function cuid(){
+        return $this->hasOne(CuidsModel::class, "fk_customer","id");
+    }
+
+    public function policies(){
+        return $this->hasMany(PoliciesModel::class, "fk_customer","id");
+    }
 }

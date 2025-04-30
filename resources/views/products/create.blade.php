@@ -134,7 +134,7 @@
                         <div class="row align-items-end alias-item" data-id="{{$index}}">
                             <div class="col-md-6 col-8">
                                 <div class="form-group">
-                                    <label for="alias_{{$index}}">Alias {{$index + 1}}:</label>
+                                    <label for="alias_{{$index}}" class="lb-alias">Alias {{$index + 1}}:</label>
                                     <input type="text" class="form-control @error("alias.".$index) is-invalid @enderror" id="alias_{{$index}}" name="alias[]" value="{{ old("alias.".$index)}}">
                                     @error("alias.".$index)
                                         <span class="invalid-feedback" role="alert">

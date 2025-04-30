@@ -25,9 +25,11 @@ class UpdateLeadRequest extends FormRequest
     {
 
         $ignoreSSN = "";
+        $ignorePhone = "";
         if(request()->route('id') !== null){
             $customers = CustomersModel::find(request()->route('id'));
             $ignoreSSN = $customers->ssn;
+            $ignorePhone = $customers->phone;
         }
 
         return [
@@ -45,7 +47,7 @@ class UpdateLeadRequest extends FormRequest
             'county' => 'nullable',
             'city' => 'nullable',
             'zip_code' => 'nullable',
-            'phone' => ['required', 'max:10', 'not_regex:/^1/'],
+            'phone' => ['required', 'max:10', 'not_regex:/^1/',Rule::unique('customers','phone')->ignore($ignorePhone, 'phone')],
             'phone_2' => 'nullable',
             'registration_source' => 'nullable',
             'referring_customer_id' => ['nullable', function ($attribute, $value, $fail) {

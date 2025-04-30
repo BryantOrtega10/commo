@@ -80,13 +80,13 @@ input.search-icon:read-only {
     height: 160px !important;
 }
 
-.icheck-secondary{
+.icheck-secondary {
     user-select: none;
 }
 
 .circle-initials {
     font-size: 3rem;
-    color: #FFF;
+    color: #fff;
     background: #858585;
     width: 100px;
     height: 100px;
@@ -97,6 +97,27 @@ input.search-icon:read-only {
     border-radius: 50%;
     margin-bottom: 5px;
 }
-.content-header h1{
+.content-header h1 {
     color: var(--blue);
+}
+
+.dependent-item {
+    background: #eff1f2;
+    border-radius: 15px;
+    padding: 20px 10px;
+    margin-bottom: 15px;
+}
+
+.dependent-item label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: normal;
+}
+
+h5.dependent-title {
+    font-weight: 600;
+    margin-bottom: 35px;
+    color: #718096;
+}
+
+.remove-dependent {
+    margin-bottom: 25px;
 }
