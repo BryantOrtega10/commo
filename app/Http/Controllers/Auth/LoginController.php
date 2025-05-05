@@ -31,7 +31,7 @@ class LoginController extends Controller
         
         switch(strtolower(Auth::user()->role)){
             case 'admin':
-                return route('client-sources.show');
+                return route('policies.show');
                 break;
     
             case 'agent':
@@ -39,7 +39,7 @@ class LoginController extends Controller
                 break;
     
             default:
-                return route('client-sources.show');
+                return route('policies.show');
                 break;
         }
         return '/';

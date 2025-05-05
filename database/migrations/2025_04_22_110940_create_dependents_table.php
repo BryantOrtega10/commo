@@ -24,7 +24,7 @@ return new class extends Migration
             
             $table->date("date_added")->nullable();
 
-            $table->bigInteger("fk_policy")->unsigned()->nullable();
+            $table->bigInteger("fk_policy")->unsigned();
             $table->foreign('fk_policy')->references('id')->on('policies');
             $table->index('fk_policy');
 

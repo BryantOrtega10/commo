@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("alias");
             
-            $table->bigInteger("fk_product")->unsigned()->nullable();
+            $table->bigInteger("fk_product")->unsigned();
             $table->foreign('fk_product')->references('id')->on('products')->onDelete("cascade");
             $table->index('fk_product');
 

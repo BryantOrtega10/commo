@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        HeadingRowFormatter::extend('custom',function($heading) {
+            $heading = strtolower($heading);
+            $heading = trim($heading);
+            $heading = str_replace(' ', '_', $heading);
+            $heading = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $heading);
+            $heading = preg_replace('/[^a-z0-9_]/', '', $heading);
+            return $heading;
+        });
+        HeadingRowFormatter::default('custom');
+
+
         $agent_permissions = [
             'leads',
             'my-settlements'

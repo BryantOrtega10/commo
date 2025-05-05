@@ -4,7 +4,8 @@ use App\Http\Controllers\Agents\AgentNumbersController;
 use App\Http\Controllers\Agents\AgentsControllers;
 
 use App\Http\Controllers\Auth\LoginController;
-
+use App\Http\Controllers\Commissions\CommissionsController;
+use App\Http\Controllers\Commissions\TemplatesController;
 use App\Http\Controllers\MultiTable\AgenciesController;
 use App\Http\Controllers\MultiTable\AgencyCodesController;
 use App\Http\Controllers\MultiTable\AgentStatusController;
@@ -93,7 +94,7 @@ Route::get('/', function () {
     if (Auth::check()){
         switch(strtolower(Auth::user()->role)){
             case 'admin':
-                return redirect(route('client-sources.show'));
+                return redirect(route('policies.show'));
                 break;
             case 'agent':
                 return redirect(route('leads.show'));
@@ -218,6 +219,18 @@ Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin
 });
 
 
+Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:admin']],function () {
+    Route::group(['prefix' => 'calculation'], function () {
+        Route::get("/", [CommissionsController::class, 'show'])->name("commissions.calculation");        
+        Route::post("/import", [CommissionsController::class, 'import'])->name("commissions.calculation.import");        
+        Route::get("/import/{id}", [CommissionsController::class, 'showImport'])->name("commissions.calculation.showImport");
+        Route::get("/rows/{id}", [CommissionsController::class, 'loadRowsUploaded'])->name("commissions.calculation.loadRowsUploaded");
+        Route::post("/datatable/{id}", [CommissionsController::class, 'datatableAjax'])->name("commissions.calculation.datatable");
+        
+    });
+});
+
+
 //Utils
 Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
     Route::group(['prefix' => 'customers'], function () {
@@ -243,8 +256,11 @@ Route::group([ 'prefix' => 'users', 'middleware' => ['auth', 'user-role:admin|ag
     Route::post("/my-profile", [UsersController::class, 'updateProfile']);
     
 });
-
-
+Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:admin']],function () {
+    Route::group(['prefix' => 'templates'], function () {
+        Route::get("/details/{id?}", [TemplatesController::class, 'loadInfo'])->name("templates.loadInfo");
+    });
+});
 
 Route::group([ 'prefix' => 'files', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
     Route::post("/upload", [FilesController::class, 'uploadFile'])->name("files.upload");

@@ -536,7 +536,15 @@ return [
             'url' => 'commissions/',
             'can' => 'commissions',
             'active' => ['commissions*'],
-            'icon' => 'fas fa-receipt'
+            'icon' => 'fas fa-receipt',
+            'submenu' => [
+                [
+                    'text' => 'Commission Calculation',
+                    'route' => 'commissions.calculation',
+                    'can' => 'commissions',
+                    'active' => ['calculation*'],
+                ],
+            ]
         ],[
             'text' => 'Users',
             'url' => 'users/',

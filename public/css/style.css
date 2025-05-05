@@ -121,3 +121,7 @@ h5.dependent-title {
 .remove-dependent {
     margin-bottom: 25px;
 }
+
+.rows-uploaded{
+    color: var(--blue);
+}
