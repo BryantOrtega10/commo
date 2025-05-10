@@ -39,7 +39,6 @@ class PoliciesModel extends Model
         "auto_entry_date",
         "auto_entry_filename",
         "auto_entry_comp_type",
-        "auto_entry_method",
         "review_note",
         "non_commissionable",
         "fk_policy_status",

@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string("name");
             $table->text("file_route");
-            $table->integer("rows_uploaded")->unsigned()->default(0)->nullable();
-            $table->integer("rows_processed")->unsigned()->default(0)->nullable();
+            $table->integer("uploaded_rows")->unsigned()->default(0)->nullable();
+            $table->integer("processed_rows")->unsigned()->default(0)->nullable();
+            $table->integer("error_rows")->unsigned()->default(0)->nullable();
             $table->date("statement_date")->nullable();
             $table->dateTime("processing_start_date")->nullable();
             $table->dateTime("processing_end_date")->nullable();

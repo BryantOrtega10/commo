@@ -20,8 +20,8 @@
 
     <div class="card">
         <div class="card-body text-center">
-            <input type="hidden" id="url" value="{{route('commissions.calculation.loadRowsUploaded', ['id' => $commissionUpload->id])}}">
-            <h2><span class="rows-uploaded">{{$commissionUpload->rows_uploaded}}</span> rows<br>uploaded</h2>
+            <input type="hidden" id="url" value="{{route('commissions.calculation.loadUploadedRows', ['id' => $commissionUpload->id])}}">
+            <h2><span class="uploaded-rows">{{$commissionUpload->uploaded_rows}}</span> Uploaded<br>rows</h2>
             <div class="loader m-auto"></div>
         </div>
     </div>

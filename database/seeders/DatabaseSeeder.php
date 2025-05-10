@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             // CustomerTablesSeeder::class,
             // AgentsSeeder::class,
             // TestAgentsSeed::class,
-            TemplateSeeder::class,
+            // TemplateSeeder::class,
+            CompensationTypeSeeder::class,
         ]);
        
     }

@@ -16,9 +16,33 @@ return new class extends Migration
 
             $table->date("check_date")->nullable();
             $table->date("statement_date");
-            
+            $table->date("submit_date");
+
+            $table->date("original_effective_date")->nullable();
+            $table->date("benefit_effective_date")->nullable();
+            $table->date("cancel_date")->nullable();
+            $table->date("initial_payment_date")->nullable();
+            $table->date("accounting_date")->nullable();
+
             $table->decimal("comp_amount");
             $table->decimal("flat_rate")->nullable();
+
+            $table->text("notes")->nullable();
+
+            $table->decimal("premium_percentaje")->nullable();
+            $table->decimal("premium_amount")->nullable();
+            
+            $table->string("event_type")->nullable();
+            $table->string("exchange_ind")->nullable();
+
+            $table->boolean("is_adjustment")->nullable();
+            
+            $table->smallInteger("comp_year")->nullable();
+            $table->smallInteger("comp_year")->nullable();
+
+            $table->boolean("is_qualified")->nullable();   
+
+            $table->tinyInteger("rate_type")->comment("1 - Percentage, 2 - Flat Rate, 3 - Flat Rate per member")->nullable();
 
             $table->bigInteger("fk_agency_code")->unsigned()->nullable();
             $table->foreign('fk_agency_code')->references('id')->on('agency_codes');
@@ -64,9 +88,15 @@ return new class extends Migration
             $table->foreign('fk_county')->references('id')->on('counties');
             $table->index('fk_county');
 
-            $table->bigInteger("fk_policy")->unsigned();
+            $table->bigInteger("fk_policy")->unsigned()->nullable();
             $table->foreign('fk_policy')->references('id')->on('policies');
             $table->index('fk_policy');
+
+            $table->bigInteger("fk_agent_number")->unsigned()->nullable();
+            $table->foreign('fk_agent_number')->references('id')->on('agent_numbers');
+            $table->index('fk_agent_number');
+
+            $table->string("adjusment_subscriber")->nullable();
 
             $table->text("notes")->nullable();
 
@@ -123,6 +153,9 @@ return new class extends Migration
 
             $table->dropForeign("commission_transactions_fk_entry_user_foreign");
             $table->dropIndex("commission_transactions_fk_entry_user_index");
+
+            $table->dropForeign("commission_transactions_fk_agent_number_foreign");
+            $table->dropIndex("commission_transactions_fk_agent_number_index");
         });
 
         Schema::dropIfExists('commission_transactions');

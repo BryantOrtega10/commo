@@ -8,13 +8,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\AfterImport;
 
 
-class CommissionRowImport implements ToCollection, WithChunkReading, WithHeadingRow, ShouldQueue, WithEvents
+class CommissionRowImport implements ToCollection, WithChunkReading, WithHeadingRow, ShouldQueue, WithEvents, WithCalculatedFormulas
 {
     protected $commissionUploadId;
 
@@ -47,17 +48,28 @@ class CommissionRowImport implements ToCollection, WithChunkReading, WithHeading
     */
     public function collection(Collection $rows)
     {
-        
+        $count = 0;
         foreach ($rows as $row) {
-            Log::info('Datos de la fila: ', $row->toArray());
-
-            $commisionRow = new CommissionUploadRowsModel();
-            $commisionRow->data = json_encode($row);
-            $commisionRow->fk_commission_upload = $this->commissionUploadId;
-            $commisionRow->save();
+            $arrRow = $row->toArray();
+            $onlyNull = true;
+            Log::info('Datos de la fila: ', $arrRow);
+            foreach($arrRow as $itemRow){
+                if($itemRow != null && $itemRow != ""){
+                    $onlyNull = false;
+                    break;
+                }
+            }
+            if(!$onlyNull){
+                $commisionRow = new CommissionUploadRowsModel();
+                $commisionRow->data = json_encode($row);
+                $commisionRow->fk_commission_upload = $this->commissionUploadId;
+                $commisionRow->save();
+                $count++;
+            }
+          
         }
         $commissionUpload = CommissionUploadsModel::find($this->commissionUploadId);
-        $commissionUpload->rows_uploaded += sizeof($rows);
+        $commissionUpload->uploaded_rows += $count;
         $commissionUpload->save();
     }
 }

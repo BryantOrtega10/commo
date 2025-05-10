@@ -125,3 +125,11 @@ h5.dependent-title {
 .rows-uploaded{
     color: var(--blue);
 }
+
+.info-square{
+    width: 20px;
+    height: 20px;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}

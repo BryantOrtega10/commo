@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Commissions\ImportCommissionsRequest;
 use App\Imports\CommissionRowImport;
+use App\Jobs\LinkCommissionUploadsJob;
 use App\Models\Commissions\CommissionUploadRowsModel;
 use App\Models\Commissions\CommissionUploadsModel;
 use App\Models\Commissions\TemplatesModel;
 use App\Models\MultiTable\CarriersModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -75,26 +78,35 @@ class CommissionsController extends Controller
             return ucwords(str_replace('_', ' ', $field));
         }, $headersSnake);
 
+        $percentageLinked = round($commissionUpload->processed_rows * 100 / $commissionUpload->uploaded_rows, 2);
+        $percentageError = round($commissionUpload->error_rows * 100 / $commissionUpload->uploaded_rows, 2);
+        $percentageUploaded = 100 - $percentageLinked - $percentageError;
 
         return view('commissions.showImport', [
             "commissionUpload" => $commissionUpload,
             "headersSnake" => $headersSnake,
-            "headersTitle" => $headersTitle
+            "headersTitle" => $headersTitle,
+            "percentageLinked" => $percentageLinked,
+            "percentageError" => $percentageError,
+            "percentageUploaded" => $percentageUploaded,
         ]);
     }
 
-    public function loadRowsUploaded($id)
+    public function loadUploadedRows($id)
     {
         $commissionUpload = CommissionUploadsModel::find($id);
 
         return response()->json([
-            "rows_uploaded" => $commissionUpload->rows_uploaded,
+            "uploaded_rows" => $commissionUpload->uploaded_rows,
             "status" => $commissionUpload->status,
         ]);
     }
 
     public function datatableAjax($id, Request $request)
     {
+        $firstCommission = CommissionUploadRowsModel::where("fk_commission_upload", "=", $id)->first();
+        $data = json_decode($firstCommission->data, true);
+        $headersSnake = array_keys($data);
 
         $commissionRows = CommissionUploadRowsModel::select(
             "commission_upload_rows.*"
@@ -133,6 +145,9 @@ class CommissionsController extends Controller
                     $commissionRows->orderBy("notes", $direction);
                     break;
             }
+            if ($column >= 3) {
+                $commissionRows->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(data, '$." . $headersSnake[$column - 3] . "'))" . " " . $direction);
+            }
         }
 
 
@@ -151,7 +166,7 @@ class CommissionsController extends Controller
             $filteredRecord["id"]["id"] = $commissionRow->id;
             $filteredRecord["status"] = $commissionRow->txt_status;
             $filteredRecord["notes"] = $commissionRow->notes ?? "";
-            
+
             $data = json_decode($commissionRow->data, true);
             foreach ($data as $index => $item) {
                 $filteredRecord[$index] = Utils::rowFormat($index, $item);
@@ -168,6 +183,24 @@ class CommissionsController extends Controller
         ]);
     }
 
-    
+    public function linkAllCommissions($id)
+    {
 
+        $commissionRows = CommissionUploadRowsModel::select(
+            "commission_upload_rows.*"
+        )->where("fk_commission_upload", "=", $id)
+            ->where("status", "=", 0)
+            ->get()
+            ->toArray();
+
+        $jobs = array_map(fn($commissionRow) => new LinkCommissionUploadsJob($commissionRow['id']), $commissionRows);
+
+        Bus::batch($jobs)
+            ->then(fn($batch) => Log::info("Todas las filas fueron procesadas"))
+            ->catch(fn($batch, $e) => Log::error("Error al procesar: " . $e->getMessage()))
+            ->finally(fn($batch) => Log::info("Batch finalizado"))
+            ->dispatch();
+
+        return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
+    }
 }

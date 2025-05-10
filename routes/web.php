@@ -224,8 +224,9 @@ Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:ad
         Route::get("/", [CommissionsController::class, 'show'])->name("commissions.calculation");        
         Route::post("/import", [CommissionsController::class, 'import'])->name("commissions.calculation.import");        
         Route::get("/import/{id}", [CommissionsController::class, 'showImport'])->name("commissions.calculation.showImport");
-        Route::get("/rows/{id}", [CommissionsController::class, 'loadRowsUploaded'])->name("commissions.calculation.loadRowsUploaded");
+        Route::get("/rows/{id}", [CommissionsController::class, 'loadUploadedRows'])->name("commissions.calculation.loadUploadedRows");
         Route::post("/datatable/{id}", [CommissionsController::class, 'datatableAjax'])->name("commissions.calculation.datatable");
+        Route::get("/link-all/{id}", [CommissionsController::class, 'linkAllCommissions'])->name("commissions.calculation.linkAll");
         
     });
 });

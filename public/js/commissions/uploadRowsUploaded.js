@@ -9,7 +9,7 @@ $(document).ready(function () {
             type: "GET",
             url: $("#url").val(),
             success: function (commissionUpload) {
-                $(".rows-uploaded").html(commissionUpload.rows_uploaded);
+                $(".uploaded-rows").html(commissionUpload.uploaded_rows);
                 if(commissionUpload.status == 1){
                     window.location.reload();
                 }
@@ -21,5 +21,5 @@ $(document).ready(function () {
         });
     }
     getRows();
-    setInterval(getRows, 10000);
+    setInterval(getRows, 1000);
 });

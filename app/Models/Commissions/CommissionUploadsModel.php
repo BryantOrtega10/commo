@@ -14,8 +14,9 @@ class CommissionUploadsModel extends Model
     protected $fillable = [
         "name",
         "file_route",
-        "rows_uploaded",
-        "rows_processed",        
+        "uploaded_rows",
+        "processed_rows",
+        "error_rows",
         "statement_date",
         "check_date",
         "processing_start_date",
