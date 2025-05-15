@@ -43,18 +43,23 @@ class CommissionRatesModel extends Model
         "benefit_effective_from",
         "benefit_effective_to",
         "flat_rate",
-        "exclude_admin_fee",
         "rate_type",
+        "rate_amount",
         "order",
         "fk_entry_user",
     ];  
     
     public function txtRateType(): Attribute {
         return Attribute::make(
-            get: fn () => [0 => "Percentage", 1 => "Flat Rate", 2 => "Flat Rate per member"][$this->rate_type]
+            get: fn () => ["" => "", 0 => "Percentage", 1 => "Flat Rate", 2 => "Flat Rate per member"][$this->rate_type]
         );
     }
 
+    public function txtAgentType(): Attribute {
+        return Attribute::make(
+            get: fn () => ["" => "", 0 => "Writting Agent", 1 => "Override Agent", 2 => "Mentor Agent", 3 => "Carrier Agent"][$this->agent_type]
+        );
+    }
     
     public function agent_number(){
         return $this->belongsTo(AgentNumbersModel::class, "fk_agent_number", "id");

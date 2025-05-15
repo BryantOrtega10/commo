@@ -2,6 +2,7 @@
 
 namespace App\Models\Commissions;
 
+use App\Models\Agents\AgentNumbersModel;
 use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\MultiTable\BusinessSegmentsModel;
 use App\Models\MultiTable\BusinessTypesModel;
@@ -22,8 +23,22 @@ class CommissionTransactionsModel extends Model
     protected $fillable = [
         "check_date",
         "statement_date",
+        "submit_date",
+        "original_effective_date",
+        "benefit_effective_date",
+        "cancel_date",
+        "initial_payment_date",
+        "accounting_date",
         "comp_amount",
         "flat_rate",
+        "premium_percentaje",
+        "premium_amount",
+        "event_type",
+        "exchange_ind",
+        "is_adjustment",
+        "comp_year",
+        "is_qualified",
+        "rate_type",
         "fk_agency_code",
         "fk_carrier",
         "fk_business_segment",
@@ -36,6 +51,9 @@ class CommissionTransactionsModel extends Model
         "fk_tier",
         "fk_county",
         "fk_policy",
+        "fk_agent_number",
+        "fk_comm_upload_row",
+        "adjusment_subscriber",
         "notes",
         "fk_entry_user",
     ];  
@@ -91,6 +109,14 @@ class CommissionTransactionsModel extends Model
         return $this->belongsTo(PoliciesModel::class, "fk_policy","id");
     }
 
+    public function agent_number(){
+        return $this->belongsTo(AgentNumbersModel::class, "fk_agent_number","id");
+    }
+
+    public function commission_upload_row(){
+        return $this->belongsTo(CommissionUploadRowsModel::class, "fk_comm_upload_row","id");
+    }
+   
     public function entry_user(){
         return $this->belongsTo(User::class, "fk_entry_user","id");
     }

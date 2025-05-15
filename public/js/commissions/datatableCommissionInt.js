@@ -15,7 +15,10 @@ $(document).ready(function() {
             data: 'status'
         },
         {
-            data: 'notes'
+            data: 'notes',
+            render: function(data, type, row) {
+                return `<pre>${data}</pre>`;
+            },
         },
     ]
     const headers = JSON.parse($("#headers").val());

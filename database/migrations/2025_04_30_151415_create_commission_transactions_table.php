@@ -27,8 +27,6 @@ return new class extends Migration
             $table->decimal("comp_amount");
             $table->decimal("flat_rate")->nullable();
 
-            $table->text("notes")->nullable();
-
             $table->decimal("premium_percentaje")->nullable();
             $table->decimal("premium_amount")->nullable();
             
@@ -37,7 +35,6 @@ return new class extends Migration
 
             $table->boolean("is_adjustment")->nullable();
             
-            $table->smallInteger("comp_year")->nullable();
             $table->smallInteger("comp_year")->nullable();
 
             $table->boolean("is_qualified")->nullable();   
@@ -95,6 +92,10 @@ return new class extends Migration
             $table->bigInteger("fk_agent_number")->unsigned()->nullable();
             $table->foreign('fk_agent_number')->references('id')->on('agent_numbers');
             $table->index('fk_agent_number');
+
+            $table->bigInteger("fk_comm_upload_row")->unsigned();
+            $table->foreign('fk_comm_upload_row')->references('id')->on('commission_upload_rows');
+            $table->index('fk_comm_upload_row');           
 
             $table->string("adjusment_subscriber")->nullable();
 
@@ -156,6 +157,9 @@ return new class extends Migration
 
             $table->dropForeign("commission_transactions_fk_agent_number_foreign");
             $table->dropIndex("commission_transactions_fk_agent_number_index");
+
+            $table->dropForeign("commission_transactions_fk_comm_upload_row_foreign");
+            $table->dropIndex("commission_transactions_fk_comm_upload_row_index");            
         });
 
         Schema::dropIfExists('commission_transactions');

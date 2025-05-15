@@ -28,7 +28,7 @@ return new class extends Migration
             $table->decimal("comp_amount");
 
             $table->bigInteger("fk_commission_rate")->unsigned()->nullable();
-            $table->foreign('fk_commission_rate')->references('id')->on('commission_rates');
+            $table->foreign('fk_commission_rate')->references('id')->on('commission_rates')->nullOnDelete();
             $table->index('fk_commission_rate');
 
             $table->bigInteger("fk_commission_transaction")->unsigned()->nullable();

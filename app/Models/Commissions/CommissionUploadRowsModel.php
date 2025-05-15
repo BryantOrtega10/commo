@@ -20,7 +20,7 @@ class CommissionUploadRowsModel extends Model
 
     public function txtStatus(): Attribute {
         return Attribute::make(
-            get: fn () => [0 => "Unlinked", 1 => "Linking", 2 => "Linked"][$this->status]
+            get: fn () => [0 => "Unlinked", 1 => "Linking", 2 => "Linked", 3 => "Error"][$this->status]
         );
     }
 

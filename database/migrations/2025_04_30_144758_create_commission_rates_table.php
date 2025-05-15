@@ -64,6 +64,8 @@ return new class extends Migration
             $table->foreign('fk_tx_type')->references('id')->on('tx_types');
             $table->index('fk_tx_type');
 
+            $table->tinyInteger("agent_type")->unsigned()->comment("0 - Writting Agent, 1 - Override Agent, 2 - Mentor Agent, 3 - Carrier Agent")->nullable();
+
             $table->date("submit_from")->nullable();
             $table->date("submit_to")->nullable();
 
@@ -78,9 +80,9 @@ return new class extends Migration
 
             $table->decimal("flat_rate")->nullable();
             
-            $table->boolean("exclude_admin_fee")->nullable();
-
             $table->tinyInteger("rate_type")->comment("1 - Percentage, 2 - Flat Rate, 3 - Flat Rate per member")->nullable();
+            
+            $table->decimal("rate_amount",10,8)->nullable();
             
             $table->integer("order")->nullable()->default(0);
 

@@ -9,14 +9,27 @@ use App\Http\Requests\Agents\UpdateAgentNumbersRequest;
 use App\Models\Agents\AgentNumAgentModel;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\Agents\AgentsModel;
+use App\Models\Commissions\AmfCompensationTypesModel;
+use App\Models\Commissions\CommissionRatesModel;
+use App\Models\Commissions\CompensationTypesModel;
+use App\Models\Commissions\TxTypesModel;
 use App\Models\MultiTable\AdminFeesModel;
 use App\Models\MultiTable\AgenciesModel;
 use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\MultiTable\AgentStatusModel;
 use App\Models\MultiTable\AgentTitlesModel;
+use App\Models\MultiTable\BusinessSegmentsModel;
+use App\Models\MultiTable\BusinessTypesModel;
 use App\Models\MultiTable\CarriersModel;
+use App\Models\MultiTable\PlanTypesModel;
+use App\Models\MultiTable\ProductTypesModel;
+use App\Models\MultiTable\RegionsModel;
+use App\Models\MultiTable\TiersModel;
+use App\Models\Policies\CountiesModel;
+use App\Models\Products\ProductsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\ViewErrorBag;
 
 class AgentNumbersController extends Controller
 {
@@ -183,7 +196,31 @@ class AgentNumbersController extends Controller
             array_push($overrideAgents , ["id" => $overrideAgent->fk_agent, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
         }
         
+        $commissionRates = CommissionRatesModel::where("fk_agent_number","=",$id)->orderBy("order", "ASC")->get();
+        $business_segments = BusinessSegmentsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $business_types = BusinessTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $compensation_types = CompensationTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $amf_compensation_types = AmfCompensationTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $plan_types = PlanTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $products = ProductsModel::orderBy("description", "ASC")->get();
+        $product_types = ProductTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $tiers = TiersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $counties = CountiesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $regions = RegionsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $txTypes = TxTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $agentTypes = [0 => "Writting Agent", 1 => "Override Agent", 2 => "Mentor Agent", 3 => "Carrier Agent"];
+        $rateTypes = [0 => "Percentage", 1 => "Flat Rate", 2 => "Flat Rate per member"];
         
+
+        $selectedCommissionRate = null;
+        $errors = session('errors', new ViewErrorBag);
+
+        if ($errors->editRate->any()) {
+            if ($errors->hasBag('editRate')) {
+                $selectedCommissionRateId = session()->getOldInput('commissionRateId');
+                $selectedCommissionRate = CommissionRatesModel::find($selectedCommissionRateId);
+            }
+        }
 
         return view('agent_numbers.update', [
             "agent_number" => $agent_number,
@@ -196,6 +233,21 @@ class AgentNumbersController extends Controller
             "agents" => $agents,
             "mentorAgents" => $mentorAgents,
             "overrideAgents" => $overrideAgents,
+            "commissionRates" => $commissionRates,
+            "business_segments" => $business_segments,
+            "business_types" => $business_types,
+            "compensation_types" => $compensation_types,
+            "amf_compensation_types" => $amf_compensation_types,
+            "plan_types" => $plan_types,
+            "products" => $products,
+            "product_types" => $product_types,
+            "tiers" => $tiers,
+            "counties" => $counties,
+            "regions" => $regions,
+            "txTypes" => $txTypes,
+            "agentTypes" => $agentTypes,
+            "rateTypes" => $rateTypes,
+            "selectedCommissionRate" => $selectedCommissionRate
         ]);
     }
 

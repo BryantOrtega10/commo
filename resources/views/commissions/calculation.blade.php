@@ -98,6 +98,33 @@
             </div>
         </form>
     </div>
+    <div class="card">
+        <div class="card-header">
+            Imported Commission Transaction Sets
+        </div>
+        <div class="card-body">
+            <table class="table table-striped datatable">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Carrier</th>
+                        <th>Import Date</th>
+                        <th>Entry user</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($commissionUploads as $item)
+                        <tr>
+                            <td><a href="{{route('commissions.calculation.showImport',['id' => $item->id])}}">{{ $item->name }}</a></td>
+                            <td>{{ $item->carrier?->name }}</td>
+                            <td>{{ date("m/d/Y", strtotime($item->created_at)) }}</td>
+                            <td>{{ $item->entry_user?->name }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 @stop
 
 @section('js')
@@ -106,6 +133,16 @@
             $("body").on("click", ".select-excel", function() {
                 $("#file-excel").trigger("click")
             })
+             $('.datatable').DataTable({
+                layout: {
+                    topStart: {
+                        buttons: [
+                            'copy', 'excel', 'pdf'
+                        ]
+                    }
+                },
+                order: [[2, 'desc']]  
+            });
         })
     </script>
 @stop

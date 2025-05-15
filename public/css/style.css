@@ -133,3 +133,10 @@ h5.dependent-title {
     display: inline-block;
     vertical-align: middle;
 }
+
+#commision-rates-table td{
+    min-width: 120px;
+}
+#commision-rates-table td input, #commision-rates-table td select{
+    width: 100%;
+}

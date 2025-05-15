@@ -11,6 +11,7 @@ use App\Models\Commissions\CommissionUploadRowsModel;
 use App\Models\Commissions\CommissionUploadsModel;
 use App\Models\Commissions\TemplatesModel;
 use App\Models\MultiTable\CarriersModel;
+use App\Services\Commissions\CommissionRowProcessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
@@ -25,10 +26,11 @@ class CommissionsController extends Controller
 
         $carriers = CarriersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $templates = TemplatesModel::where("id", ">", "1")->get();
-
+        $commissionUploads = CommissionUploadsModel::orderBy("created_at", "DESC")->get();
         return view('commissions.calculation', [
             "carriers" => $carriers,
             "templates" => $templates,
+            "commissionUploads" => $commissionUploads
         ]);
     }
 
@@ -96,9 +98,18 @@ class CommissionsController extends Controller
     {
         $commissionUpload = CommissionUploadsModel::find($id);
 
+        $percentageLinked = round($commissionUpload->processed_rows * 100 / $commissionUpload->uploaded_rows, 2);
+        $percentageError = round($commissionUpload->error_rows * 100 / $commissionUpload->uploaded_rows, 2);
+        $percentageUploaded = 100 - $percentageLinked - $percentageError;
+
         return response()->json([
             "uploaded_rows" => $commissionUpload->uploaded_rows,
+            "processed_rows" => $commissionUpload->processed_rows,
+            "error_rows" => $commissionUpload->error_rows,
             "status" => $commissionUpload->status,
+            "percentage_uploaded" => $percentageUploaded,
+            "percentage_linked" => $percentageLinked,
+            "percentage_error" => $percentageError,
         ]);
     }
 
@@ -186,9 +197,12 @@ class CommissionsController extends Controller
     public function linkAllCommissions($id)
     {
 
-        $commissionRows = CommissionUploadRowsModel::select(
-            "commission_upload_rows.*"
-        )->where("fk_commission_upload", "=", $id)
+        $commissionUpload = CommissionUploadsModel::find($id);
+        $commissionUpload->status = 2;
+        $commissionUpload->save();
+
+        $commissionRows = CommissionUploadRowsModel::select("commission_upload_rows.*")
+            ->where("fk_commission_upload", "=", $id)
             ->where("status", "=", 0)
             ->get()
             ->toArray();
@@ -196,11 +210,73 @@ class CommissionsController extends Controller
         $jobs = array_map(fn($commissionRow) => new LinkCommissionUploadsJob($commissionRow['id']), $commissionRows);
 
         Bus::batch($jobs)
-            ->then(fn($batch) => Log::info("Todas las filas fueron procesadas"))
-            ->catch(fn($batch, $e) => Log::error("Error al procesar: " . $e->getMessage()))
-            ->finally(fn($batch) => Log::info("Batch finalizado"))
+            ->finally(function ($batch) use ($id) {
+                $commissionUpload = CommissionUploadsModel::find($id);
+                $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
+                    ->where("fk_commission_upload", "=", $id)
+                    ->where("status", "=", 1)
+                    ->update(["status" => 3]);
+                $commissionUpload->error_rows = $commissionUpload->error_rows + $commissionRowsUpdated;
+
+                if ($commissionUpload->error_rows > 0) {
+                    $commissionUpload->status = 3;
+                } else {
+                    $commissionUpload->status = 4;
+                }
+                $commissionUpload->save();
+            })
             ->dispatch();
 
         return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
+    }
+
+    public function linkErrors($id)
+    {
+
+        $commissionUpload = CommissionUploadsModel::find($id);
+        $commissionUpload->status = 2;
+        $commissionUpload->error_rows = 0;
+        $commissionUpload->save();
+
+        $commissionRows = CommissionUploadRowsModel::select("commission_upload_rows.*")
+            ->where("fk_commission_upload", "=", $id)
+            ->where("status", "=", 3)
+            ->get()
+            ->toArray();
+
+
+        $jobs = array_map(fn($commissionRow) => new LinkCommissionUploadsJob($commissionRow['id']), $commissionRows);
+
+        Bus::batch($jobs)
+            ->then(function ($batch) use ($id) {
+                Log::info("Todas las filas fueron procesadas");
+            })
+            ->catch(fn($batch, $e) => Log::error("Error al procesar: " . $e->getMessage()))
+            ->finally(function ($batch) use ($id) {
+                $commissionUpload = CommissionUploadsModel::find($id);
+                $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
+                    ->where("fk_commission_upload", "=", $id)
+                    ->where("status", "=", 1)
+                    ->update(["status" => 3]);
+                $commissionUpload->error_rows = $commissionUpload->error_rows + $commissionRowsUpdated;
+
+                if ($commissionUpload->error_rows > 0) {
+                    $commissionUpload->status = 3;
+                } else {
+                    $commissionUpload->status = 4;
+                }
+                $commissionUpload->save();
+            })
+            ->dispatch();
+
+        return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
+    }
+
+    public function testRow($id)
+    {
+
+
+        // $procesor = new CommissionRowProcessor();
+        // $procesor->startProcess($id);
     }
 }

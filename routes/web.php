@@ -4,6 +4,7 @@ use App\Http\Controllers\Agents\AgentNumbersController;
 use App\Http\Controllers\Agents\AgentsControllers;
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Commissions\CommissionRatesController;
 use App\Http\Controllers\Commissions\CommissionsController;
 use App\Http\Controllers\Commissions\TemplatesController;
 use App\Http\Controllers\MultiTable\AgenciesController;
@@ -227,7 +228,19 @@ Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:ad
         Route::get("/rows/{id}", [CommissionsController::class, 'loadUploadedRows'])->name("commissions.calculation.loadUploadedRows");
         Route::post("/datatable/{id}", [CommissionsController::class, 'datatableAjax'])->name("commissions.calculation.datatable");
         Route::get("/link-all/{id}", [CommissionsController::class, 'linkAllCommissions'])->name("commissions.calculation.linkAll");
+        Route::get("/link-errors/{id}", [CommissionsController::class, 'linkErrors'])->name("commissions.calculation.linkErrors");
+
+        Route::get("/test-row/{id}", [CommissionsController::class, 'testRow'])->name("commissions.calculation.testRow");
         
+    });
+    Route::group(['prefix' => 'rate'], function () {
+        Route::get("/add-new-row", [CommissionRatesController::class, 'showCreateRow'])->name("commissions.rate.add-new");
+        Route::post("/create", [CommissionRatesController::class, 'create'])->name("commissions.rate.create");
+
+        Route::get("/update/{id}", [CommissionRatesController::class, 'showUpdateRow'])->name("commissions.rate.update");
+        Route::post("/update/{id}", [CommissionRatesController::class, 'update']);
+        
+        Route::post("/delete/{id}", [CommissionRatesController::class, 'delete'])->name("commissions.rate.delete");
     });
 });
 

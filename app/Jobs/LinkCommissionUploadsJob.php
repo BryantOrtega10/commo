@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Commissions\CommissionUploadRowsModel;
+use App\Services\Commissions\CommissionRowProcessor;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -26,11 +27,7 @@ class LinkCommissionUploadsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $commissionRow = CommissionUploadRowsModel::find($this->commissionRowId);
-        $commissionRow->status = 1;
-        $commissionRow->save();
-
-        $commissionRow->commission_upload->processed_rows++;
-        $commissionRow->commission_upload->save();
+        $procesor = new CommissionRowProcessor();
+        $procesor->startProcess($this->commissionRowId);
     }
 }

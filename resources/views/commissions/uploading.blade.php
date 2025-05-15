@@ -32,5 +32,5 @@
 @stop
 
 @section('js')
-    <script src="/js/commissions/uploadRowsUploaded.js"></script>
+    <script src="/js/commissions/reloadRowsUploaded.js"></script>
 @stop
