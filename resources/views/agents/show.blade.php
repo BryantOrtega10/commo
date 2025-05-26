@@ -275,12 +275,12 @@
                                 <td>{{ $agent_number->carrier?->name }}</td>
                                 <td>
                                     @foreach ($agent_number->override_agents as $override_agent)
-                                        <div class="agents">{{ $override_agent->agent->first_name }} {{ $override_agent->agent->last_name }}</div>
+                                        <div class="agents">{{ $override_agent->agent_number_rel->agent->first_name }} {{ $override_agent->agent_number_rel->agent->last_name }}</div>
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($agent_number->mentor_agents as $mentor_agent)
-                                        <div class="agents">{{ $mentor_agent->agent->first_name }} {{ $mentor_agent->agent->last_name }}</div>
+                                        <div class="agents">{{ $mentor_agent->agent_number_rel->agent->first_name }} {{ $mentor_agent->agent_number_rel->agent->last_name }}</div>
                                     @endforeach
                                 </td>
                                 <td> @isset($agent->contract_date)

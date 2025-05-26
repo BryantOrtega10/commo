@@ -12,6 +12,7 @@ use App\Models\MultiTable\AgentStatusModel;
 use App\Models\MultiTable\AgentTitlesModel;
 use App\Models\MultiTable\CarriersModel;
 use App\Models\MultiTable\ContractTypeModel;
+use App\Models\MultiTable\PolicyStatusModel;
 use App\Models\MultiTable\SalesRegionModel;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -53,6 +54,7 @@ class AgentsSeeder extends Seeder
         AdminFeesModel::create(["name" => "AMF", "description" => "AMF", "sort_order" => "-1", "status" => "1"]);
         AdminFeesModel::create(["name" => "Surebridge Reserve", "description" => "Surebridge Reserve", "sort_order" => "-1", "status" => "1"]);
 
-        
+        PolicyStatusModel::create(["name" => "Active", "description" => "Active", "sort_order" => "-1", "status" => "1"]);
+        PolicyStatusModel::create(["name" => "Canceled", "description" => "Canceled", "sort_order" => "-1", "status" => "1"]);
     }
 }

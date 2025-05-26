@@ -28,7 +28,7 @@ class UpdateAgentNumbersRequest extends FormRequest
             'agent_title' => 'nullable',
             'agent_status' => 'nullable',
             'agency' => 'nullable',
-            'contract_rate' => 'required',
+            'contract_rate' => 'nullable',
             'admin_fee' => 'nullable',
             'notes' => 'nullable',
         ];

@@ -2,7 +2,7 @@
 
 namespace App\Models\Commissions;
 
-use App\Models\Agents\AgentNumbersModel;
+
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -13,11 +13,11 @@ class StatementsItemModel extends Model
 
     protected $fillable = [
         "check_date",
-        "statement_date",
-        "fk_agent_number",
+        "fk_statement",
         "agent_type",
         "flat_rate",
         "rate_type",
+        "comp_amount",
         "fk_commission_rate",
         "fk_commission_transaction",
         "fk_entry_user",
@@ -25,7 +25,7 @@ class StatementsItemModel extends Model
 
     public function txtAgentType(): Attribute {
         return Attribute::make(
-            get: fn () => [0 => "Writting Agent", 1 => "Override Agent", 2 => "Mentor Agent", 3 => "Carrier Agent"][$this->agent_type]
+            get: fn () => [0 => "Writting Agent", 1 => "Mentor Agent", 2 => "Override Agent", 3 => "Carrier Agent"][$this->agent_type]
         );
     }
 
@@ -35,8 +35,8 @@ class StatementsItemModel extends Model
         );
     }
 
-    public function agent_number(){
-        return $this->belongsTo(AgentNumbersModel::class, "fk_agent_number", "id");
+    public function statement(){
+        return $this->belongsTo(StatementsModel::class, "fk_statement", "id");
     }
 
     public function commission_rate(){

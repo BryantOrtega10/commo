@@ -140,3 +140,19 @@ h5.dependent-title {
 #commision-rates-table td input, #commision-rates-table td select{
     width: 100%;
 }
+
+.selected-agent-item span{
+    display: inline-block;
+    width: 70%;
+}
+
+.row.selected-agents {
+    border-radius: 15px;
+    border: 2px dashed #7eaada;
+    padding: 20px 10px;
+}
+
+.selected-agent-item {
+    display: list-item;
+    list-style-position: inside;
+}

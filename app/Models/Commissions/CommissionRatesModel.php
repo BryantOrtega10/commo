@@ -51,7 +51,7 @@ class CommissionRatesModel extends Model
     
     public function txtRateType(): Attribute {
         return Attribute::make(
-            get: fn () => ["" => "", 0 => "Percentage", 1 => "Flat Rate", 2 => "Flat Rate per member"][$this->rate_type]
+            get: fn () => ["" => "", 1 => "Percentage", 2 => "Flat Rate", 3 => "Flat Rate per member"][$this->rate_type]
         );
     }
 

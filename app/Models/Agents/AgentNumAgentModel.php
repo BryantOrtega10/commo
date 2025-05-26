@@ -11,24 +11,26 @@ class AgentNumAgentModel extends Model
 
     protected $fillable = [
         "type",
-        "fk_agent_number",
-        "fk_agent",
+        "fk_agent_number_base",
+        "fk_agent_number_rel",
         "start_date",
         "end_date",
     ];
 
-    public function txtType(): Attribute {
+    public function txtType(): Attribute
+    {
         return Attribute::make(
-            get: fn () => [1 => "Mentor Agent", 2 => "Override"][$this->type]
+            get: fn() => [1 => "Mentor Agent", 2 => "Override"][$this->type]
         );
     }
 
-    public function agent_number(){
-        return $this->belongsTo(AgentNumbersModel::class, "fk_agent_number","id");
+    public function agent_number_base()
+    {
+        return $this->belongsTo(AgentNumbersModel::class, "fk_agent_number_base", "id");
     }
 
-    public function agent(){
-        return $this->belongsTo(AgentsModel::class, "fk_agent","id");
-    }  
-
+    public function agent_number_rel()
+    {
+        return $this->belongsTo(AgentNumbersModel::class, "fk_agent_number_rel", "id");
+    }
 }

@@ -36,7 +36,7 @@ return new class extends Migration
             $table->foreign('fk_agency')->references('id')->on('agencies');
             $table->index('fk_agency');
 
-            $table->double("contract_rate");
+            $table->double("contract_rate")->nullable();
 
             $table->bigInteger("fk_admin_fee")->unsigned()->nullable();
             $table->foreign('fk_admin_fee')->references('id')->on('admin_fees');

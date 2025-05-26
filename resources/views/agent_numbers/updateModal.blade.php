@@ -120,7 +120,7 @@
                         </div>
                         <div class="col-md-4 col-12">
                             <div class="form-group">
-                                <label for="contract_rate">Contract Rate (*):</label>
+                                <label for="contract_rate">Contract Rate:</label>
                                 <input type="number" step="0.01" max="1" class="form-control @if ($errors->editAgentNumberForm->has('contract_rate')) is-invalid @endif"
                                     id="contract_rate" name="contract_rate" placeholder="Contract Rate:" value="{{ old('contract_rate',$agent_number->contract_rate) }}">
                                 @if ($errors->editAgentNumberForm->has('contract_rate'))
@@ -162,7 +162,7 @@
                                         @foreach ($agents as $agent)
                                             <option value="{{ $agent->id }}"
                                                 @if (old('mentor_agent_'.$i, $mentorAgents[$i-1]["id"] ?? null) == $agent->id) selected @endif>
-                                                    {{ $agent->id }} - {{$agent->first_name}} {{$agent->last_name}}
+                                                    {{ $agent->nubmer }} - {{$agent->agent->first_name}} {{$agent->agent->last_name}}
                                             </option>
                                         @endforeach
                                     </select>
@@ -211,7 +211,7 @@
                                         @foreach ($agents as $agent)
                                             <option value="{{ $agent->id }}"
                                                 @if (old('override_agent_'.$i, $overrideAgents[$i-1]["id"] ?? null) == $agent->id) selected @endif>
-                                                    {{ $agent->id }} - {{$agent->first_name}} {{$agent->last_name}}
+                                                    {{ $agent->number }} - {{$agent->agent->first_name}} {{$agent->agent->last_name}}
                                             </option>
                                         @endforeach
                                     </select>

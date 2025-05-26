@@ -58,9 +58,10 @@ class CommissionTransactionsModel extends Model
         "fk_entry_user",
     ];  
 
+    public function statements(){
+        return $this->hasMany(StatementsItemModel::class, "fk_commission_transaction", "id");
+    }
     
-
-
     public function agency_code(){
         return $this->belongsTo(AgencyCodesModel::class, "fk_agency_code","id");
     }

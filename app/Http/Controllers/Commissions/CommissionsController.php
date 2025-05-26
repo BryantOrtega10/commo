@@ -7,11 +7,15 @@ use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Commissions\ImportCommissionsRequest;
 use App\Imports\CommissionRowImport;
 use App\Jobs\LinkCommissionUploadsJob;
+use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\CommissionUploadRowsModel;
 use App\Models\Commissions\CommissionUploadsModel;
+use App\Models\Commissions\StatementsItemModel;
 use App\Models\Commissions\TemplatesModel;
+use App\Models\MultiTable\AgentTitlesModel;
 use App\Models\MultiTable\CarriersModel;
 use App\Services\Commissions\CommissionRowProcessor;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
@@ -31,6 +35,15 @@ class CommissionsController extends Controller
             "carriers" => $carriers,
             "templates" => $templates,
             "commissionUploads" => $commissionUploads
+        ]);
+    }
+
+    public function infoTemplate($id)
+    {
+        $template = TemplatesModel::find($id);
+
+        return response()->json([
+            "downloadUrl" => $template->download_route,
         ]);
     }
 
@@ -178,6 +191,17 @@ class CommissionsController extends Controller
             $filteredRecord["status"] = $commissionRow->txt_status;
             $filteredRecord["notes"] = $commissionRow->notes ?? "";
 
+            $count = 0;
+            if (isset($commissionRow->transactions) && isset($commissionRow->transactions->statements)) {
+                $count = sizeof($commissionRow->transactions->statements);
+            }
+
+            $filteredRecord["statements"]["href"] = route('commissions.calculation.showStatements', ['id' => $commissionRow->id]);
+            $filteredRecord["statements"]["text"] = $count;
+
+            $filteredRecord["actions"]["edit_href"] = route('commissions.calculation.update', ['id' => $commissionRow->id]);
+            $filteredRecord["actions"]["delete_href"] = route('commissions.calculation.delete', ['id' => $commissionRow->id]);
+
             $data = json_decode($commissionRow->data, true);
             foreach ($data as $index => $item) {
                 $filteredRecord[$index] = Utils::rowFormat($index, $item);
@@ -197,35 +221,89 @@ class CommissionsController extends Controller
     public function linkAllCommissions($id)
     {
 
-        $commissionUpload = CommissionUploadsModel::find($id);
-        $commissionUpload->status = 2;
-        $commissionUpload->save();
+
 
         $commissionRows = CommissionUploadRowsModel::select("commission_upload_rows.*")
             ->where("fk_commission_upload", "=", $id)
             ->where("status", "=", 0)
             ->get()
             ->toArray();
+        if (sizeof($commissionRows) > 0) {
 
-        $jobs = array_map(fn($commissionRow) => new LinkCommissionUploadsJob($commissionRow['id']), $commissionRows);
+            $commissionUpload = CommissionUploadsModel::find($id);
+            $commissionUpload->status = 2;
+            $commissionUpload->processing_start_date = date("Y-m-d H:i:s");
+            $commissionUpload->save();
 
-        Bus::batch($jobs)
-            ->finally(function ($batch) use ($id) {
-                $commissionUpload = CommissionUploadsModel::find($id);
-                $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
-                    ->where("fk_commission_upload", "=", $id)
-                    ->where("status", "=", 1)
-                    ->update(["status" => 3]);
-                $commissionUpload->error_rows = $commissionUpload->error_rows + $commissionRowsUpdated;
+            $jobs = array_map(fn($commissionRow) => new LinkCommissionUploadsJob($commissionRow['id']), $commissionRows);
 
-                if ($commissionUpload->error_rows > 0) {
-                    $commissionUpload->status = 3;
-                } else {
-                    $commissionUpload->status = 4;
-                }
-                $commissionUpload->save();
-            })
-            ->dispatch();
+            Bus::batch($jobs)
+                ->finally(function ($batch) use ($id) {
+                    $commissionUpload = CommissionUploadsModel::find($id);
+                    $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
+                        ->where("fk_commission_upload", "=", $id)
+                        ->where("status", "=", 1)
+                        ->update(["status" => 3]);
+                    $commissionUpload->error_rows = $commissionUpload->error_rows + $commissionRowsUpdated;
+                    $commissionUpload->processing_end_date = date("Y-m-d H:i:s");
+                    if ($commissionUpload->error_rows > 0) {
+                        $commissionUpload->status = 3;
+                    } else {
+                        $commissionUpload->status = 4;
+                    }
+                    $commissionUpload->save();
+                })
+                ->dispatch();
+        }
+
+
+        return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
+    }
+
+    public function linkCommissions(Request $request)
+    {
+
+        $commissionRowsDB = CommissionUploadRowsModel::select("commission_upload_rows.*")
+            ->whereIn("id", $request->input("commissionRow"));
+
+        $commissionRows = $commissionRowsDB->get()->toArray();
+
+        if (sizeof($commissionRows) > 0) {
+            $commissionRowsLinked = $commissionRowsDB->where("status", "=", 2)->count();
+            $commissionRowsError = $commissionRowsDB->where("status", "=", 3)->count();
+
+
+            $commissionUpload = CommissionUploadsModel::find($commissionRows[0]['fk_commission_upload']);
+            $commissionUpload->status = 2;
+            $commissionUpload->processing_start_date = date("Y-m-d H:i:s");
+            $commissionUpload->error_rows = $commissionUpload->error_rows - $commissionRowsError;
+            $commissionUpload->processed_rows = $commissionUpload->processed_rows - $commissionRowsLinked;
+            $commissionUpload->save();
+
+            $jobs = array_map(fn($commissionRow) => new LinkCommissionUploadsJob($commissionRow['id']), $commissionRows);
+            $ids = $request->input("commissionRow");
+            $id = $commissionRows[0]['fk_commission_upload'];
+
+            Bus::batch($jobs)
+                ->finally(function ($batch) use ($ids, $id) {
+                    $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
+                        ->whereIn("id", $ids)
+                        ->where("status", "=", 1)
+                        ->update(["status" => 3]);
+
+                    $commissionUpload = CommissionUploadsModel::find($id);
+                    $commissionUpload->error_rows = $commissionUpload->error_rows + $commissionRowsUpdated;
+                    $commissionUpload->processing_end_date = date("Y-m-d H:i:s");
+                    if ($commissionUpload->error_rows > 0) {
+                        $commissionUpload->status = 3;
+                    } else {
+                        $commissionUpload->status = 4;
+                    }
+                    $commissionUpload->save();
+                })
+                ->dispatch();
+        }
+
 
         return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
     }
@@ -272,11 +350,86 @@ class CommissionsController extends Controller
         return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
     }
 
+    public function showModalStatements($id)
+    {
+        $statementItems = StatementsItemModel::select("statement_items.*")
+            ->join("commission_transactions", "commission_transactions.id", "=", "statement_items.fk_commission_transaction")
+            ->where("commission_transactions.fk_comm_upload_row", "=", $id)
+            ->get();
+
+        return view('commissions.partials.showStatementsModal', [
+            "statementItems" => $statementItems
+        ]);
+    }
+
+    public function showUpdateRow($id)
+    {
+        $commissionRow = CommissionUploadRowsModel::find($id);
+        $data = json_decode($commissionRow->data, true);
+        $formattedData = [];
+        foreach ($data as $index => $item) {
+            $formattedData[$index] = Utils::dbFormat($index, $item);
+        }
+
+
+        return view("commissions.partials.updateUploadRowModal",[
+            "commissionRow" => $commissionRow,
+            "data" => $formattedData,
+            "formattedData" => $formattedData,
+        ]);
+    }
+
+    public function update($id, Request $request) {
+
+        $commissionRow = CommissionUploadRowsModel::find($id);
+        $data = json_decode($commissionRow->data, true);
+        $excelBase = 25569;
+        foreach ($data as $index => $value) {
+            $endWord = explode("_",$index);
+            $endWord = last($endWord);
+            $value = $request->input("data_".$index);
+            if($endWord == "date" && $request->has("data_".$index) && $request->input("data_".$index) !== null){
+                $date = $request->input("data_".$index);
+                $daysFrom1970 = intval(strtotime($date) / 86400);
+                $value = $daysFrom1970 + $excelBase;
+            }            
+            $data[$index] = $value;
+        }
+        $commissionRow->data = json_encode($data);
+        $commissionRow->save();
+
+        return redirect(route('commissions.calculation.showImport', ['id' => $commissionRow->fk_commission_upload]))->with('message', 'Commision row updated');
+    }
+
+    public function delete($id) {
+        $commissionRow = CommissionUploadRowsModel::find($id);
+        if (isset($commissionRow->transactions) && isset($commissionRow->transactions->statements)) {
+            foreach($commissionRow->transactions->statements as $statementItem){
+                if($statementItem->statement->status == 1){
+                    return redirect(route('commissions.calculation.showImport', ['id' => $commissionRow->fk_commission_upload]))->with('error', "The row cannot be deleted, a statement has already been generated.");
+                }
+            }
+        }
+        $idComm = $commissionRow->fk_commission_upload;
+
+        $commissionUpload = CommissionUploadsModel::find($idComm);
+        $commissionUpload->uploaded_rows = $commissionUpload->uploaded_rows - 1;
+        if($commissionRow->status == 2){
+            $commissionUpload->processed_rows = $commissionUpload->processed_rows - 1;
+        }
+        else{
+            $commissionUpload->error_rows = $commissionUpload->error_rows - 1;
+            
+        }
+        $commissionUpload->save();
+        $commissionRow->delete();
+        return redirect(route('commissions.calculation.showImport', ['id' => $commissionUpload->id]))->with('message', "The row deleted");
+
+    }
+
     public function testRow($id)
     {
-
-
-        // $procesor = new CommissionRowProcessor();
-        // $procesor->startProcess($id);
+        $procesor = new CommissionRowProcessor();
+        $procesor->startProcess($id);
     }
 }

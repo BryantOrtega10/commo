@@ -169,7 +169,7 @@
         <select id="agentType" name="agentType" class="form-control @if ($errors->editRate->has('agentType')) is-invalid @endif">
             <option value=""></option>
             @foreach ($agentTypes as $row => $agentType)
-                <option value="{{ $row }}" @if (old('agentType', $commissionRate->agent_type) === $row) selected @endif>
+                <option value="{{ $row }}" @if (old('agentType', $commissionRate->agent_type) == $row && old('agentType', $commissionRate->agent_type) !== null) selected @endif>
                     {{ $agentType }}</option>
             @endforeach
         </select>
@@ -265,7 +265,7 @@
         <select id="rate_type" name="rate_type" class="form-control @if ($errors->editRate->has('rate_type')) is-invalid @endif">
             <option value=""></option>
             @foreach ($rateTypes as $row => $rate_type)
-                <option value="{{ $row }}" @if (old('rate_type', $commissionRate->rate_type) === $row) selected @endif>
+                <option value="{{ $row }}" @if (old('rate_type', $commissionRate->rate_type) == $row && old('rate_type', $commissionRate->rate_type) !== null) selected @endif>
                     {{ $rate_type }}</option>
             @endforeach
         </select>

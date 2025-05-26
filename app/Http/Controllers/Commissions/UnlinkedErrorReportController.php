@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Controllers\Commissions;
+
+use App\Http\Controllers\Controller;
+use App\Models\Agents\AgentNumbersModel;
+use App\Models\MultiTable\AgencyCodesModel;
+use App\Models\MultiTable\CarriersModel;
+use Illuminate\Http\Request;
+
+class UnlinkedErrorReportController extends Controller
+{
+    public function showUnlinkedErrorReport(){
+        $agentNumbers = AgentNumbersModel::select("agent_numbers.*")
+                                         ->join("agents", "agents.id", "=","agent_numbers.fk_agent")
+                                         ->orderBy("agents.last_name", "ASC")
+                                         ->orderBy("agents.first_name", "ASC")
+                                         ->orderBy("agent_numbers.id", "ASC")
+                                         ->get();
+        $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $carriers = CarriersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+
+        return view('commissions.showUnlinkedErrorReport',[
+            "agentNumbers" => $agentNumbers,
+            "agency_codes" => $agency_codes,
+            "carriers" => $carriers,
+        ]);
+    }
+
+    public function generateUnlinkedErrorReport(){
+        //
+    }
+    
+}

@@ -66,19 +66,19 @@ class AgentNumbersModel extends Model
     }
 
     public function override_agent(){
-        return $this->hasOne(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type","=", 2);
+        return $this->hasOne(AgentNumAgentModel::class, "fk_agent_number_base", "id")->where("type","=", 2);
     }
 
     public function mentor_agent(){
-        return $this->hasOne(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type", "=", 1);
+        return $this->hasOne(AgentNumAgentModel::class, "fk_agent_number_base", "id")->where("type", "=", 1);
     }
 
     public function override_agents(){
-        return $this->hasMany(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type","=", 2);
+        return $this->hasMany(AgentNumAgentModel::class, "fk_agent_number_base", "id")->where("type","=", 2);
     }
 
     public function mentor_agents(){
-        return $this->hasMany(AgentNumAgentModel::class, "fk_agent_number", "id")->where("type", "=", 1);
+        return $this->hasMany(AgentNumAgentModel::class, "fk_agent_number_base", "id")->where("type", "=", 1);
     }
 
     public function entry_user()

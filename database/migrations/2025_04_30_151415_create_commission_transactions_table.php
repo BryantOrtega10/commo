@@ -94,7 +94,7 @@ return new class extends Migration
             $table->index('fk_agent_number');
 
             $table->bigInteger("fk_comm_upload_row")->unsigned();
-            $table->foreign('fk_comm_upload_row')->references('id')->on('commission_upload_rows');
+            $table->foreign('fk_comm_upload_row')->references('id')->on('commission_upload_rows')->onDelete("cascade");
             $table->index('fk_comm_upload_row');           
 
             $table->string("adjusment_subscriber")->nullable();

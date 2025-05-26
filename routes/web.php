@@ -4,9 +4,14 @@ use App\Http\Controllers\Agents\AgentNumbersController;
 use App\Http\Controllers\Agents\AgentsControllers;
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Commissions\AgentRatesController;
+use App\Http\Controllers\Commissions\AgentReportController;
+use App\Http\Controllers\Commissions\AgentReportProcessController;
+use App\Http\Controllers\Commissions\AllSalesController;
 use App\Http\Controllers\Commissions\CommissionRatesController;
 use App\Http\Controllers\Commissions\CommissionsController;
 use App\Http\Controllers\Commissions\TemplatesController;
+use App\Http\Controllers\Commissions\UnlinkedErrorReportController;
 use App\Http\Controllers\MultiTable\AgenciesController;
 use App\Http\Controllers\MultiTable\AgencyCodesController;
 use App\Http\Controllers\MultiTable\AgentStatusController;
@@ -223,25 +228,74 @@ Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin
 Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:admin']],function () {
     Route::group(['prefix' => 'calculation'], function () {
         Route::get("/", [CommissionsController::class, 'show'])->name("commissions.calculation");        
+        
+        Route::get("/template/{id?}", [CommissionsController::class, 'infoTemplate'])->name("commissions.calculation.infoTemplate");        
         Route::post("/import", [CommissionsController::class, 'import'])->name("commissions.calculation.import");        
         Route::get("/import/{id}", [CommissionsController::class, 'showImport'])->name("commissions.calculation.showImport");
         Route::get("/rows/{id}", [CommissionsController::class, 'loadUploadedRows'])->name("commissions.calculation.loadUploadedRows");
         Route::post("/datatable/{id}", [CommissionsController::class, 'datatableAjax'])->name("commissions.calculation.datatable");
         Route::get("/link-all/{id}", [CommissionsController::class, 'linkAllCommissions'])->name("commissions.calculation.linkAll");
+        
+        Route::post("/link", [CommissionsController::class, 'linkCommissions'])->name("commissions.calculation.link");
+
         Route::get("/link-errors/{id}", [CommissionsController::class, 'linkErrors'])->name("commissions.calculation.linkErrors");
+        Route::get("/statements/{id}", [CommissionsController::class, 'showModalStatements'])->name("commissions.calculation.showStatements");
+
+        Route::get("/update/{id}", [CommissionsController::class, 'showUpdateRow'])->name("commissions.calculation.update");
+        Route::post("/update/{id}", [CommissionsController::class, 'update']);
+        Route::post("/delete/{id}", [CommissionsController::class, 'delete'])->name("commissions.calculation.delete");
 
         Route::get("/test-row/{id}", [CommissionsController::class, 'testRow'])->name("commissions.calculation.testRow");
-        
     });
     Route::group(['prefix' => 'rate'], function () {
         Route::get("/add-new-row", [CommissionRatesController::class, 'showCreateRow'])->name("commissions.rate.add-new");
         Route::post("/create", [CommissionRatesController::class, 'create'])->name("commissions.rate.create");
-
         Route::get("/update/{id}", [CommissionRatesController::class, 'showUpdateRow'])->name("commissions.rate.update");
         Route::post("/update/{id}", [CommissionRatesController::class, 'update']);
-        
         Route::post("/delete/{id}", [CommissionRatesController::class, 'delete'])->name("commissions.rate.delete");
     });
+
+    Route::group(['prefix' => 'agent-report'], function () {
+        Route::get("/", [AgentReportController::class, 'showAgentReport'])->name("commissions.agent-report.show");
+        Route::post("/", [AgentReportController::class, 'generateAgentReport']);
+        Route::post("/datatable", [AgentReportController::class, 'dataTableAgentReport'])->name("commissions.agent-report.datatable");
+    });
+
+    Route::group(['prefix' => 'agent-process'], function () {
+        Route::get("/", [AgentReportProcessController::class, 'showAgentReportProcesses'])->name("commissions.agent-process.show");
+        Route::get("/show-batch/{id}", [AgentReportProcessController::class, 'showAgentReportProcessesBatch'])->name("commissions.agent-process.showBatch");
+        Route::get("/email-template", [AgentReportProcessController::class, 'showAgentReportEmailTemplate'])->name("commissions.agent-process.show-email");
+        Route::post("/email-template", [AgentReportProcessController::class, 'updateEmailTemplate']);
+        Route::post("/batch", [AgentReportProcessController::class, 'generateAgentReportBatch'])->name("commissions.agent-process.generate-batch");
+        Route::post("/individual", [AgentReportProcessController::class, 'generateAgentReportIndividual'])->name("commissions.agent-process.generate-individual");
+        Route::post("/send-mail-batch", [AgentReportProcessController::class, 'sendMailBatch'])->name("commissions.agent-process.send-mail-batch");
+        Route::post("/send-mail-individual", [AgentReportProcessController::class, 'sendMailIndividual'])->name("commissions.agent-process.send-mail-individual");
+    });
+
+    Route::group(['prefix' => 'agent-rates'], function () {
+        Route::get("/", [AgentRatesController::class, 'showAgentRates'])->name("commissions.agent-rates.show");
+        Route::post("/datatable", [AgentRatesController::class, 'datatable'])->name("commissions.agent-rates.datatable");
+        Route::post("/append", [AgentRatesController::class, 'appendRates'])->name("commissions.agent-rates.append");
+        Route::post("/replicate", [AgentRatesController::class, 'replicateRates'])->name("commissions.agent-rates.replicate");
+    });
+
+    Route::group(['prefix' => 'all-sales'], function () {
+        Route::get("/", [AllSalesController::class, 'showAllSalesForm'])->name("commissions.all-sales.show");
+        Route::post("/", [AllSalesController::class, 'generateAllSalesReport']);
+        
+    });
+
+    Route::group(['prefix' => 'unlinked'], function () {
+        Route::get("/", [UnlinkedErrorReportController::class, 'showUnlinkedErrorReport'])->name("commissions.unlinked.show");
+        Route::post("/", [UnlinkedErrorReportController::class, 'generateUnlinkedErrorReport']);
+        
+    });
+
+    
+
+
+    
+
 });
 
 

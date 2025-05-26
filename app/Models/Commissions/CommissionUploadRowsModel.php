@@ -28,4 +28,7 @@ class CommissionUploadRowsModel extends Model
         return $this->belongsTo(CommissionUploadsModel::class, "fk_commission_upload", "id");
     }
 
+    public function transactions(){
+        return $this->hasOne(CommissionTransactionsModel::class, "fk_comm_upload_row", "id");
+    }
 }

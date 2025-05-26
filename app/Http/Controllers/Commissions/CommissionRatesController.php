@@ -37,7 +37,7 @@ class CommissionRatesController extends Controller
         $regions = RegionsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $txTypes = TxTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agentTypes = [0 => "Writting Agent", 1 => "Override Agent", 2 => "Mentor Agent", 3 => "Carrier Agent"];
-        $rateTypes = [0 => "Percentage", 1 => "Flat Rate", 2 => "Flat Rate per member"];
+        $rateTypes = [1 => "Percentage", 2 => "Flat Rate", 3 => "Flat Rate per member"];
 
         return view('agent_numbers.partials.commissionRateAddRow', [
             "business_segments" => $business_segments,
@@ -112,7 +112,7 @@ class CommissionRatesController extends Controller
         $regions = RegionsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $txTypes = TxTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agentTypes = [0 => "Writting Agent", 1 => "Override Agent", 2 => "Mentor Agent", 3 => "Carrier Agent"];
-        $rateTypes = [0 => "Percentage", 1 => "Flat Rate", 2 => "Flat Rate per member"];
+        $rateTypes = [1 => "Percentage", 2 => "Flat Rate", 3 => "Flat Rate per member"];
 
         return view('agent_numbers.partials.commissionRateEditRow', [
             "commissionRate" => $commissionRate,

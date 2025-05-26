@@ -366,10 +366,10 @@ class AgentsControllers extends Controller
             foreach ($agent->agent_numbers as $agent_number) {
                 if ($agent_number->id == $agent->agent_number_id) {
                     foreach ($agent_number->override_agents as $override_agent) {
-                        array_push($overrideAgents, $override_agent->agent->first_name . " " . $override_agent->agent->last_name);
+                        array_push($overrideAgents, $override_agent->agent_number_rel->agent->first_name . " " . $override_agent->agent_number_rel->agent->last_name);
                     }
                     foreach ($agent_number->mentor_agents as $mentor_agent) {
-                        array_push($mentorAgents, $mentor_agent->agent->first_name . " " . $mentor_agent->agent->last_name);
+                        array_push($mentorAgents, $mentor_agent->agent_number_rel->agent->first_name . " " . $mentor_agent->agent_number_rel->agent->last_name);
                     }
                 }
             }
@@ -522,7 +522,7 @@ class AgentsControllers extends Controller
         $agent_statuses = AgentStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agencies = AgenciesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $admin_fees = AdminFeesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        $agents = AgentsModel::where("id", "<>", $id)->get();
+        $agents = AgentNumbersModel::where("fk_agent", "<>", $id)->get();
 
         $selectedAgentNumber = null;
         $errors = session('errors', new ViewErrorBag);

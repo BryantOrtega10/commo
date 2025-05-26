@@ -436,7 +436,7 @@
                             <label for="state">Policy State:</label>
                             <input type="text" readonly class="form-control @error('state') is-invalid @enderror"
                                 id="state" name="state" placeholder="State:"
-                                value="{{ old('state', $policy->county->state->name) }}">
+                                value="{{ old('state', $policy->county?->state?->name) }}">
                             @error('state')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -449,7 +449,7 @@
                             <label for="region">Policy Region:</label>
                             <input type="text" readonly class="form-control @error('region') is-invalid @enderror"
                                 id="region" name="region" placeholder="Region:"
-                                value="{{ old('region', $policy->county->region->name) }}">
+                                value="{{ old('region', $policy->county?->region?->name) }}">
                             @error('region')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

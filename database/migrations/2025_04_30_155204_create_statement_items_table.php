@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
 
             $table->date("check_date")->nullable();
-            $table->date("statement_date");
 
-            $table->bigInteger("fk_agent_number")->unsigned();
-            $table->foreign('fk_agent_number')->references('id')->on('agent_numbers');
-            $table->index('fk_agent_number');
+            $table->bigInteger("fk_statement")->unsigned();
+            $table->foreign('fk_statement')->references('id')->on('statements');
+            $table->index('fk_statement');
 
-            $table->tinyInteger("agent_type")->unsigned()->comment("0 - Writting Agent, 1 - Override Agent, 2 - Mentor Agent, 3 - Carrier Agent")->nullable();
+            $table->tinyInteger("agent_type")->unsigned()->comment("0 - Writting Agent, 1 - Mentor Agent, 2 - Override Agent, 3 - Carrier Agent")->nullable();
             
             $table->decimal("flat_rate")->nullable();
             $table->tinyInteger("rate_type")->comment("0 - Percentage, 1 - Flat Rate, 2 - Flat Rate per member")->nullable();
@@ -32,7 +31,7 @@ return new class extends Migration
             $table->index('fk_commission_rate');
 
             $table->bigInteger("fk_commission_transaction")->unsigned()->nullable();
-            $table->foreign('fk_commission_transaction')->references('id')->on('commission_transactions');
+            $table->foreign('fk_commission_transaction')->references('id')->on('commission_transactions')->onDelete("cascade");
             $table->index('fk_commission_transaction');
 
             $table->bigInteger("fk_entry_user")->unsigned();
@@ -50,8 +49,8 @@ return new class extends Migration
     {
         Schema::table("statement_items", function(Blueprint $table){
             
-            $table->dropForeign("statement_items_fk_agent_number_foreign");
-            $table->dropIndex("statement_items_fk_agent_number_index");
+            $table->dropForeign("statement_items_fk_statement_foreign");
+            $table->dropIndex("statement_items_fk_statement_index");
             $table->dropForeign("statement_items_fk_commission_rate_foreign");
             $table->dropIndex("statement_items_fk_commission_rate_index");
             $table->dropForeign("statement_items_fk_commission_transaction_foreign");

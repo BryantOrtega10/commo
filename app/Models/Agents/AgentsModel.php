@@ -80,18 +80,6 @@ class AgentsModel extends Model
         return $this->hasMany(AgentNumbersModel::class, "fk_agent", "id");
     }
 
-    public function related_agents()
-    {
-        return $this->hasManyThrough(
-            AgentNumbersModel::class, //Relacionado con...
-            AgentNumAgentModel::class, //Tabla nxn
-            'fk_agent',        // Clave foránea en nxn que referencia a este modelo
-            'id',              // Clave primaria en Relacionado con...
-            'id',              // Clave primaria en este modelo
-            'fk_agent_number'  // Clave foránea en nxn que referencia a Relacionado con...
-        );
-    }
-
     public function files(){
         return $this->hasMany(FilesModel::class, "fk_agent","id");
     }

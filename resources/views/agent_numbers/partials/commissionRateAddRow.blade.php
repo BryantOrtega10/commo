@@ -169,7 +169,7 @@
         <select id="agentType" name="agentType" class="form-control @if ($errors->addNewRate->has('agentType')) is-invalid @endif">
             <option value=""></option>
             @foreach ($agentTypes as $row => $agentType)
-                <option value="{{ $row }}" @if (old('agentType') === $row) selected @endif>
+                <option value="{{ $row }}" @if (old('agentType') == $row && old('agentType') !== null) selected @endif>
                     {{ $agentType }}</option>
             @endforeach
         </select>
@@ -262,10 +262,11 @@
         @endif
     </td>
     <td>
+        
         <select id="rate_type" name="rate_type" class="form-control @if ($errors->addNewRate->has('rate_type')) is-invalid @endif">
             <option value=""></option>
             @foreach ($rateTypes as $row => $rate_type)
-                <option value="{{ $row }}" @if (old('rate_type') === $row) selected @endif>
+                <option value="{{ $row }}" @if (old('rate_type') == $row && old('rate_type')!=null) selected @endif>
                     {{ $rate_type }}</option>
             @endforeach
         </select>
@@ -285,7 +286,7 @@
         @endif
     </td>
     <td>
-        <input type="hidden" class="order" data-id="-1" value="0" />
+        <input type="hidden" name="order" class="order" data-id="-1" value="0" />
         {{-- <button type="button" class="btn btn-outline-secondary commission-rate-order-up" data-id="-1">
             <i class="fas fa-chevron-up"></i>
         </button>

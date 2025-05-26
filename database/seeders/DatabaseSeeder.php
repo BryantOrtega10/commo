@@ -15,12 +15,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         $this->call([
-            // UserAdminSeeder::class,
-            // CustomerTablesSeeder::class,
-            // AgentsSeeder::class,
-            // TestAgentsSeed::class,
-            // TemplateSeeder::class,
+            UserAdminSeeder::class,
+            CustomerTablesSeeder::class,
+            AgentsSeeder::class,
+            TestAgentsSeed::class,
+            TemplateSeeder::class,
             CompensationTypeSeeder::class,
+            EmailTemplateSeed::class,
         ]);
        
     }

@@ -14,10 +14,10 @@ class TemplateSeeder extends Seeder
     public function run(): void
     {
         TemplatesModel::create(["name" => "Manual", "download_route" => "#"]);
-        TemplatesModel::create(["name" => "EG1", "download_route" => "#"]);
-        TemplatesModel::create(["name" => "E13", "download_route" => "#"]);
-        TemplatesModel::create(["name" => "E14", "download_route" => "#"]);
-        TemplatesModel::create(["name" => "E16", "download_route" => "#"]);
+        TemplatesModel::create(["name" => "EG1", "download_route" => "EG01.xlsx"]);
+        TemplatesModel::create(["name" => "E13", "download_route" => "EI13.xlsx"]);
+        TemplatesModel::create(["name" => "E14", "download_route" => "EI14.xlsx"]);
+        TemplatesModel::create(["name" => "E16", "download_route" => "EI16.xlsx"]);
 
     }
 }

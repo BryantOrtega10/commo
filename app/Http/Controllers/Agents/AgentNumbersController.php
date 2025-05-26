@@ -41,7 +41,7 @@ class AgentNumbersController extends Controller
         $agent_statuses = AgentStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agencies = AgenciesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $admin_fees = AdminFeesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        $agents = AgentsModel::where("id", "<>", $id)->get();
+        $agents = AgentNumbersModel::where("fk_agent", "<>", $id)->get();
 
 
         return view('agent_numbers.createModal', [
@@ -83,12 +83,13 @@ class AgentNumbersController extends Controller
                 $startDate = $request->input("start_date_ment_".$i);
                 $endDate = $request->input("end_date_ment_".$i);
 
-                $existMentorAgent = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("fk_agent", "=", $mentorAgentID)->first();
+                $existMentorAgent = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
+                                                      ->where("fk_agent_number_rel", "=", $mentorAgentID)->first();
                 if (!isset($existMentorAgent)) {
                     $agentNumAgent = new AgentNumAgentModel();
                     $agentNumAgent->type = 1;
-                    $agentNumAgent->fk_agent_number = $agent_number->id;
-                    $agentNumAgent->fk_agent = $mentorAgentID;
+                    $agentNumAgent->fk_agent_number_base = $agent_number->id;
+                    $agentNumAgent->fk_agent_number_rel = $mentorAgentID;
                     $agentNumAgent->start_date = $startDate;
                     $agentNumAgent->end_date = $endDate;
                     $agentNumAgent->save();
@@ -102,12 +103,13 @@ class AgentNumbersController extends Controller
                 $startDate = $request->input("start_date_over_".$i);
                 $endDate = $request->input("end_date_over_".$i);
                 
-                $existOverrideAgent = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("fk_agent", "=", $overrideAgentID)->first();
+                $existOverrideAgent = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
+                                                        ->where("fk_agent_number_rel", "=", $overrideAgentID)->first();
                 if (!isset($existOverrideAgent)) {
                     $agentNumAgent = new AgentNumAgentModel();
                     $agentNumAgent->type = 2;
-                    $agentNumAgent->fk_agent_number = $agent_number->id;
-                    $agentNumAgent->fk_agent = $overrideAgentID;
+                    $agentNumAgent->fk_agent_number_base = $agent_number->id;
+                    $agentNumAgent->fk_agent_number_rel = $overrideAgentID;
                     $agentNumAgent->start_date = $startDate;
                     $agentNumAgent->end_date = $endDate;
                     $agentNumAgent->save();
@@ -127,18 +129,20 @@ class AgentNumbersController extends Controller
         $agent_statuses = AgentStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agencies = AgenciesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $admin_fees = AdminFeesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        $agents = AgentsModel::where("id", "<>", $agent_number->fk_agent)->get();
+        $agents = AgentNumbersModel::where("fk_agent", "<>", $agent_number->fk_agent)->get();
 
-        $mentorAgentsDB = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("type", "=", 1)->get();
+        $mentorAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
+                                            ->where("type", "=", 1)->get();
         $mentorAgents = array();
         foreach($mentorAgentsDB as $mentorAgent){
-            array_push($mentorAgents , ["id" => $mentorAgent->fk_agent, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
+            array_push($mentorAgents , ["id" => $mentorAgent->fk_agent_number_rel, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
         }
         
-        $overrideAgentsDB = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("type", "=", 2)->get();
+        $overrideAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
+                                              ->where("type", "=", 2)->get();
         $overrideAgents = array();
         foreach($overrideAgentsDB as $overrideAgent){
-            array_push($overrideAgents , ["id" => $overrideAgent->fk_agent, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
+            array_push($overrideAgents , ["id" => $overrideAgent->fk_agent_number_rel, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
         }
         
 
@@ -182,18 +186,18 @@ class AgentNumbersController extends Controller
         $agent_statuses = AgentStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agencies = AgenciesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $admin_fees = AdminFeesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        $agents = AgentsModel::where("id", "<>", $agent_number->fk_agent)->get();
+        $agents = AgentNumbersModel::where("fk_agent", "<>", $agent_number->fk_agent)->get();
 
-        $mentorAgentsDB = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("type", "=", 1)->get();
+        $mentorAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 1)->get();
         $mentorAgents = array();
         foreach($mentorAgentsDB as $mentorAgent){
-            array_push($mentorAgents , ["id" => $mentorAgent->fk_agent, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
+            array_push($mentorAgents , ["id" => $mentorAgent->fk_agent_number_rel, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
         }
         
-        $overrideAgentsDB = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("type", "=", 2)->get();
+        $overrideAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 2)->get();
         $overrideAgents = array();
         foreach($overrideAgentsDB as $overrideAgent){
-            array_push($overrideAgents , ["id" => $overrideAgent->fk_agent, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
+            array_push($overrideAgents , ["id" => $overrideAgent->fk_agent_number_rel, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
         }
         
         $commissionRates = CommissionRatesModel::where("fk_agent_number","=",$id)->orderBy("order", "ASC")->get();
@@ -209,7 +213,7 @@ class AgentNumbersController extends Controller
         $regions = RegionsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $txTypes = TxTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agentTypes = [0 => "Writting Agent", 1 => "Override Agent", 2 => "Mentor Agent", 3 => "Carrier Agent"];
-        $rateTypes = [0 => "Percentage", 1 => "Flat Rate", 2 => "Flat Rate per member"];
+        $rateTypes = [1 => "Percentage", 2 => "Flat Rate", 3 => "Flat Rate per member"];
         
 
         $selectedCommissionRate = null;
@@ -272,11 +276,11 @@ class AgentNumbersController extends Controller
         $agent_number->notes = $request->input("notes");
         $agent_number->save();
 
-        $mentorAgents = AgentNumAgentModel::select("fk_agent")->where("fk_agent_number", "=", $agent_number->id)->where("type", "=", 1)->get()->toArray();
-        $mentorAgents = array_column($mentorAgents,'fk_agent');
+        $mentorAgents = AgentNumAgentModel::select("fk_agent_number_rel")->where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 1)->get()->toArray();
+        $mentorAgents = array_column($mentorAgents,'fk_agent_number_rel');
 
-        $overrideAgents = AgentNumAgentModel::select("fk_agent")->where("fk_agent_number", "=", $agent_number->id)->where("type", "=", 2)->get()->toArray();
-        $overrideAgents = array_column($overrideAgents,'fk_agent');
+        $overrideAgents = AgentNumAgentModel::select("fk_agent_number_rel")->where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 2)->get()->toArray();
+        $overrideAgents = array_column($overrideAgents,'fk_agent_number_rel');
 
         $arrMentorAgents = [];
         $arrMentorAgentsDates = [];
@@ -310,17 +314,17 @@ class AgentNumbersController extends Controller
         $deleteOverrideAgents = array_diff($overrideAgents, $arrOverrideAgents);
 
         
-        AgentNumAgentModel::where("fk_agent_number", $agent_number->id)->whereIn("fk_agent", $deleteMentorAgents)->delete();
-        AgentNumAgentModel::where("fk_agent_number", $agent_number->id)->whereIn("fk_agent", $deleteOverrideAgents)->delete();
+        AgentNumAgentModel::where("fk_agent_number_base", $agent_number->id)->whereIn("fk_agent_number_rel", $deleteMentorAgents)->delete();
+        AgentNumAgentModel::where("fk_agent_number_base", $agent_number->id)->whereIn("fk_agent_number_rel", $deleteOverrideAgents)->delete();
 
 
         foreach ($arrMentorAgents as $row => $mentorAgentID) {
-            $existMentorAgent = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("fk_agent", "=", $mentorAgentID)->first();
+            $existMentorAgent = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)->where("fk_agent_number_rel", "=", $mentorAgentID)->first();
             if (!isset($existMentorAgent)) {
                 $agentNumAgent = new AgentNumAgentModel();
                 $agentNumAgent->type = 1;
-                $agentNumAgent->fk_agent_number = $agent_number->id;                
-                $agentNumAgent->fk_agent = $mentorAgentID;
+                $agentNumAgent->fk_agent_number_base = $agent_number->id;                
+                $agentNumAgent->fk_agent_number_rel = $mentorAgentID;
             }
             else{
                 $agentNumAgent = AgentNumAgentModel::find($existMentorAgent->id);
@@ -333,12 +337,12 @@ class AgentNumbersController extends Controller
         }
 
         foreach ($arrOverrideAgents as $row => $overrideAgentID) {
-            $existOverrideAgent = AgentNumAgentModel::where("fk_agent_number", "=", $agent_number->id)->where("fk_agent", "=", $overrideAgentID)->first();
+            $existOverrideAgent = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)->where("fk_agent_number_rel", "=", $overrideAgentID)->first();
             if (!isset($existOverrideAgent)) {
                 $agentNumAgent = new AgentNumAgentModel();
                 $agentNumAgent->type = 2;
-                $agentNumAgent->fk_agent_number = $agent_number->id;
-                $agentNumAgent->fk_agent = $overrideAgentID;
+                $agentNumAgent->fk_agent_number_base = $agent_number->id;
+                $agentNumAgent->fk_agent_number_rel = $overrideAgentID;
             }
             else{
                 $agentNumAgent = AgentNumAgentModel::find($existMentorAgent->id);

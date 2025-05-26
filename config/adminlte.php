@@ -544,6 +544,38 @@ return [
                     'can' => 'commissions',
                     'active' => ['calculation*'],
                 ],
+                [
+                    'text' => 'Agent Report',
+                    'route' => 'commissions.agent-report.show',
+                    'can' => 'commissions',
+                    'active' => ['agent-report*'],
+                ],
+                [
+                    'text' => 'Agent Reports Processes',
+                    'route' => 'commissions.agent-process.show',
+                    'can' => 'commissions',
+                    'active' => ['agent-process*'],
+                ],
+                [
+                    'text' => 'Agent Rates',
+                    'route' => 'commissions.agent-rates.show',
+                    'can' => 'commissions',
+                    'active' => ['agent-rates*'],
+                ],
+                [
+                    'text' => 'All Sales Report',
+                    'route' => 'commissions.all-sales.show',
+                    'can' => 'commissions',
+                    'active' => ['all-sales*'],
+                ],
+                [
+                    'text' => 'Unlinked Error Report',
+                    'route' => 'commissions.unlinked.show',
+                    'can' => 'commissions',
+                    'active' => ['unlinked*'],
+                ],
+                
+                
             ]
         ],[
             'text' => 'Users',

@@ -4,13 +4,14 @@
 
 @section('content_header')
     <h1>Commission Calculation</h1>
-    
+
 @stop
 
 @section('content')
-    <div class="card">
+    <div class="card card-light">
         <form action="{{ route('commissions.calculation.import') }}" method="post" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" id="urlTemplate" value="{{ route('commissions.calculation.infoTemplate') }}" />
             <div class="card-header">
                 Import Commission Transactions
             </div>
@@ -47,7 +48,8 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-12">
-                        <a href="#" download id="download-template" class="btn btn-outline-primary mt-4">Download Template</a>
+                        <a href="#" download id="download-template" class="btn btn-outline-primary mt-4">Download
+                            Template</a>
                     </div>
                     <div class="col-md-3 col-12">
                         <div class="form-group">
@@ -81,9 +83,10 @@
                     </div>
                     <div class="col-md-3 col-12">
                         <div class="form-group">
-                            <label for="file-excel">Select excel file:</label>
+                            <label for="file-excel">Select excel file:</label><br>
                             <button type="button" class="btn btn-outline-primary select-excel">Select File</button>
-                            <input type="file" id="file-excel" name="file-excel" class="d-none" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                            <input type="file" id="file-excel" name="file-excel" class="d-none"
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                             @error('file-excel')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -98,7 +101,7 @@
             </div>
         </form>
     </div>
-    <div class="card">
+    <div class="card card-light">
         <div class="card-header">
             Imported Commission Transaction Sets
         </div>
@@ -115,9 +118,11 @@
                 <tbody>
                     @foreach ($commissionUploads as $item)
                         <tr>
-                            <td><a href="{{route('commissions.calculation.showImport',['id' => $item->id])}}">{{ $item->name }}</a></td>
+                            <td><a
+                                    href="{{ route('commissions.calculation.showImport', ['id' => $item->id]) }}">{{ $item->name }}</a>
+                            </td>
                             <td>{{ $item->carrier?->name }}</td>
-                            <td>{{ date("m/d/Y", strtotime($item->created_at)) }}</td>
+                            <td>{{ date('m/d/Y H:i:s', strtotime($item->created_at)) }}</td>
                             <td>{{ $item->entry_user?->name }}</td>
                         </tr>
                     @endforeach
@@ -129,11 +134,16 @@
 
 @section('js')
     <script>
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
         $(document).ready(function(e) {
             $("body").on("click", ".select-excel", function() {
                 $("#file-excel").trigger("click")
             })
-             $('.datatable').DataTable({
+            $('.datatable').DataTable({
                 layout: {
                     topStart: {
                         buttons: [
@@ -141,8 +151,28 @@
                         ]
                     }
                 },
-                order: [[2, 'desc']]  
+                order: [
+                    [2, 'desc']
+                ]
             });
+
+            $("body").on("change", "#template", function(e) {
+                if ($(this).val() != "") {
+                    $.ajax({
+                        type: "GET",
+                        url: `${$("#urlTemplate").val()}/${$(this).val()}`,
+                        success: function(data) {
+                            $("#download-template").prop("href", "/templates/" + data.downloadUrl)
+                        },
+                        error: function(data) {
+                            console.log("error");
+                            console.log(data);
+                        },
+                    });
+                }
+
+            });
+
         })
     </script>
 @stop

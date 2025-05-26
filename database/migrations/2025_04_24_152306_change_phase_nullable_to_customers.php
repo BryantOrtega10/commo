@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->bigInteger("fk_phase")->unsigned()->nullable(false)->change();
-            $table->bigInteger("fk_legal_basis")->unsigned()->nullable(false)->change();
+            $table->bigInteger("fk_phase")->unsigned()->nullable(true)->change();
+            $table->bigInteger("fk_legal_basis")->unsigned()->nullable(true)->change();
         });
     }
 };

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Agents\AgentNumAgentModel;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\Agents\AgentsModel;
+use App\Models\Commissions\CommissionRatesModel;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -75,7 +76,7 @@ class TestAgentsSeed extends Seeder
         ]);
 
         $agentNumer1 = AgentNumbersModel::create([
-            "number" => "1000001",
+            "number" => "5182074",
             "fk_agency_code" => "1",
             "fk_carrier" => "1",
             "fk_agent_title" => "1",
@@ -88,22 +89,80 @@ class TestAgentsSeed extends Seeder
         ]);
 
         $agentNumer2 = AgentNumbersModel::create([
-            "number" => "1000002",
-            "fk_agency_code" => "2",
-            "fk_carrier" => "2",
-            "fk_agent_title" => "2",
-            "fk_agent_status" => "2",
-            "fk_agency" => "2",
-            "contract_rate" => "0.99",
-            "fk_admin_fee" => "2",
+            "number" => "5986244",
+            "fk_agency_code" => "1",
+            "fk_carrier" => "1",
+            "fk_agent_title" => "1",
+            "fk_agent_status" => "1",
+            "fk_agency" => "1",
+            "contract_rate" => "0.95",
+            "fk_admin_fee" => "1",
             "fk_entry_user" => "1",
             "fk_agent" => $agent1->id
         ]);
 
+        $agentNumer3 = AgentNumbersModel::create([
+            "number" => "5077017",
+            "fk_agency_code" => "1",
+            "fk_carrier" => "1",
+            "fk_agent_title" => "1",
+            "fk_agent_status" => "1",
+            "fk_agency" => "1",
+            "contract_rate" => "0.95",
+            "fk_admin_fee" => "1",
+            "fk_entry_user" => "1",
+            "fk_agent" => $agent1->id
+        ]);
+
+        $agentNumer4 = AgentNumbersModel::create([
+            "number" => "5113003",
+            "fk_agency_code" => "2",
+            "fk_carrier" => "2",
+            "fk_agent_title" => "2",
+            "fk_agent_status" => "1",
+            "fk_agency" => "2",
+            "contract_rate" => "0.99",
+            "fk_admin_fee" => "2",
+            "fk_entry_user" => "1",
+            "fk_agent" => $agent2->id
+        ]);
+
         AgentNumAgentModel::create([
             "type" => "1",
+            "fk_agent_number_base" => $agentNumer1->id,
+            "fk_agent_number_rel" => $agentNumer4->id,
+        ]);
+
+        CommissionRatesModel::create([
             "fk_agent_number" => $agentNumer1->id,
-            "fk_agent" => $agent2->id,
+            "rate_type" => 1,
+            "rate_amount" => 0.5,
+            "order" => 1,
+            "fk_entry_user" => 1,
+        ]);
+
+        CommissionRatesModel::create([
+            "fk_agent_number" => $agentNumer2->id,
+            "rate_type" => 1,
+            "rate_amount" => 0.75,
+            "order" => 1,
+            "fk_entry_user" => 1,
+        ]);
+
+        CommissionRatesModel::create([
+            "fk_agent_number" => $agentNumer3->id,
+            "rate_type" => 1,
+            "rate_amount" => 0.9,
+            "order" => 1,
+            "fk_entry_user" => 1,
+        ]);
+
+        CommissionRatesModel::create([
+            "fk_agent_number" => $agentNumer4->id,
+            "rate_type" => 1,
+            "rate_amount" => 1,
+            "order" => 1,
+            "fk_entry_user" => 1,
         ]);
     }
 }
