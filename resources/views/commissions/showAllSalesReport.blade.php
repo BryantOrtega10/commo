@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="text-right">
-            <input type="submit" class="btn btn-primary append-rates" value="Export to Excel" />
+            <input type="submit" class="btn btn-primary" value="Export to Excel" />
         </div>
     </form>
 @stop

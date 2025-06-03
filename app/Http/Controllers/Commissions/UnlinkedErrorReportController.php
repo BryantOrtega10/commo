@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Commissions;
 
+use App\Exports\UnlinkedErrorExport;
 use App\Http\Controllers\Controller;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\MultiTable\CarriersModel;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UnlinkedErrorReportController extends Controller
 {
@@ -27,8 +29,16 @@ class UnlinkedErrorReportController extends Controller
         ]);
     }
 
-    public function generateUnlinkedErrorReport(){
-        //
+    public function generateUnlinkedErrorReport(Request $request){
+        
+        return Excel::download(new UnlinkedErrorExport(
+                $request->input('statement_start_date'),
+                $request->input('statement_end_date'),
+                $request->input('agentNumberBase'),
+                $request->input('agency_code'),
+                $request->input('carrier'),
+        ), 'unlinked_error_report.xlsx');
+        
     }
     
 }

@@ -5,7 +5,7 @@
 @section('title', 'Leads')
 
 @section('content_header')
-    <h1>My Settlements</h1>
+    <h1>My Statements</h1>
 @stop
 
 @section('content')
@@ -24,7 +24,7 @@
         <div class="card-header">
             Search filters
         </div>
-        <form>
+        <form method="GET">
             <div class="card-body">
                 <div class="row align-items-center">
 
@@ -64,8 +64,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($settlements as $settlement)
-                        {{-- TODO: Tabla de settlements --}}
+                    @foreach ($settlements as $statement)
+                        <tr>
+                            <td>{{date("m/d/Y", strtotime($statement->statement_date))}}</td>
+                            <td>$ {{number_format($statement->total,2)}}</td>
+                            <td>{{$statement->number_policies}}</td>
+                            <td><a href="{{route('my-settlements.generate',['id' => $statement->id])}}" class="btn btn-outline-primary">Download PDF</a></td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>

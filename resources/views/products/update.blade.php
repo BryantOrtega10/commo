@@ -69,7 +69,7 @@
                             <select id="business_type" name="business_type" class="form-control @error('business_type') is-invalid @enderror">
                                 <option value=""></option>
                                 @foreach ($business_types as $business_type)
-                                    <option value="{{$business_segment->id}}" @if (old('business_type',$product->fk_business_type) == $business_type->id) selected @endif>{{$business_type->name}}</option>
+                                    <option value="{{$business_type->id}}" @if (old('business_type',$product->fk_business_type) == $business_type->id) selected @endif>{{$business_type->name}}</option>
                                 @endforeach                                
                             </select>
                             @error('business_type')

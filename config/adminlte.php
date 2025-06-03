@@ -316,7 +316,7 @@ return [
             'route' => 'my-settlements.show',
             'active' => ['my-settlements*'],
             'icon' => 'fas fa-wallet',
-        ],        
+        ],
         [
             'text' => 'Home',
             'url' => 'home/',
@@ -370,7 +370,7 @@ return [
             'can' => 'customers',
             'active' => ['customers*'],
             'icon' => 'fas fa-user-circle',
-            'submenu' => [                
+            'submenu' => [
                 [
                     'text' => 'Customers',
                     'route' => 'customers.show',
@@ -382,42 +382,50 @@ return [
                     'route' => 'genders.show',
                     'can' => 'genders',
                     'active' => ['genders*'],
-                ],[
+                ],
+                [
                     'text' => 'Marital Status',
                     'route' => 'marital-status.show',
                     'can' => 'marital-status',
                     'active' => ['marital-status*'],
-                ],[
+                ],
+                [
                     'text' => 'Regions',
                     'route' => 'regions.show',
                     'can' => 'regions',
                     'active' => ['regions*'],
-                ],[
+                ],
+                [
                     'text' => 'States',
                     'route' => 'states.show',
                     'can' => 'states',
                     'active' => ['states*'],
-                ],[
+                ],
+                [
                     'text' => 'Suffixes',
                     'route' => 'suffixes.show',
                     'can' => 'suffixes',
                     'active' => ['suffixes*'],
-                ],[
+                ],
+                [
                     'text' => 'Customer Status',
                     'route' => 'customer-status.show',
                     'can' => 'customer-status',
                     'active' => ['customer-status*'],
-                ],[
+                ],
+                [
                     'text' => 'Phases',
                     'route' => 'phases.show',
                     'can' => 'phases',
                     'active' => ['phases*'],
-                ],[
+                ],
+                [
                     'text' => 'Legal Basis',
                     'route' => 'legal-basis.show',
                     'can' => 'legal-basis',
                     'active' => ['legal-basis*'],
-                ],[
+                ],
+                [
                     'text' => 'Registration Sources',
                     'route' => 'registration-sources.show',
                     'can' => 'registration-sources',
@@ -437,9 +445,9 @@ return [
                     'text' => 'Agent',
                     'route' => 'agents.show',
                     'can' => 'agents',
-                    'active' => ['agents/agents*','agents/agent-numbers*'],
-                ]
-                ,[
+                    'active' => ['agents/agents*', 'agents/agent-numbers*'],
+                ],
+                [
                     'text' => 'Admin Fees',
                     'route' => 'admin-fees.show',
                     'can' => 'admin-fees',
@@ -450,27 +458,32 @@ return [
                     'route' => 'agencies.show',
                     'can' => 'agencies',
                     'active' => ['agencies*'],
-                ],[
+                ],
+                [
                     'text' => 'Agency Codes',
                     'route' => 'agency-codes.show',
                     'can' => 'agency-codes',
                     'active' => ['agency-codes*'],
-                ],[
+                ],
+                [
                     'text' => 'Contract Types',
                     'route' => 'contract-types.show',
                     'can' => 'contract-types',
                     'active' => ['contract-types*'],
-                ],[
+                ],
+                [
                     'text' => 'Agent Status',
                     'route' => 'agent-status.show',
                     'can' => 'agent-status',
                     'active' => ['agent-status*'],
-                ],[
+                ],
+                [
                     'text' => 'Agent Titles',
                     'route' => 'agent-titles.show',
                     'can' => 'agent-titles',
                     'active' => ['agent-titles*'],
-                ],[
+                ],
+                [
                     'text' => 'Sales Regions',
                     'route' => 'sales-regions.show',
                     'can' => 'sales-regions',
@@ -497,27 +510,32 @@ return [
                     'route' => 'business-segments.show',
                     'can' => 'business-segments',
                     'active' => ['business-segments*'],
-                ],[
+                ],
+                [
                     'text' => 'Business Types',
                     'route' => 'business-types.show',
                     'can' => 'business-types',
                     'active' => ['business-types*'],
-                ],[
+                ],
+                [
                     'text' => 'Carriers',
                     'route' => 'carriers.show',
                     'can' => 'carriers',
                     'active' => ['carriers*'],
-                ],[
+                ],
+                [
                     'text' => 'Plan Types',
                     'route' => 'plan-types.show',
                     'can' => 'plan-types',
                     'active' => ['plan-types*'],
-                ],[
+                ],
+                [
                     'text' => 'Product Tiers',
                     'route' => 'product-tiers.show',
                     'can' => 'product-tiers',
                     'active' => ['product-tiers*'],
-                ],[
+                ],
+                [
                     'text' => 'Product Types',
                     'route' => 'product-types.show',
                     'can' => 'product-types',
@@ -525,13 +543,55 @@ return [
                 ]
             ]
 
-        ],[
+        ],
+        [
             'text' => 'Reports',
             'url' => 'reports/',
             'can' => 'reports',
             'active' => ['reports*'],
-            'icon' => 'fas fa-file'
-        ],[
+            'icon' => 'fas fa-file',
+            'submenu' => [
+                [
+                    'header' => 'General',
+                ],
+                [
+                    'text' => 'Agents',
+                    'route' => 'reports.agent.show',
+                    'can' => 'reports',
+                    'active' => ['reports/agent*'],
+                ],
+                [
+                    'text' => 'Customer',
+                    'route' => 'reports.customer.show',
+                    'can' => 'reports',
+                    'active' => ['reports/customer*'],
+                ],
+                [
+                    'text' => 'Products',
+                    'route' => 'reports.product.show',
+                    'can' => 'reports',
+                    'active' => ['reports/product*'],
+                ],
+                [
+                    'header' => 'Policies',
+                ],
+                [
+                    'text' => 'Policies',
+                    'route' => 'reports.policies.show',
+                    'can' => 'reports',
+                    'active' => ['reports/policies*'],
+                ],
+                [
+                    'text' => 'Policies and Customers',
+                    'route' => 'reports.policy-customer.show',
+                    'can' => 'reports',
+                    'active' => ['reports/policy-customer*'],
+                ],
+                
+
+            ]
+        ],
+        [
             'text' => 'Commissions',
             'url' => 'commissions/',
             'can' => 'commissions',
@@ -554,7 +614,13 @@ return [
                     'text' => 'Agent Reports Processes',
                     'route' => 'commissions.agent-process.show',
                     'can' => 'commissions',
-                    'active' => ['agent-process*'],
+                    'active' => ['agent-process*', 'commissions/agent-process*'],
+                ],
+                [
+                    'text' => 'Agent Commission Statement Balances',
+                    'route' => 'commissions.statement-balances.show',
+                    'can' => 'commissions',
+                    'active' => ['statement-balances*'],
                 ],
                 [
                     'text' => 'Agent Rates',
@@ -574,17 +640,18 @@ return [
                     'can' => 'commissions',
                     'active' => ['unlinked*'],
                 ],
-                
-                
+
+
             ]
-        ],[
+        ],
+        [
             'text' => 'Users',
             'url' => 'users/',
             'can' => 'users',
             'active' => ['users*'],
             'icon' => 'fas fa-users'
         ],
-        
+
     ],
 
     /*
@@ -659,7 +726,7 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => 'https://cdn.datatables.net/v/bs4/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-html5-3.0.2/b-print-3.0.2/datatables.min.js',
-                ],                
+                ],
             ],
         ],
         'DefaultDatatable' => [
@@ -773,6 +840,31 @@ return [
                 ]
             ]
         ],
+        'Select2' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js'
+                ],                
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css'
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/utils/select2.js',
+                ],
+            ]
+        ]
     ],
 
     /*

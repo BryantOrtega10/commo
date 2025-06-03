@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Commissions;
 use App\Http\Controllers\Controller;
 use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\StatementsItemModel;
+use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\MultiTable\AgentTitlesModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -14,8 +15,10 @@ class AgentReportController extends Controller
     public function showAgentReport()
     {
         $agent_titles = AgentTitlesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
         return view('commissions.showAgentReport', [
+            "agency_codes" => $agency_codes,
             "agent_titles" => $agent_titles
         ]);
     }
@@ -35,6 +38,12 @@ class AgentReportController extends Controller
             $input = $request->input("agent_title");
             $statementItems->where('agent_numbers.fk_agent_title', "=", $input);
         }
+        if ($request->has("agency_code") && !empty($request->input("agency_code"))) {
+            $input = $request->input("agency_code");
+            $statementItems->where('agent_numbers.fk_agency_code', "=", $input);
+        }
+
+        
 
         if ($statementItems->count() == 0) {
             return redirect(route('commissions.agent-report.show'))->with('error', 'No statements were found for this search');
@@ -86,7 +95,7 @@ class AgentReportController extends Controller
         $canvas->page_text(15, 540, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 10, [0, 0, 0]);
 
 
-        return $pdf->stream('AgentReport' . date("Y-m-d") . '.pdf'); // O ->download('archivo.pdf');
+        return $pdf->download('AgentReport' . date("Y-m-d") . '.pdf'); // O ->stream('archivo.pdf');
     }
 
     public function dataTableAgentReport(Request $request)

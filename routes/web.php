@@ -10,6 +10,7 @@ use App\Http\Controllers\Commissions\AgentReportProcessController;
 use App\Http\Controllers\Commissions\AllSalesController;
 use App\Http\Controllers\Commissions\CommissionRatesController;
 use App\Http\Controllers\Commissions\CommissionsController;
+use App\Http\Controllers\Commissions\StatementBalancesReportController;
 use App\Http\Controllers\Commissions\TemplatesController;
 use App\Http\Controllers\Commissions\UnlinkedErrorReportController;
 use App\Http\Controllers\MultiTable\AgenciesController;
@@ -50,6 +51,11 @@ use App\Http\Controllers\MultiTable\AdminFeesController;
 use App\Http\Controllers\Policies\CountiesController;
 use App\Http\Controllers\Policies\PoliciesController;
 use App\Http\Controllers\Products\ProductsController;
+use App\Http\Controllers\Reports\AgentReportController as ReportsAgentReportController;
+use App\Http\Controllers\Reports\CustomerReportController;
+use App\Http\Controllers\Reports\PolicyCustomerReportController;
+use App\Http\Controllers\Reports\PolicyReportController;
+use App\Http\Controllers\Reports\ProductReportController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Utils\FilesController;
 
@@ -200,6 +206,7 @@ Route::group([ 'prefix' => 'leads', 'middleware' => ['auth', 'user-role:agent']]
 
 Route::group([ 'prefix' => 'my-settlements', 'middleware' => ['auth', 'user-role:agent']],function () {
     Route::get("/", [MySettlementsController::class, 'show'])->name("my-settlements.show");
+    Route::get("/{id}", [MySettlementsController::class, 'generatePDF'])->name("my-settlements.generate");
 });
 
 Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:admin']],function () {
@@ -263,7 +270,14 @@ Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:ad
 
     Route::group(['prefix' => 'agent-process'], function () {
         Route::get("/", [AgentReportProcessController::class, 'showAgentReportProcesses'])->name("commissions.agent-process.show");
-        Route::get("/show-batch/{id}", [AgentReportProcessController::class, 'showAgentReportProcessesBatch'])->name("commissions.agent-process.showBatch");
+        Route::get("/show-batch/{id}", [AgentReportProcessController::class, 'showAgentReportProcessesBatch'])->name("commissions.agent-process.showUpload");
+        Route::get("/show-batch-json/{id}", [AgentReportProcessController::class, 'showAgentReportProcessesBatchJson'])->name("commissions.agent-process.showUploadJson");
+
+        Route::get('/download-zip/{id}', [AgentReportProcessController::class, 'download'])->name("commissions.agent-process.download");
+        Route::post('/delete/{id}', [AgentReportProcessController::class, 'delete'])->name("commissions.agent-process.delete");
+
+        Route::get('/test/{id}', [AgentReportProcessController::class, 'testProcessor'])->name("commissions.agent-process.test");
+
         Route::get("/email-template", [AgentReportProcessController::class, 'showAgentReportEmailTemplate'])->name("commissions.agent-process.show-email");
         Route::post("/email-template", [AgentReportProcessController::class, 'updateEmailTemplate']);
         Route::post("/batch", [AgentReportProcessController::class, 'generateAgentReportBatch'])->name("commissions.agent-process.generate-batch");
@@ -291,13 +305,36 @@ Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:ad
         
     });
 
-    
-
-
-    
-
+    Route::group(['prefix' => 'statement-balances'], function () {
+        Route::get("/", [StatementBalancesReportController::class, 'showStatementBalances'])->name("commissions.statement-balances.show");
+        Route::post("/", [StatementBalancesReportController::class, 'generateStatementBalances']);
+        
+    });
 });
 
+Route::group([ 'prefix' => 'reports', 'middleware' => ['auth', 'user-role:admin']],function () {
+    Route::group(['prefix' => 'agent'], function () {
+        Route::get("/", [ReportsAgentReportController::class, 'showAgentReport'])->name("reports.agent.show");
+        Route::post("/", [ReportsAgentReportController::class, 'generateAgentReport']);
+    });
+    Route::group(['prefix' => 'customer'], function () {
+        Route::get("/", [CustomerReportController::class, 'showReport'])->name("reports.customer.show");
+        Route::post("/", [CustomerReportController::class, 'generateReport']);
+    });
+    Route::group(['prefix' => 'product'], function () {
+        Route::get("/", [ProductReportController::class, 'showReport'])->name("reports.product.show");
+        Route::post("/", [ProductReportController::class, 'generateReport']);
+    });
+    Route::group(['prefix' => 'policies'], function () {
+        Route::get("/", [PolicyReportController::class, 'showReport'])->name("reports.policies.show");
+        Route::post("/", [PolicyReportController::class, 'generateReport']);
+    });
+
+    Route::group(['prefix' => 'policy-customer'], function () {
+        Route::get("/", [PolicyCustomerReportController::class, 'showReport'])->name("reports.policy-customer.show");
+        Route::post("/", [PolicyCustomerReportController::class, 'generateReport']);
+    });
+});
 
 //Utils
 Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin|agent']],function () {

@@ -24,7 +24,7 @@
             {{ session('error') }}
         </div>
     @endif
-    <form action="{{ route('commissions.all-sales.show') }}" method="POST">
+    <form action="{{ route('commissions.unlinked.show') }}" method="POST">
         @csrf
         <div class="card card-light">
             <div class="card-body">
@@ -33,7 +33,7 @@
                         <div class="form-group">
                             <label for="statement_start_date">Statement Start Date:</label>
                             <input type="date" class="form-control @error('statement_start_date') is-invalid @enderror"
-                                id="statement_start_date" name="statement_start_date" required
+                                id="statement_start_date" name="statement_start_date" 
                                 value="{{ old('statement_start_date') }}">
                             @error('statement_start_date')
                                 <span class="invalid-feedback" role="alert">
@@ -46,7 +46,7 @@
                         <div class="form-group">
                             <label for="statement_end_date">Statement End Date:</label>
                             <input type="date" class="form-control @error('statement_end_date') is-invalid @enderror"
-                                id="statement_end_date" name="statement_end_date" required
+                                id="statement_end_date" name="statement_end_date" 
                                 value="{{ old('statement_end_date') }}">
                             @error('statement_end_date')
                                 <span class="invalid-feedback" role="alert">
@@ -100,7 +100,7 @@
             </div>
         </div>
         <div class="text-right">
-            <input type="submit" class="btn btn-primary append-rates" value="Generate Report" />
+            <input type="submit" class="btn btn-primary" value="Generate Report" />
         </div>
     </form>
 @stop
