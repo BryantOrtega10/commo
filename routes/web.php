@@ -20,17 +20,14 @@ use App\Http\Controllers\MultiTable\AgentTitlesController;
 use App\Http\Controllers\MultiTable\BusinessSegmentsController;
 use App\Http\Controllers\MultiTable\BusinessTypesController;
 use App\Http\Controllers\MultiTable\CarriersController;
-use App\Http\Controllers\MultiTable\ClientSourcesController;
 use App\Http\Controllers\MultiTable\ContractTypeController;
 use App\Http\Controllers\MultiTable\CustomerStatusController;
 use App\Http\Controllers\MultiTable\EnrollmentMethodsController;
 use App\Http\Controllers\MultiTable\GendersController;
 use App\Http\Controllers\MultiTable\LegalBasisController;
 use App\Http\Controllers\MultiTable\MaritalStatusController;
-use App\Http\Controllers\MultiTable\MemberTypesController;
 use App\Http\Controllers\MultiTable\PhasesController;
 use App\Http\Controllers\MultiTable\PlanTypesController;
-use App\Http\Controllers\MultiTable\PolicyAgentNumberTypesController;
 use App\Http\Controllers\MultiTable\PolicyStatusController;
 use App\Http\Controllers\MultiTable\ProductTypesController;
 use App\Http\Controllers\MultiTable\RegionsController;
@@ -45,7 +42,7 @@ use App\Http\Controllers\Customers\CuidsController;
 use App\Http\Controllers\Customers\CustomersController;
 use App\Http\Controllers\Leads\ActivitiesController;
 use App\Http\Controllers\Leads\LeadsController;
-use App\Http\Controllers\Leads\MySettlementsController;
+use App\Http\Controllers\Leads\MyStatementsController;
 use App\Http\Controllers\MultiTable\AdminFeesController;
 
 use App\Http\Controllers\Policies\CountiesController;
@@ -56,9 +53,12 @@ use App\Http\Controllers\Reports\CustomerReportController;
 use App\Http\Controllers\Reports\PolicyCustomerReportController;
 use App\Http\Controllers\Reports\PolicyReportController;
 use App\Http\Controllers\Reports\ProductReportController;
+use App\Http\Controllers\Supervisor\ActivitiesSuperController;
+use App\Http\Controllers\Supervisor\LeadsSuperController;
+use App\Http\Controllers\Supervisor\LogsController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Utils\FilesController;
-
+use App\Http\Controllers\Utils\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -105,9 +105,17 @@ Auth::routes(['login' => false]);
 Route::get('/', function () {
     if (Auth::check()){
         switch(strtolower(Auth::user()->role)){
-            case 'admin':
-                return redirect(route('policies.show'));
+            case 'supervisor':
+                return redirect(route('supervisor.leads.show'));
                 break;
+            case 'superadmin':
+                return redirect(route('home'));
+                break;
+
+            case 'admin':
+                return redirect(route('home'));
+                break;
+
             case 'agent':
                 return redirect(route('leads.show'));
                 break;
@@ -115,10 +123,11 @@ Route::get('/', function () {
     }
     return view('auth.login');
 })->name('login');
+
 Route::post('/login', [LoginController::class, 'login']);
 
 foreach($crudRoutes as $routeGroup => $subRoutes){
-    Route::group([ 'prefix' => $routeGroup, 'middleware' => ['auth', 'user-role:admin']],function () use($subRoutes) {
+    Route::group([ 'prefix' => $routeGroup, 'middleware' => ['auth', 'user-role:superadmin|admin']],function () use($subRoutes) {
         foreach($subRoutes as $routeItem => $controller) {
             Route::group([
                 'prefix' => $routeItem
@@ -135,7 +144,7 @@ foreach($crudRoutes as $routeGroup => $subRoutes){
     });
 }
 
-Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
     Route::group(['prefix' => 'customers'], function () {
         Route::get("/", [CustomersController::class, 'show'])->name("customers.show");
         Route::post("/datatable", [CustomersController::class, 'datatableAjax'])->name("customers.datatable");
@@ -155,7 +164,7 @@ Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admi
     
 });
 
-Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
     Route::group(['prefix' => 'agents'], function () {
         Route::get("/", [AgentsControllers::class, 'show'])->name("agents.show");
         Route::post("/", [AgentsControllers::class, 'show']);
@@ -181,8 +190,6 @@ Route::group([ 'prefix' => 'agents', 'middleware' => ['auth', 'user-role:admin']
 
 Route::group([ 'prefix' => 'leads', 'middleware' => ['auth', 'user-role:agent']],function () {
 
-    
-
     Route::get("/", [LeadsController::class, 'show'])->name("leads.show");
     Route::post("/datatable", [LeadsController::class, 'datatableAjax'])->name("leads.datatable");
     Route::get("/create", [LeadsController::class, 'showCreateForm'])->name("leads.create");
@@ -204,12 +211,12 @@ Route::group([ 'prefix' => 'leads', 'middleware' => ['auth', 'user-role:agent']]
     });
 });
 
-Route::group([ 'prefix' => 'my-settlements', 'middleware' => ['auth', 'user-role:agent']],function () {
-    Route::get("/", [MySettlementsController::class, 'show'])->name("my-settlements.show");
-    Route::get("/{id}", [MySettlementsController::class, 'generatePDF'])->name("my-settlements.generate");
+Route::group([ 'prefix' => 'my-statements', 'middleware' => ['auth', 'user-role:agent']],function () {
+    Route::get("/", [MyStatementsController::class, 'show'])->name("my-statements.show");
+    Route::get("/{id}", [MyStatementsController::class, 'generatePDF'])->name("my-statements.generate");
 });
 
-Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
     Route::group(['prefix' => 'products'], function () {
         Route::get("/", [ProductsController::class, 'show'])->name("products.show");
         Route::post("/datatable", [ProductsController::class, 'datatableAjax'])->name("products.datatable");
@@ -220,7 +227,7 @@ Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:admin
     });
 });
 
-Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
     Route::group(['prefix' => 'policies'], function () {
         Route::get("/", [PoliciesController::class, 'show'])->name("policies.show");
         Route::post("/datatable", [PoliciesController::class, 'datatableAjax'])->name("policies.datatable");
@@ -232,7 +239,7 @@ Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin
 });
 
 
-Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
     Route::group(['prefix' => 'calculation'], function () {
         Route::get("/", [CommissionsController::class, 'show'])->name("commissions.calculation");        
         
@@ -312,7 +319,7 @@ Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:ad
     });
 });
 
-Route::group([ 'prefix' => 'reports', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'reports', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
     Route::group(['prefix' => 'agent'], function () {
         Route::get("/", [ReportsAgentReportController::class, 'showAgentReport'])->name("reports.agent.show");
         Route::post("/", [ReportsAgentReportController::class, 'generateAgentReport']);
@@ -336,38 +343,93 @@ Route::group([ 'prefix' => 'reports', 'middleware' => ['auth', 'user-role:admin'
     });
 });
 
+Route::group([ 'prefix' => 'users', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
+    Route::group(['prefix' => 'users'], function () {
+        Route::get("/", [UsersController::class, 'show'])->name("users.show");
+        Route::post("/datatable", [UsersController::class, 'datatableAjax'])->name("users.datatable");
+        Route::get("/create", [UsersController::class, 'showCreateForm'])->name("users.create");
+        Route::post("/create", [UsersController::class, 'create']);
+        Route::get("/update/{id}", [UsersController::class, 'showUpdateForm'])->name("users.update");
+        Route::post("/update/{id}", [UsersController::class, 'update']);
+
+        Route::get("/log/{id}", [UsersController::class, 'showLogForm'])->name("users.log");
+        Route::post("/log/{id}", [UsersController::class, 'downloadLog']);
+    });
+});
+
+Route::group([ 'prefix' => 'supervisor-leads', 'middleware' => ['auth', 'user-role:supervisor']],function () {
+
+    Route::get("/", [LeadsSuperController::class, 'show'])->name("supervisor.leads.show");
+    Route::post("/datatable", [LeadsSuperController::class, 'datatableAjax'])->name("supervisor.leads.datatable");
+    Route::get("/create", [LeadsSuperController::class, 'showCreateForm'])->name("supervisor.leads.create");
+    Route::post("/create", [LeadsSuperController::class, 'create']);
+    Route::get("/details/{id}", [LeadsSuperController::class, 'showDetailsForm'])->name("supervisor.leads.details");
+    Route::post("/details/{id}", [LeadsSuperController::class, 'updateDetails']);
+    Route::get("/reassign/{id}", [LeadsSuperController::class, 'showReassignForm'])->name("supervisor.leads.reassign");
+    Route::post("/reassign/{id}", [LeadsSuperController::class, 'reassign']);
+
+    Route::get("/update/{id}", [LeadsSuperController::class, 'showUpdateForm'])->name("supervisor.leads.update");
+    Route::post("/update/{id}", [LeadsSuperController::class, 'update']);
+
+    Route::group(['prefix' => 'activity'], function () {
+        Route::get("/{idLead}/{type}", [ActivitiesSuperController::class, 'showActivityModal'])->name("supervisor.leads.activityModal");
+        Route::post("/{idLead}", [ActivitiesSuperController::class, 'createActivity'])->name("supervisor.leads.createActivity");
+        Route::get("/modal/details/{id}", [ActivitiesSuperController::class, 'showActivityDetailsModal'])->name("supervisor.leads.activityDetailsModal");
+        Route::post("/modal/details/{id}", [ActivitiesSuperController::class, 'update']);
+
+        Route::get("/notifications", [ActivitiesSuperController::class, 'myNotifications'])->name("supervisor.leads.notifications");
+        Route::post("/notifications", [ActivitiesSuperController::class, 'myNotifications'])->name("supervisor.leads.notifications");
+        
+    });
+});
+
+Route::group([ 'prefix' => 'supervisor-logs', 'middleware' => ['auth', 'user-role:supervisor']],function () {
+    Route::group(['prefix' => 'users'], function () {
+        Route::get("/", [LogsController::class, 'show'])->name("supervisor-logs.show");
+        Route::post("/datatable", [LogsController::class, 'datatableAjax'])->name("supervisor-logs.datatable");
+        Route::get("/log/{id}", [LogsController::class, 'showLogForm'])->name("supervisor-logs.log");
+        Route::post("/log/{id}", [LogsController::class, 'downloadLog']);
+    });
+});
+
 //Utils
-Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
+Route::group([ 'prefix' => 'customers', 'middleware' => ['auth', 'user-role:superadmin|admin|agent|supervisor']],function () {
     Route::group(['prefix' => 'customers'], function () {
         Route::post("/search", [CustomersController::class, 'search'])->name("customers.search");
         Route::post("/search/subscribers", [CustomersController::class, 'searchSubscribers'])->name("customers.searchSubscribers");
         
     });
 });
-Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
+
+Route::group([ 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
+   Route::get("/home", [HomeController::class, 'show'])->name("home");
+});
+
+
+Route::group([ 'prefix' => 'products', 'middleware' => ['auth', 'user-role:superadmin|admin|agent']],function () {
     Route::group(['prefix' => 'products'], function () {
         Route::get("/details/{id?}", [ProductsController::class, 'loadInfo'])->name("products.loadInfo");
     });
 });
-Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
+Route::group([ 'prefix' => 'policies', 'middleware' => ['auth', 'user-role:superadmin|admin|agent']],function () {
     Route::group(['prefix' => 'counties'], function () {
         Route::get("/{id?}", [CountiesController::class, 'loadInfo'])->name("counties.loadInfo");
     });
 });
 
-Route::group([ 'prefix' => 'users', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
+Route::group([ 'prefix' => 'users', 'middleware' => ['auth', 'user-role:superadmin|admin|agent|supervisor']],function () {
     Route::post("/change-password", [UsersController::class, 'changePassword'])->name("users.changePassword");
     Route::get("/my-profile", [UsersController::class, 'showProfileForm'])->name("users.profile");
     Route::post("/my-profile", [UsersController::class, 'updateProfile']);
     
 });
-Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:admin']],function () {
+Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:superadmin|admin']],function () {
     Route::group(['prefix' => 'templates'], function () {
         Route::get("/details/{id?}", [TemplatesController::class, 'loadInfo'])->name("templates.loadInfo");
     });
 });
 
-Route::group([ 'prefix' => 'files', 'middleware' => ['auth', 'user-role:admin|agent']],function () {
+Route::group([ 'prefix' => 'files', 'middleware' => ['auth', 'user-role:superadmin|admin|agent|supervisor']],function () {
     Route::post("/upload", [FilesController::class, 'uploadFile'])->name("files.upload");
     Route::post("/remove/{id}", [FilesController::class, 'remove'])->name("files.delete");
 });

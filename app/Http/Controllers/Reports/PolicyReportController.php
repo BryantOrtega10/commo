@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Reports;
 
 use App\Exports\PolicyReportExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\MultiTable\BusinessSegmentsModel;
 use App\Models\MultiTable\BusinessTypesModel;
@@ -26,7 +27,11 @@ class PolicyReportController extends Controller
 
         $registration_sources = RegistrationSourcesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agentNumbers = AgentNumbersModel::all();
-
+        Utils::createLog(
+            "The user has entered the policy report",
+            "reports.policy",
+            "show"
+        );
         return view('reports.showPoliciesReport',[
             'carriers' => $carriers,
             'business_segments' => $business_segments,
@@ -55,7 +60,11 @@ class PolicyReportController extends Controller
         $plan_type = $request->input("plan_type");
         $description = $request->input("description");
         $product_type = $request->input("product_type");
-
+        Utils::createLog(
+            "The user has downloaded the policy report.",
+            "reports.policy",
+            "create"
+        );
         return Excel::download(new PolicyReportExport(
             $app_submit_date_start,
             $app_submit_date_end,

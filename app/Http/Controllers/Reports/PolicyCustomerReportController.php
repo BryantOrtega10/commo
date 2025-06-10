@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Reports;
 use App\Exports\PolicyCustomerReportExport;
 use App\Exports\PolicyReportExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\MultiTable\BusinessSegmentsModel;
 use App\Models\MultiTable\BusinessTypesModel;
@@ -39,7 +40,11 @@ class PolicyCustomerReportController extends Controller
         $policy_statuses = PolicyStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $enrollment_methods = EnrollmentMethodsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $users = User::orderBy("name","asc")->get();
-
+        Utils::createLog(
+            "The user has entered the policy and customer report",
+            "reports.policy-customer",
+            "show"
+        );
         return view('reports.showPoliciesCustomerReport', [
             'carriers' => $carriers,
             'business_segments' => $business_segments,
@@ -86,7 +91,11 @@ class PolicyCustomerReportController extends Controller
         $user = $request->input("user");
         $entry_date_start = $request->input("entry_date_start");
         $entry_date_end = $request->input("entry_date_end");
-
+        Utils::createLog(
+            "The user has downloaded the policy and customer report.",
+            "reports.policy-customer",
+            "create"
+        );
         return Excel::download(new PolicyCustomerReportExport(
             $agent_number,
             $subscriber_name,

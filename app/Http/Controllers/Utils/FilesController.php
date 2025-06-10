@@ -58,6 +58,12 @@ class FilesController extends Controller
 
         $fileDB->save();
 
+        Utils::createLog(
+            "The user has uploaded file with ID: ".$fileDB->id,
+            "files",
+            "create"
+        );
+
         return response()->json([
             "success" => true,
             "filename" => $file->getClientOriginalName(),
@@ -87,6 +93,12 @@ class FilesController extends Controller
         Storage::disk('public')->delete($fileFinal);
 
         $fileDB->delete();
+
+        Utils::createLog(
+            "The user has deleted file with ID: ".$id,
+            "files",
+            "delete"
+        );
 
         return redirect($request->server("HTTP_REFERER"))->with("message","File removed successfully!");
 

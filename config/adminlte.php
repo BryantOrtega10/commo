@@ -311,10 +311,24 @@ return [
             'icon' => 'fas fa-user-circle',
         ],
         [
-            'text' => 'My Settlements',
-            'can' => 'my-settlements',
-            'route' => 'my-settlements.show',
-            'active' => ['my-settlements*'],
+            'text' => 'Leads',
+            'can' => 'supervisor',
+            'route' => 'supervisor.leads.show',
+            'active' => ['supervisor-leads*'],
+            'icon' => 'fas fa-user-circle',
+        ],
+        [
+            'text' => 'Logs',
+            'can' => 'logs',
+            'route' => 'supervisor-logs.show',
+            'active' => ['supervisor-logs*'],
+            'icon' => 'fas fa-users',
+        ],
+        [
+            'text' => 'My Statements',
+            'can' => 'my-statements',
+            'route' => 'my-statements.show',
+            'active' => ['my-statements*'],
             'icon' => 'fas fa-wallet',
         ],
         [
@@ -587,7 +601,7 @@ return [
                     'can' => 'reports',
                     'active' => ['reports/policy-customer*'],
                 ],
-                
+
 
             ]
         ],
@@ -649,7 +663,15 @@ return [
             'url' => 'users/',
             'can' => 'users',
             'active' => ['users*'],
-            'icon' => 'fas fa-users'
+            'icon' => 'fas fa-users',
+            'submenu' => [
+                [
+                    'text' => 'Users',
+                    'route' => 'users.show',
+                    'can' => 'users',
+                    'active' => ['users/users*'],
+                ],
+            ]
         ],
 
     ],
@@ -847,7 +869,7 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js'
-                ],                
+                ],
                 [
                     'type' => 'css',
                     'asset' => false,

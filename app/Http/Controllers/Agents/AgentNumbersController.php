@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Agents;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Agents\CreateAgentNumbersRequest;
 use App\Http\Requests\Agents\EditAgentNumbersRequest;
 use App\Http\Requests\Agents\UpdateAgentNumbersRequest;
@@ -27,6 +28,7 @@ use App\Models\MultiTable\RegionsModel;
 use App\Models\MultiTable\TiersModel;
 use App\Models\Policies\CountiesModel;
 use App\Models\Products\ProductsModel;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ViewErrorBag;
@@ -43,6 +45,11 @@ class AgentNumbersController extends Controller
         $admin_fees = AdminFeesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agents = AgentNumbersModel::where("fk_agent", "<>", $id)->get();
 
+        Utils::createLog(
+            "The user entered the form to create agent numbers.",
+            'agents.agents-numbers',
+            "show"
+        );
 
         return view('agent_numbers.createModal', [
             "agentID" => $id,
@@ -74,17 +81,17 @@ class AgentNumbersController extends Controller
         $agent_number->fk_agent = $id;
         $agent_number->fk_entry_user = $entry_user->id;
         $agent_number->save();
-        
+
         for ($i = 1; $i <= 5; $i++) {
             //Mentors Agents
             $mentorAgentInput = "mentor_agent_" . $i;
             if ($request->has($mentorAgentInput) && !empty($request->input($mentorAgentInput))) {
                 $mentorAgentID = $request->input($mentorAgentInput);
-                $startDate = $request->input("start_date_ment_".$i);
-                $endDate = $request->input("end_date_ment_".$i);
+                $startDate = $request->input("start_date_ment_" . $i);
+                $endDate = $request->input("end_date_ment_" . $i);
 
                 $existMentorAgent = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
-                                                      ->where("fk_agent_number_rel", "=", $mentorAgentID)->first();
+                    ->where("fk_agent_number_rel", "=", $mentorAgentID)->first();
                 if (!isset($existMentorAgent)) {
                     $agentNumAgent = new AgentNumAgentModel();
                     $agentNumAgent->type = 1;
@@ -100,11 +107,11 @@ class AgentNumbersController extends Controller
             $overrideAgentInput = "override_agent_" . $i;
             if ($request->has($overrideAgentInput) && !empty($request->input($overrideAgentInput))) {
                 $overrideAgentID = $request->input($overrideAgentInput);
-                $startDate = $request->input("start_date_over_".$i);
-                $endDate = $request->input("end_date_over_".$i);
-                
+                $startDate = $request->input("start_date_over_" . $i);
+                $endDate = $request->input("end_date_over_" . $i);
+
                 $existOverrideAgent = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
-                                                        ->where("fk_agent_number_rel", "=", $overrideAgentID)->first();
+                    ->where("fk_agent_number_rel", "=", $overrideAgentID)->first();
                 if (!isset($existOverrideAgent)) {
                     $agentNumAgent = new AgentNumAgentModel();
                     $agentNumAgent->type = 2;
@@ -116,6 +123,12 @@ class AgentNumbersController extends Controller
                 }
             }
         }
+
+        Utils::createLog(
+            "The user has created a new agent number with ID: " . $agent_number->id,
+            "agents.agents-numbers",
+            "create"
+        );
 
         return redirect(route('agents.update', ['id' => $id]))->with('message', 'Agent number created successfully');
     }
@@ -132,19 +145,24 @@ class AgentNumbersController extends Controller
         $agents = AgentNumbersModel::where("fk_agent", "<>", $agent_number->fk_agent)->get();
 
         $mentorAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
-                                            ->where("type", "=", 1)->get();
+            ->where("type", "=", 1)->get();
         $mentorAgents = array();
-        foreach($mentorAgentsDB as $mentorAgent){
-            array_push($mentorAgents , ["id" => $mentorAgent->fk_agent_number_rel, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
+        foreach ($mentorAgentsDB as $mentorAgent) {
+            array_push($mentorAgents, ["id" => $mentorAgent->fk_agent_number_rel, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
         }
-        
+
         $overrideAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)
-                                              ->where("type", "=", 2)->get();
+            ->where("type", "=", 2)->get();
         $overrideAgents = array();
-        foreach($overrideAgentsDB as $overrideAgent){
-            array_push($overrideAgents , ["id" => $overrideAgent->fk_agent_number_rel, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
+        foreach ($overrideAgentsDB as $overrideAgent) {
+            array_push($overrideAgents, ["id" => $overrideAgent->fk_agent_number_rel, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
         }
-        
+
+        Utils::createLog(
+            "The user has entered the form to update agent numbers with ID: " . $agent_number->id,
+            "agents.agents-numbers",
+            "show"
+        );
 
         return view('agent_numbers.updateModal', [
             "agent_number" => $agent_number,
@@ -160,19 +178,35 @@ class AgentNumbersController extends Controller
         ]);
     }
 
-    public function updateModal($id, EditAgentNumbersRequest $request){
+    public function updateModal($id, EditAgentNumbersRequest $request)
+    {
         $agent_number = AgentNumbersModel::find($id);
         $this->update($id, $request);
         return redirect(route('agents.update', ['id' => $agent_number->fk_agent]))->with('message', 'Agent number updated successfully');
     }
 
-    
 
-    public function delete($id){
+
+    public function delete($id)
+    {
         $agent_number = AgentNumbersModel::find($id);
         $agentId =  $agent_number->fk_agent;
-        // TODO: Validar que al eliminar no se lleve las relaciones
-        $agent_number->delete();
+        try {
+            Utils::createLog(
+                "The user has attempted to delete the agent number with ID: " . $id,
+                "agents.agents-numbers",
+                "delete"
+            );
+            $agent_number->delete();
+            Utils::createLog(
+                "The user has deleted the the agent number with ID: " . $id,
+                "agents.agents-numbers",
+                "delete"
+            );
+        } catch (Exception $e) {
+            return redirect(route('agents.update', ['id' => $agentId]))->with('error', "This agent number is related and cannot be deleted");
+        }
+
         return redirect(route('agents.update', ['id' => $agentId]))->with('message', 'Agent number deleted successfully');
     }
 
@@ -190,17 +224,17 @@ class AgentNumbersController extends Controller
 
         $mentorAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 1)->get();
         $mentorAgents = array();
-        foreach($mentorAgentsDB as $mentorAgent){
-            array_push($mentorAgents , ["id" => $mentorAgent->fk_agent_number_rel, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
+        foreach ($mentorAgentsDB as $mentorAgent) {
+            array_push($mentorAgents, ["id" => $mentorAgent->fk_agent_number_rel, "start_date" => $mentorAgent->start_date, "end_date" => $mentorAgent->end_date]);
         }
-        
+
         $overrideAgentsDB = AgentNumAgentModel::where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 2)->get();
         $overrideAgents = array();
-        foreach($overrideAgentsDB as $overrideAgent){
-            array_push($overrideAgents , ["id" => $overrideAgent->fk_agent_number_rel, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
+        foreach ($overrideAgentsDB as $overrideAgent) {
+            array_push($overrideAgents, ["id" => $overrideAgent->fk_agent_number_rel, "start_date" => $overrideAgent->start_date, "end_date" => $overrideAgent->end_date]);
         }
-        
-        $commissionRates = CommissionRatesModel::where("fk_agent_number","=",$id)->orderBy("order", "ASC")->get();
+
+        $commissionRates = CommissionRatesModel::where("fk_agent_number", "=", $id)->orderBy("order", "ASC")->get();
         $business_segments = BusinessSegmentsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $business_types = BusinessTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $compensation_types = CompensationTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
@@ -214,7 +248,7 @@ class AgentNumbersController extends Controller
         $txTypes = TxTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agentTypes = [0 => "Writting Agent", 1 => "Override Agent", 2 => "Mentor Agent", 3 => "Carrier Agent"];
         $rateTypes = [1 => "Percentage", 2 => "Flat Rate", 3 => "Flat Rate per member"];
-        
+
 
         $selectedCommissionRate = null;
         $errors = session('errors', new ViewErrorBag);
@@ -225,6 +259,12 @@ class AgentNumbersController extends Controller
                 $selectedCommissionRate = CommissionRatesModel::find($selectedCommissionRateId);
             }
         }
+
+        Utils::createLog(
+            "The user has entered the form to update agent numbers with ID: " . $agent_number->id,
+            "agents.agents-numbers",
+            "show"
+        );
 
         return view('agent_numbers.update', [
             "agent_number" => $agent_number,
@@ -255,12 +295,13 @@ class AgentNumbersController extends Controller
         ]);
     }
 
-    public function updateForm($id, UpdateAgentNumbersRequest $request){
+    public function updateForm($id, UpdateAgentNumbersRequest $request)
+    {
         $this->update($id, $request);
         return redirect(route('agent_numbers.update', ['id' => $id]))->with('message', 'Agent number updated successfully');
     }
 
-    
+
 
     private function update($id, Request $request)
     {
@@ -277,10 +318,10 @@ class AgentNumbersController extends Controller
         $agent_number->save();
 
         $mentorAgents = AgentNumAgentModel::select("fk_agent_number_rel")->where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 1)->get()->toArray();
-        $mentorAgents = array_column($mentorAgents,'fk_agent_number_rel');
+        $mentorAgents = array_column($mentorAgents, 'fk_agent_number_rel');
 
         $overrideAgents = AgentNumAgentModel::select("fk_agent_number_rel")->where("fk_agent_number_base", "=", $agent_number->id)->where("type", "=", 2)->get()->toArray();
-        $overrideAgents = array_column($overrideAgents,'fk_agent_number_rel');
+        $overrideAgents = array_column($overrideAgents, 'fk_agent_number_rel');
 
         $arrMentorAgents = [];
         $arrMentorAgentsDates = [];
@@ -290,19 +331,18 @@ class AgentNumbersController extends Controller
             $mentorAgentInput = "mentor_agent_" . $i;
             if ($request->has($mentorAgentInput) && !empty($request->input($mentorAgentInput))) {
                 $mentorAgentID = $request->input($mentorAgentInput);
-                $startDate = $request->input("start_date_ment_".$i);
-                $endDate = $request->input("end_date_ment_".$i);
+                $startDate = $request->input("start_date_ment_" . $i);
+                $endDate = $request->input("end_date_ment_" . $i);
 
                 array_push($arrMentorAgents, $mentorAgentID);
                 array_push($arrMentorAgentsDates, ["start_date" => $startDate, "end_date" => $endDate]);
-                
             }
 
             $overrideAgentInput = "override_agent_" . $i;
             if ($request->has($overrideAgentInput) && !empty($request->input($overrideAgentInput))) {
                 $overrideAgentID = $request->input($overrideAgentInput);
-                $startDate = $request->input("start_date_over_".$i);
-                $endDate = $request->input("end_date_over_".$i);
+                $startDate = $request->input("start_date_over_" . $i);
+                $endDate = $request->input("end_date_over_" . $i);
 
                 array_push($arrOverrideAgents, $overrideAgentID);
                 array_push($arrOverrideAgentsDates, ["start_date" => $startDate, "end_date" => $endDate]);
@@ -313,7 +353,7 @@ class AgentNumbersController extends Controller
         $deleteMentorAgents = array_diff($mentorAgents, $arrMentorAgents);
         $deleteOverrideAgents = array_diff($overrideAgents, $arrOverrideAgents);
 
-        
+
         AgentNumAgentModel::where("fk_agent_number_base", $agent_number->id)->whereIn("fk_agent_number_rel", $deleteMentorAgents)->delete();
         AgentNumAgentModel::where("fk_agent_number_base", $agent_number->id)->whereIn("fk_agent_number_rel", $deleteOverrideAgents)->delete();
 
@@ -323,16 +363,15 @@ class AgentNumbersController extends Controller
             if (!isset($existMentorAgent)) {
                 $agentNumAgent = new AgentNumAgentModel();
                 $agentNumAgent->type = 1;
-                $agentNumAgent->fk_agent_number_base = $agent_number->id;                
+                $agentNumAgent->fk_agent_number_base = $agent_number->id;
                 $agentNumAgent->fk_agent_number_rel = $mentorAgentID;
-            }
-            else{
+            } else {
                 $agentNumAgent = AgentNumAgentModel::find($existMentorAgent->id);
             }
 
             $agentNumAgent->start_date = $arrMentorAgentsDates[$row]["start_date"];
             $agentNumAgent->end_date = $arrMentorAgentsDates[$row]["end_date"];
-            
+
             $agentNumAgent->save();
         }
 
@@ -343,14 +382,19 @@ class AgentNumbersController extends Controller
                 $agentNumAgent->type = 2;
                 $agentNumAgent->fk_agent_number_base = $agent_number->id;
                 $agentNumAgent->fk_agent_number_rel = $overrideAgentID;
-            }
-            else{
+            } else {
                 $agentNumAgent = AgentNumAgentModel::find($existMentorAgent->id);
             }
             $agentNumAgent->start_date = $arrOverrideAgentsDates[$row]["start_date"];
             $agentNumAgent->end_date = $arrOverrideAgentsDates[$row]["end_date"];
 
             $agentNumAgent->save();
-        }        
+        }
+
+        Utils::createLog(
+            "The user has modified the agent number with ID: " . $agent_number->id,
+            "agents.agents-numbers",
+            "update"
+        );
     }
 }

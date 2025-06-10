@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Cuids\CreateCuidRequest;
 use App\Http\Requests\Cuids\EditCuidRequest;
 use App\Models\Customers\CuidsModel;
@@ -17,6 +18,12 @@ class CuidsController extends Controller
     {
         $carriers = CarriersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $business_segments = BusinessSegmentsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+
+        Utils::createLog(
+            "The user has entered the form to create CUID to Customer with ID: " . $customerID,
+            "customers.cuids",
+            "show"
+        );
 
         return view('cuids.create', [
             "customerID" => $customerID,
@@ -36,16 +43,30 @@ class CuidsController extends Controller
         $cuid->fk_customer = $request->input("customerID");
         $cuid->save();
 
+        Utils::createLog(
+            "The user has created a new CUID with ID: " . $cuid->id,
+            "customers.cuids",
+            "create"
+        );
+
+
         return redirect(route('customers.update', ['id' => $cuid->fk_customer]))->with('message', 'CUID created successfully');
     }
 
-    public function showUpdateForm($id){
+    public function showUpdateForm($id)
+    {
 
         $cuid = CuidsModel::find($id);
         $carriers = CarriersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $business_segments = BusinessSegmentsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
-        return view('cuids.update',[
+        Utils::createLog(
+            "The user has entered the form to update CUIDs with ID:" . $cuid->id,
+            'customers.cuids',
+            "show"
+        );
+
+        return view('cuids.update', [
             "cuid" => $cuid,
             "carriers" => $carriers,
             "business_segments" => $business_segments,
@@ -53,7 +74,8 @@ class CuidsController extends Controller
     }
 
 
-    public function update($id, EditCuidRequest $request){
+    public function update($id, EditCuidRequest $request)
+    {
         $cuid = CuidsModel::find($id);
         $cuid->name = $request->input("cuid");
         $cuid->fk_carrier = $request->input("carrier");
@@ -62,16 +84,31 @@ class CuidsController extends Controller
         $cuid->validation_note = $request->input("validation_note");
         $cuid->save();
 
+        Utils::createLog(
+            "The user has modified the CUID with ID:" . $cuid->id,
+            'customers.cuids',
+            "update"
+        );
+
         return redirect(route('customers.update', ['id' => $cuid->fk_customer]))->with('message', 'CUID upadted successfully');
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $cuid = CuidsModel::find($id);
+        Utils::createLog(
+            "The user has attempted to delete the CUID with ID: " . $id,
+            'customers.cuids',
+            "delete"
+        );
         $customerID = $cuid->fk_customer;
-        //Validations
-        $cuid->delete();       
+        $cuid->delete();
+        Utils::createLog(
+            "The user has deleted the CUID with ID: " . $id,
+            'customers.cuids',
+            "delete"
+        );
 
         return redirect(route('customers.update', ['id' => $customerID]))->with('message', 'CUID deleted successfully');
     }
-
 }

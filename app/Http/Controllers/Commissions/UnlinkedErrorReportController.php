@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Commissions;
 
 use App\Exports\UnlinkedErrorExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\MultiTable\CarriersModel;
@@ -22,6 +23,11 @@ class UnlinkedErrorReportController extends Controller
         $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $carriers = CarriersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
+        Utils::createLog(
+            "The user has entered the unlinked report",
+            "commissions.unlinked",
+            "show"
+        );
         return view('commissions.showUnlinkedErrorReport',[
             "agentNumbers" => $agentNumbers,
             "agency_codes" => $agency_codes,
@@ -31,6 +37,11 @@ class UnlinkedErrorReportController extends Controller
 
     public function generateUnlinkedErrorReport(Request $request){
         
+        Utils::createLog(
+            "The user has downloaded the unlinked report.",
+            "commissions.unlinked",
+            "create"
+        );
         return Excel::download(new UnlinkedErrorExport(
                 $request->input('statement_start_date'),
                 $request->input('statement_end_date'),

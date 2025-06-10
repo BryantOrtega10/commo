@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Agents;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Agents\CreateAgentRequest;
 use App\Http\Requests\Agents\EditAgentRequest;
 use App\Models\Agents\AgentNumbersModel;
@@ -28,112 +29,12 @@ class AgentsControllers extends Controller
 {
     public function show(Request $request)
     {
-        $agents = AgentsModel::with(["agent_numbers" => function ($query) use ($request) {
-
-            if ($request->has("agent_number") && !empty($request->input("agent_number"))) {
-                $input = $request->input("agent_number");
-                $query->where('number', "LIKE",  '%' . $input . '%');
-            }
-            if ($request->has("agency_code") && !empty($request->input("agency_code"))) {
-                $input = $request->input("agency_code");
-                $query->where('fk_agency_code', "=", $input);
-            }
-            if ($request->has("agent_title") && !empty($request->input("agent_title"))) {
-                $input = $request->input("agent_title");
-                $query->where('fk_agent_title', "=", $input);
-            }
-            if ($request->has("agent_status") && !empty($request->input("agent_status"))) {
-                $input = $request->input("agent_status");
-                $query->where('fk_agent_status', "=", $input);
-            }
-            if ($request->has("carrier") && !empty($request->input("carrier"))) {
-                $input = $request->input("carrier");
-                $query->where('fk_carrier', "=", $input);
-            }
-            if ($request->has("mentor_agent") && !empty($request->input("mentor_agent"))) {
-                $input = $request->input("mentor_agent");
-                $query->whereHas('mentor_agents', function ($subquery) use ($input) {
-                    $subquery->where('fk_agent', "=", $input);
-                });
-            }
-            if ($request->has("override_agent") && !empty($request->input("override_agent"))) {
-                $input = $request->input("override_agent");
-                $query->whereHas('override_agents', function ($subquery) use ($input) {
-                    $subquery->where('fk_agent', "=", $input);
-                });
-            }
-        }]);
-
-        if ($request->has("first_name") && !empty($request->input("first_name"))) {
-            $agents->where("agents.first_name", "LIKE", '%' . $request->input("first_name") . '%');
-        }
-        if ($request->has("last_name") && !empty($request->input("last_name"))) {
-            $agents->where("agents.last_name", "LIKE", '%' . $request->input("last_name") . '%');
-        }
-        if ($request->has("agent_number") && !empty($request->input("agent_number"))) {
-            $input = $request->input("agent_number");
-            $agents->whereHas('agent_numbers', function ($query) use ($input) {
-                $query->where('number', "LIKE",  '%' . $input . '%');
-            });
-        }
-        if ($request->has("agency_code") && !empty($request->input("agency_code"))) {
-            $input = $request->input("agency_code");
-            $agents->whereHas('agent_numbers', function ($query) use ($input) {
-                $query->where('fk_agency_code', "=", $input);
-            });
-        }
-        if ($request->has("email") && !empty($request->input("email"))) {
-            $agents->where("agents.email", "LIKE", '%' . $request->input("email") . '%');
-        }
-        if ($request->has("phone") && !empty($request->input("phone"))) {
-            $agents->where("agents.phone", "LIKE", '%' . $request->input("phone") . '%');
-        }
-        if ($request->has("contract_type") && !empty($request->input("contract_type"))) {
-            $agents->where("agents.fk_contract_type", "=", $request->input("contract_type"));
-        }
-        if ($request->has("agent_title") && !empty($request->input("agent_title"))) {
-            $input = $request->input("agent_title");
-            $agents->whereHas('agent_numbers', function ($query) use ($input) {
-                $query->where('fk_agent_title', "=", $input);
-            });
-        }
-        if ($request->has("agent_status") && !empty($request->input("agent_status"))) {
-            $input = $request->input("agent_status");
-            $agents->whereHas('agent_numbers', function ($query) use ($input) {
-                $query->where('fk_agent_status', "=", $input);
-            });
-        }
-        if ($request->has("carrier") && !empty($request->input("carrier"))) {
-            $input = $request->input("carrier");
-            $agents->whereHas('agent_numbers', function ($query) use ($input) {
-                $query->where('fk_carrier', "=", $input);
-            });
-        }
-        if ($request->has("contract_date_from") && !empty($request->input("contract_date_from"))) {
-            $agents->where("agents.contract_date", ">=", $request->input("contract_date_from"));
-        }
-        if ($request->has("contract_date_to") && !empty($request->input("contract_date_to"))) {
-            $agents->where("agents.contract_date", "<=", $request->input("contract_date_to"));
-        }
-        if ($request->has("mentor_agent") && !empty($request->input("mentor_agent"))) {
-            $input = $request->input("mentor_agent");
-            $agents->whereHas('agent_numbers', function ($query) use ($input) {
-                $query->whereHas('mentor_agents', function ($subquery) use ($input) {
-                    $subquery->where('fk_agent', "=", $input);
-                });
-            });
-        }
-        if ($request->has("override_agent") && !empty($request->input("override_agent"))) {
-            $input = $request->input("override_agent");
-            $agents->whereHas('agent_numbers', function ($query) use ($input) {
-                $query->whereHas('override_agents', function ($subquery) use ($input) {
-                    $subquery->where('fk_agent', "=", $input);
-                });
-            });
-        }
-
-        $agents = $agents->get();
-
+        $agents = []; //DataTable
+        Utils::createLog(
+            "The user entered the agents list.",
+            "agents.agents",
+            "show"
+        );
         session()->flashInput($request->all());
 
         $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
@@ -169,7 +70,11 @@ class AgentsControllers extends Controller
         $states = StatesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $sales_regions = SalesRegionModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $contract_types = ContractTypeModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-
+        Utils::createLog(
+            "The user has entered the form to create agents.",
+            "agents.agents",
+            "show"
+        );
         return view('agents.create', [
             'genders' => $genders,
             'states' => $states,
@@ -502,6 +407,12 @@ class AgentsControllers extends Controller
         $agent->fk_entry_user = $entry_user->id;
         $agent->fk_user = $agent_user->id;
         $agent->save();
+        
+        Utils::createLog(
+            "The user has created a new agent with ID: " . $agent->id,
+            "agents.agents",
+            "create"
+        );
 
         return redirect(route('agents.show'))->with('message', 'Agent created successfully');
     }
@@ -534,6 +445,11 @@ class AgentsControllers extends Controller
             }
         }
 
+        Utils::createLog(
+            "The user has entered the form to update Agents with ID: " . $agent->id,
+            'agents.agents',
+            "show"
+        );
 
         return view('agents.update', [
             'agent' => $agent,
@@ -586,6 +502,12 @@ class AgentsControllers extends Controller
         $agent->company_EIN = $request->input("company_EIN");
         $agent->agent_notes = $request->input("agent_notes");
         $agent->save();
+
+        Utils::createLog(
+            "The user has modified the agent with ID:" . $agent->id,
+            'agents.agents',
+            "update"
+        );
 
         return redirect(route('agents.show'))->with('message', 'Agent updated successfully');
     }

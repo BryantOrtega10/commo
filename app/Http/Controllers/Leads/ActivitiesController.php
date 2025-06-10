@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Leads;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Leads\CreateActivityRequest;
 use App\Http\Requests\Leads\UpdateActivityRequest;
 use App\Models\Customers\ActivitiesModel;
@@ -14,6 +15,13 @@ use Illuminate\Support\Facades\Auth;
 class ActivitiesController extends Controller
 {
     public function showActivityModal($idLead, $type){
+
+        Utils::createLog(
+            "The user entered the activity form for lead ID: ".$idLead,
+            "leads.activity",
+            "show"
+        );
+        
         return view('activities.partials.activityModal',[
             'type' => $type,
             'idLead' => $idLead
@@ -51,6 +59,13 @@ class ActivitiesController extends Controller
         $log->fk_entry_user = $entry_user->id;
         $log->save();
 
+        
+        Utils::createLog(
+            "The user has created a new activity with ID: ".$activity->id." to lead with ID: ".$idLead,
+            "leads.activity",
+            "create"
+        );
+
         return redirect(route('leads.details',['id' => $idLead]))->with('message', 'Activity created successfully');
     }
 
@@ -58,6 +73,12 @@ class ActivitiesController extends Controller
 
         $activity = ActivitiesModel::find($id);
         
+        Utils::createLog(
+            "The user entered the activity details for activity ID: ".$id,
+            "leads.activity",
+            "show"
+        );
+
         return view('activities.partials.activityDetailsModal',[
             'activity' => $activity
         ]);
@@ -90,6 +111,13 @@ class ActivitiesController extends Controller
         $log->save();
 
         //TODO: Enviar Mail si se dio reenviar
+
+        Utils::createLog(
+            "The user has updated the activity with ID: ".$id,
+            "leads.activity",
+            "update"
+        );
+        
 
         return redirect(route('leads.details',['id' => $activity->fk_customer]))->with('message', 'Activity updated successfully');
     }

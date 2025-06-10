@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Commissions;
 
 use App\Exports\AgentBatchReportExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Jobs\ProcessAgentReportJob;
 use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\StatementsModel;
@@ -26,6 +27,12 @@ class AgentReportProcessController extends Controller
         $agents = AgentsModel::orderBy("last_name", "ASC")->orderBy("first_name", "ASC")->get();
         $reports = AgentBatchReportModel::all();
         $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+
+        Utils::createLog(
+            "The user has entered the agent report processes form",
+            "commissions.agent-process",
+            "show"
+        );
 
         return view('commissions.showAgentReportsProcesses', [
             "agents" => $agents,
@@ -50,24 +57,40 @@ class AgentReportProcessController extends Controller
         $template->description = $request->input("html_desc");
         $template->save();
 
+        Utils::createLog(
+            "The user has updated the email template",
+            "commissions.agent-process",
+            "update"
+        );
+
+
         return redirect(route('commissions.agent-process.show'))->with('message', 'Email Template updated successfully');
     }
 
 
     public function sendMailBatch(Request $request)
     {
+        $logMessage = "The user has sent the email to all agents with statement date: ".$request->input('statement_date');
         $statements = StatementsModel::select("statements.*")
             ->join("agent_numbers", "agent_numbers.id", "=", "statements.fk_agent_number")
             ->where("statements.statement_date", "=", $request->input('statement_date'));
 
         if ($request->has("agency_code") && !empty($request->input("agency_code"))) {
             $input = $request->input("agency_code");
+            $logMessage .= " and agency id: ".$input;
             $statements->where('agent_numbers.fk_agency_code', "=", $input);
         }
 
         $affected = $statements->count();
 
         $statements->update(["status" => "1"]);
+
+
+        Utils::createLog(
+            $logMessage,
+            "commissions.agent-process",
+            "create"
+        );
         //TODO: Enviar mails
         if ($affected == 0) {
             return redirect(route('commissions.agent-process.show'))->with('error', 'No statements were found for this date');
@@ -94,7 +117,11 @@ class AgentReportProcessController extends Controller
 
         $statements->update(["status" => "1"]);
         //TODO: Enviar mails
-
+        Utils::createLog(
+            "The user has sent the email to certain agents with statement date: ".$request->input('statement_date'),
+            "commissions.agent-process",
+            "create"
+        );
         if ($affected == 0) {
             return redirect(route('commissions.agent-process.show'))->with('error', 'No statements were found for this date and agent');
         } else {
@@ -154,6 +181,12 @@ class AgentReportProcessController extends Controller
             })
             ->dispatch();
 
+        Utils::createLog(
+            "The user has started a report of commissions for all agents with statement date: ".$request->input('statement_date'),
+            "commissions.agent-process",
+            "create"
+        );
+
         return redirect(route('commissions.agent-process.showUpload', ['id' => $report->id]))->with('message', 'Report files are being generated');
     }
     public function generateAgentReportIndividual(Request $request)
@@ -208,6 +241,11 @@ class AgentReportProcessController extends Controller
             })
             ->dispatch();
 
+        Utils::createLog(
+            "The user has started a report of commissions for certain agents with statement date: ".$request->input('statement_date'),
+            "commissions.agent-process",
+            "create"
+        );
         return redirect(route('commissions.agent-process.showUpload', ['id' => $report->id]))->with('message', 'Report files are being generated');
     }
 
@@ -276,6 +314,12 @@ class AgentReportProcessController extends Controller
         } else {
             return redirect(route('commissions.agent-process.showUpload', ['id' => $report->id]))->with('error', 'The ZIP file could not be created.');
         }
+        
+        Utils::createLog(
+            "The user has downloaded a report of commissions with ID: ".$report->id,
+            "commissions.agent-process",
+            "create"
+        );
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
@@ -293,6 +337,12 @@ class AgentReportProcessController extends Controller
 
 
         $report->delete();
+
+        Utils::createLog(
+            "The user has deleted a report of commissions with ID: ".$id,
+            "commissions.agent-process",
+            "delete"
+        );
 
         return redirect(route('commissions.agent-process.show'))->with('message', 'Report has been deleted');
     }

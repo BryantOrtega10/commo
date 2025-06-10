@@ -30,19 +30,24 @@ class ConfirmPasswordController extends Controller
     {
         
         switch(strtolower(Auth::user()->role)){
+            case 'supervisor':
+                return route('supervisor.leads.show');
+                break;
+
+            case 'superadmin':
+                return route('home');
+                break;
+
             case 'admin':
-                return route('policies.show');
+                return route('home');
                 break;
 
             case 'agent':
                 return route('leads.show');
                 break;
-        
-            default:
-                return route('policies.show');
-                break;
+
         }
-        return '/';
+        return route('home');
     }
 
     /**

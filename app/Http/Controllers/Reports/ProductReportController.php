@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Reports;
 
 use App\Exports\ProductReportExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\MultiTable\BusinessTypesModel;
 use App\Models\MultiTable\CarriersModel;
 use App\Models\MultiTable\PlanTypesModel;
@@ -19,7 +20,11 @@ class ProductReportController extends Controller
         $business_types = BusinessTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $product_types = ProductTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $plan_types = PlanTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        
+        Utils::createLog(
+            "The user has entered the product report",
+            "reports.product",
+            "show"
+        );
         return view('reports.showProductReport',[
             'carriers' => $carriers,
             'business_types' => $business_types,
@@ -36,7 +41,11 @@ class ProductReportController extends Controller
         $description = $request->input("description");
         $plan_type = $request->input("plan_type");
         $product_type = $request->input("product_type");
-
+        Utils::createLog(
+            "The user has downloaded the product report.",
+            "reports.product",
+            "create"
+        );
         return Excel::download(new ProductReportExport(
             $carrier,
             $business_type,

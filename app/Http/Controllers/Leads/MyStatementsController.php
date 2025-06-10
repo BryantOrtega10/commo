@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Leads;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\StatementsItemModel;
 use App\Models\Commissions\StatementsModel;
@@ -10,30 +11,36 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class MySettlementsController extends Controller
+class MyStatementsController extends Controller
 {
     public function show(Request $request){
 
         $agent_user = Auth::user();
    
-        $settlements = StatementsModel::join("agent_numbers","agent_numbers.id","=","statements.fk_agent_number")
+        $statements = StatementsModel::join("agent_numbers","agent_numbers.id","=","statements.fk_agent_number")
                                       ->join("agents","agents.id","=","agent_numbers.fk_agent")
                                       ->where("agents.fk_user","=",$agent_user->id)
                                       ->where("statements.status","=","1");
 
         if ($request->has("start_date") && !empty($request->input("start_date"))) {
-            $settlements->where("statement_date", ">=", $request->input("start_date"));
+            $statements->where("statement_date", ">=", $request->input("start_date"));
         }
         if ($request->has("end_date") && !empty($request->input("end_date"))) {
-            $settlements->where("statement_date", "<=", $request->input("end_date"));
+            $statements->where("statement_date", "<=", $request->input("end_date"));
         }
 
 
-        $settlements = $settlements->get();
+        $statements = $statements->get();
         session()->flashInput($request->all());
 
-        return view('leads.mySettlements',[
-            'settlements' => $settlements
+        Utils::createLog(
+            "The user entered the my statements menu",
+            "my-statements",
+            "show"
+        );
+        
+        return view('leads.myStatements',[
+            'statements' => $statements
         ]);
     }
 
@@ -41,7 +48,7 @@ class MySettlementsController extends Controller
         $agent_user = Auth::user();
         $statement = StatementsModel::find($id);
         if(!isset($statement) || $agent_user->id !== $statement->agent_number->agent->fk_user){
-            return redirect(route('my-settlements.show'))->with('error',"This statement does not belong to you");
+            return redirect(route('my-statements.show'))->with('error',"This statement does not belong to you");
         }
 
         $statementItems = StatementsItemModel::where("fk_statement", "=", $id);
@@ -88,6 +95,11 @@ class MySettlementsController extends Controller
         $canvas = $dompdf->get_canvas();
         $canvas->page_text(15, 540, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 10, [0, 0, 0]);
 
+        Utils::createLog(
+            "The user has downloaded the statements report ID: ".$statement->id,
+            "my-statements",
+            "create"
+        );
 
         return $pdf->download('Statement ' . date("m-d-Y",strtotime($statement->statement_date)) . ' - '.$id.'.pdf'); // O ->stream('archivo.pdf');
     }

@@ -35,7 +35,12 @@ class AppServiceProvider extends ServiceProvider
 
         $agent_permissions = [
             'leads',
-            'my-settlements'
+            'my-statements'
+        ];
+
+        $supervisor_permissions = [
+            'supervisor',
+            'logs'
         ];
 
         $admin_permissions = [
@@ -80,13 +85,19 @@ class AppServiceProvider extends ServiceProvider
         
         foreach ($admin_permissions as $admin_permission) {
             Gate::define($admin_permission, function (User $user) {
-                return (strtolower($user->role) == 'admin');
+                return (strtolower($user->role) == 'admin' || strtolower($user->role) == 'superadmin');
             });
         }
 
         foreach ($agent_permissions as $agent_permission) {
             Gate::define($agent_permission, function (User $user) {
                 return (strtolower($user->role) == 'agent');
+            });
+        }
+
+        foreach ($supervisor_permissions as $supervisor_permission) {
+            Gate::define($supervisor_permission, function (User $user) {
+                return (strtolower($user->role) == 'supervisor');
             });
         }
 

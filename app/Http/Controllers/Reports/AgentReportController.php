@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Reports;
 
 use App\Exports\AgentReportExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\MultiTable\AgentStatusModel;
@@ -22,6 +23,12 @@ class AgentReportController extends Controller
         $agent_statuses = AgentStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agentNumbers = AgentNumbersModel::all();
     
+        Utils::createLog(
+            "The user has entered the agent report",
+            "reports.agent",
+            "show"
+        );
+
         return view('reports.showAgentReport',[
             "agency_codes" => $agency_codes,
             "sales_regions" => $sales_regions,
@@ -40,6 +47,11 @@ class AgentReportController extends Controller
         $override_agent_number = $request->input("override_agent_number");
         $sales_region = $request->input("sales_region");
         $agent_title = $request->input("agent_title");
+        Utils::createLog(
+            "The user has downloaded the agent report.",
+            "reports.agent",
+            "create"
+        );
 
         return Excel::download(new AgentReportExport(
             $agency_code,

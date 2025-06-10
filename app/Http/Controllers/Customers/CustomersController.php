@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Customers\CreateCustomerRequest;
 use App\Models\Customers\CuidsModel;
 use App\Models\Customers\CustomersModel;
@@ -26,94 +27,12 @@ class CustomersController extends Controller
 {
     public function show(Request $request)
     {
-        $customers = CustomersModel::select("customers.*");
-
-        if ($request->has("business_type") && !empty($request->input("business_type"))) {
-            $customers = $customers->where("fk_business_type", "=", $request->input("business_type"));
-        }
-
-        if ($request->has("first_name") && !empty($request->input("first_name"))) {
-            $customers = $customers->where("first_name", "LIKE", "%" . $request->input("first_name") . "%");
-        }
-
-        if ($request->has("middle_initial") && !empty($request->input("middle_initial"))) {
-            $customers = $customers->where("middle_initial", "LIKE", "%" . $request->input("middle_initial") . "%");
-        }
-
-        if ($request->has("last_name") && !empty($request->input("last_name"))) {
-            $customers = $customers->where("last_name", "LIKE", "%" . $request->input("last_name") . "%");
-        }
-
-        if ($request->has("suffix") && !empty($request->input("suffix"))) {
-            $customers = $customers->where("fk_suffix", "=", $request->input("business_type"));
-        }
-
-        if ($request->has("date_birth") && !empty($request->input("date_birth"))) {
-            $customers = $customers->where("date_birth", "LIKE", "%" . $request->input("date_birth") . "%");
-        }
-
-        if ($request->has("ssn") && !empty($request->input("ssn"))) {
-            $customers = $customers->where("ssn", "LIKE", "%" . $request->input("ssn") . "%");
-        }
-
-        if ($request->has("gender") && !empty($request->input("gender"))) {
-            $customers = $customers->where("fk_gender", "=", $request->input("business_type"));
-        }
-
-        if ($request->has("matiral_status") && !empty($request->input("matiral_status"))) {
-            $customers = $customers->where("fk_matiral_status", "=", $request->input("business_type"));
-        }
-
-        if ($request->has("email") && !empty($request->input("email"))) {
-            $customers = $customers->where("email", "LIKE", "%" . $request->input("email") . "%");
-        }
-
-        if ($request->has("address") && !empty($request->input("address"))) {
-            $customers = $customers->where("address", "LIKE", "%" . $request->input("address") . "%");
-        }
-
-        if ($request->has("address_2") && !empty($request->input("address_2"))) {
-            $customers = $customers->where("address_2", "LIKE", "%" . $request->input("address_2") . "%");
-        }
-
-        if ($request->has("county") && !empty($request->input("county"))) {
-            $customers = $customers->where("fk_county", "=", $request->input("county"));
-        }
-
-        if ($request->has("city") && !empty($request->input("city"))) {
-            $customers = $customers->where("city", "LIKE", "%" . $request->input("city") . "%");
-        }
-
-        if ($request->has("zip_code") && !empty($request->input("zip_code"))) {
-            $customers = $customers->where("zip_code", "LIKE", "%" . $request->input("zip_code") . "%");
-        }
-
-        if ($request->has("phone") && !empty($request->input("phone"))) {
-            $customers = $customers->where("phone", "LIKE", "%" . $request->input("phone") . "%");
-        }
-
-        if ($request->has("phone_2") && !empty($request->input("phone_2"))) {
-            $customers = $customers->where("phone_2", "LIKE", "%" . $request->input("phone_2") . "%");
-        }
-
-        if ($request->has("registration_source") && !empty($request->input("registration_source"))) {
-            $customers = $customers->where("fk_registration_source", "=", $request->input("registration_source"));
-        }
-
-        if ($request->has("status") && !empty($request->input("status"))) {
-            $customers = $customers->where("fk_status", "=", $request->input("status"));
-        }
-
-        if ($request->has("phase") && !empty($request->input("phase"))) {
-            $customers = $customers->where("fk_phase", "=", $request->input("phase"));
-        }
-
-        if ($request->has("legal_basis") && !empty($request->input("legal_basis"))) {
-            $customers = $customers->where("fk_legal_basis", "=", $request->input("legal_basis"));
-        }
-
-        $customers = $customers->get();
-
+        $customers = []; //Datatable        
+        Utils::createLog(
+            "The user has entered the customers list.",
+            "customers.customers",
+            "show"
+        );
         session()->flashInput($request->all());
 
         $business_types = BusinessTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
@@ -383,6 +302,13 @@ class CustomersController extends Controller
         $phases = PhasesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $legal_basis_m = LegalBasisModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
+        Utils::createLog(
+            "The user has entered the form to create Customers",
+            "customers.customers",
+            "show"
+        );
+
+
         return view('customers.create', [
             "business_types" => $business_types,
             "matiral_statuses" => $matiral_statuses,
@@ -427,6 +353,12 @@ class CustomersController extends Controller
         $customer->fk_entry_user = $entry_user->id;
         $customer->save();
 
+        Utils::createLog(
+            "The user has created a new Customer with ID: ".$customer->id,
+            "customers.customers",
+            "create"
+        );       
+
         return redirect(route('customers.show'))->with('message', 'Customer created successfully');
     }
 
@@ -459,7 +391,14 @@ class CustomersController extends Controller
         }
 
 
-        $policies = [];
+        $policies = []; //Datatable
+
+     
+        Utils::createLog(
+            "The user has entered the form to update Customers with ID:".$customer->id,
+            'customers.customers',
+            "show"
+        );
 
         return view('customers.update', [
             'customer' => $customer,
@@ -508,6 +447,12 @@ class CustomersController extends Controller
         $customer->fk_legal_basis = $request->input("legal_basis");
         $customer->fk_agent = $request->input('contact_agent_id');
         $customer->save();
+
+        Utils::createLog(
+            "The user has modified the Customer with ID:".$customer->id,
+            "customers.customers",
+            "update"
+        );
 
         return redirect(route('customers.show'))->with('message', 'Customer updated successfully');
     }

@@ -18,7 +18,7 @@ class UserAdminSeeder extends Seeder
             'name' => 'Bryant Ortega',
             'email' => 'bryant@mdccolombia.com',
             'password' => Hash::make("1900"),
-            'role' => 'admin'
+            'role' => 'superadmin'
         ]);
     }
 }

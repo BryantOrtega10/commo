@@ -231,8 +231,8 @@ li.nav-item .fa-circle {
     width: 100%;
 }
 
-[class*=sidebar-light-] .nav-header{
-    color: #FFF;
+[class*="sidebar-light-"] .nav-header {
+    color: #fff;
     text-decoration: underline;
 }
 /* .select2-results__option--selectable:empty {
@@ -242,4 +242,27 @@ li.nav-item .fa-circle {
     margin-right: 15px !important;
     color: #000;
     margin-top: 9px;
+}
+
+.card.card-home i {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.card.card-home {
+    text-align: center;
+    min-height: 240px;
+}
+
+.card.card-home .card-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.card.card-home span {
+    font-size: 2rem;
+    color: #000;
 }

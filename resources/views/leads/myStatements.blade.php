@@ -64,12 +64,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($settlements as $statement)
+                    @foreach ($statements as $statement)
                         <tr>
                             <td>{{date("m/d/Y", strtotime($statement->statement_date))}}</td>
                             <td>$ {{number_format($statement->total,2)}}</td>
                             <td>{{$statement->number_policies}}</td>
-                            <td><a href="{{route('my-settlements.generate',['id' => $statement->id])}}" class="btn btn-outline-primary">Download PDF</a></td>
+                            <td><a href="{{route('my-statements.generate',['id' => $statement->id])}}" class="btn btn-outline-primary">Download PDF</a></td>
                         </tr>
                     @endforeach
                 </tbody>

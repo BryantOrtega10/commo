@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Commissions;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentNumbersModel;
 use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\CommissionRatesModel;
@@ -38,6 +39,13 @@ class AgentRatesController extends Controller
         $agent_titles = AgentTitlesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agent_statuses = AgentStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $defaultAgents = AgentsModel::all();
+
+        Utils::createLog(
+            "The user entered the agent rates.",
+            "commissions.agent-rates",
+            "show"
+        );
+
         return view('commissions.showAgentRates', [
             "agentNumbers" => $agentNumbers,
             "agency_codes" => $agency_codes,
@@ -309,6 +317,12 @@ class AgentRatesController extends Controller
             }
             
         }
+
+        Utils::createLog(
+            "The user append agent rates from Agent Number ID: ".$request->input("agentNumberBase")." to Agent Number IDs: ".implode(",",$request->input("agentNumberID",[])),
+            "commissions.agent-rates",
+            "create"
+        );
         return redirect(route('commissions.agent-rates.show'))->with('message', 'Commission rates append successfully');
     }
 
@@ -368,7 +382,11 @@ class AgentRatesController extends Controller
             }
         
         }
-
+        Utils::createLog(
+            "The user replicated agent rates from Agent Number ID: ".$request->input("agentNumberBase")." to Agent Number IDs: ".implode(",",$request->input("agentNumberID",[])),
+            "commissions.agent-rates",
+            "create"
+        );
         
 
         return redirect(route('commissions.agent-rates.show'))->with('message', 'Commission rates replicated successfully');

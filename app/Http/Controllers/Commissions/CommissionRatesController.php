@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Commissions;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Commissions\AddNewCommissionRateRequest;
 use App\Http\Requests\Commissions\EditCommissionRateRequest;
 use App\Models\Commissions\AmfCompensationTypesModel;
@@ -93,7 +94,11 @@ class CommissionRatesController extends Controller
         $commissionRate->fk_entry_user = $entry_user->id;
         $commissionRate->save();
 
-
+        Utils::createLog(
+            "The user has created a new commission rate to agent number: ".$request->input("idAgentNumber"),
+            "commissions.rate",
+            "create"
+        );
         return redirect(route('agent_numbers.update', ['id' => $request->input("idAgentNumber")]))->with('message', 'Commission Rate created successfully');
     }
 
@@ -160,7 +165,12 @@ class CommissionRatesController extends Controller
         $commissionRate->rate_amount = $request->input("rate_amount");
         $commissionRate->save();
 
-
+        Utils::createLog(
+            "The user has updated a commission rate to agent number: ".$commissionRate->fk_agent_number,
+            "commissions.rate",
+            "update"
+        );
+        
         return redirect(route('agent_numbers.update', ['id' => $commissionRate->fk_agent_number]))->with('message', 'Commission Rate updated successfully');
     }
 
@@ -170,6 +180,11 @@ class CommissionRatesController extends Controller
         $agentNumber = $commissionRate->fk_agent_number;
         $commissionRate->delete();
 
+        Utils::createLog(
+            "The user has deleted a commission rate to agent number: ".$agentNumber,
+            "commissions.rate",
+            "delete"
+        );
 
         return redirect(route('agent_numbers.update', ['id' => $agentNumber]))->with('message', 'Commission Rate deleted successfully');
     }

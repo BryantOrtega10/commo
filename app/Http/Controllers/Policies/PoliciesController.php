@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Policies;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Policies\CreatePolicyRequest;
 use App\Http\Requests\Policies\UpdatePolicyRequest;
 use App\Models\Agents\AgentNumbersModel;
@@ -21,12 +22,17 @@ use Illuminate\Support\Facades\Auth;
 
 class PoliciesController extends Controller
 {
-    public function show(Request $request){
+    public function show(Request $request)
+    {
 
         session()->flashInput($request->all());
 
         $product_types = ProductTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-      
+        Utils::createLog(
+            "The user entered the policies list.",
+            "policies.policies",
+            "show"
+        );
         return view('policies.show', [
             "product_types" => $product_types
         ]);
@@ -116,7 +122,7 @@ class PoliciesController extends Controller
                     break;
             }
         }
-        
+
 
 
 
@@ -132,13 +138,13 @@ class PoliciesController extends Controller
             $filteredRecord = array();
             $filteredRecord["policy_id"]["href"] = route('policies.update', ['id' => $policy->id]);
             $filteredRecord["policy_id"]["text"] = $policy->id;
-            
+
             $filteredRecord["suscriber"]["href"] = route('customers.update', ['id' => $policy->fk_customer]);
-            $filteredRecord["suscriber"]["text"] = $policy->customer->first_name." ".$policy->customer->last_name;
+            $filteredRecord["suscriber"]["text"] = $policy->customer->first_name . " " . $policy->customer->last_name;
             $filteredRecord["date_birth"] = ($policy->customer->date_birth ? date('m/d/Y', strtotime($policy->customer->date_birth)) : "");
             $filteredRecord["carrier"] = $policy->product?->carrier?->name;
             $filteredRecord["product_type"] = $policy->product?->product_type?->name ?? "";
-            
+
             $filteredRecord["product"]["href"] = route('products.update', ['id' => $policy->fk_product]);
             $filteredRecord["product"]["text"] = $policy->product->description;
 
@@ -148,11 +154,11 @@ class PoliciesController extends Controller
             $filteredRecord["original_effective_date"] = ($policy->original_effective_date ? date('m/d/Y', strtotime($policy->original_effective_date)) : "");
             $filteredRecord["benefit_effective_date"] = ($policy->benefit_effective_date ? date('m/d/Y', strtotime($policy->benefit_effective_date)) : "");
             $filteredRecord["cancel_date"] = ($policy->cancel_date ? date('m/d/Y', strtotime($policy->cancel_date)) : "");
-            
+
             $filteredRecord["status"] = $policy->policy_status->name;
-            
+
             $filteredRecord["agent"]["href"] = route('agents.update', ['id' => $policy->agent_number->fk_agent]);
-            $filteredRecord["agent"]["text"] = $policy->agent_number->agent->first_name." ".$policy->agent_number->agent->last_name;
+            $filteredRecord["agent"]["text"] = $policy->agent_number->agent->first_name . " " . $policy->agent_number->agent->last_name;
 
             $filteredRecord["agent_number"]["href"] = route('agent_numbers.update', ['id' => $policy->agent_number->id]);
             $filteredRecord["agent_number"]["text"] = $policy->agent_number->number;
@@ -168,8 +174,9 @@ class PoliciesController extends Controller
         ]);
     }
 
-    public function showCreateForm() {
-        $agentNumbers = AgentNumbersModel::with(["agent_status" => function ($query) { 
+    public function showCreateForm()
+    {
+        $agentNumbers = AgentNumbersModel::with(["agent_status" => function ($query) {
             $query->whereRaw("LOWER(name) = 'Active'");
         }])->get();
 
@@ -178,9 +185,13 @@ class PoliciesController extends Controller
         $enrollment_methods = EnrollmentMethodsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $counties = CountiesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $policy_statuses = PolicyStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        $relationships = RelationshipsModel::select("id","name")->where("status", "=", "1")->orderBy("sort_order", "ASC")->get()->makeHidden(['txt_status']);
-        
+        $relationships = RelationshipsModel::select("id", "name")->where("status", "=", "1")->orderBy("sort_order", "ASC")->get()->makeHidden(['txt_status']);
 
+        Utils::createLog(
+            "The user has entered the form to create policies.",
+            "policies.policies",
+            "show"
+        );
         return view('policies.create', [
             "agentNumbers" => $agentNumbers,
             "products" => $products,
@@ -196,8 +207,8 @@ class PoliciesController extends Controller
         $entry_user = Auth::user();
         $agent_number = AgentNumbersModel::find($request->input("agent_number"));
         $customerID = $request->input("subscriber_id");
-        
-        if(!$request->has("subscriber_id") || empty($request->input("subscriber_id"))){
+
+        if (!$request->has("subscriber_id") || empty($request->input("subscriber_id"))) {
             $customer = new CustomersModel();
             $customer->fk_business_type = 1;
             $customer->first_name = $request->input('first_name');
@@ -206,12 +217,18 @@ class PoliciesController extends Controller
             $customer->ssn = $request->input('ssn');
             $customerStatus = CustomerStatusModel::whereRaw("LOWER(name) = 'customer'")->first();
             $customer->fk_status = $customerStatus->id;
-            $customer->fk_agent = $agent_number->agent->id; 
+            $customer->fk_agent = $agent_number->agent->id;
             $customer->fk_entry_user = $entry_user->id;
             $customer->save();
             $customerID = $customer->id;
+
+            Utils::createLog(
+                "The user has created a new customer with ID: " . $customer->id." from the form to create policies",
+                "policies.policies.customers",
+                "create"
+            );
         }
-        
+
         $policy = new PoliciesModel();
         $policy->app_submit_date = $request->input("app_submit_date");
         $policy->request_effective_date = $request->input("request_effective_date");
@@ -237,9 +254,9 @@ class PoliciesController extends Controller
         $policy->fk_county = $request->input("county");
         $policy->fk_entry_user = $entry_user->id;
         $policy->save();
-
-        if($request->has("dependent_first_name")){
-            foreach($request->input("dependent_first_name") as $index => $first_name){
+        
+        if ($request->has("dependent_first_name")) {
+            foreach ($request->input("dependent_first_name") as $index => $first_name) {
                 $dependent = new DependentsModel();
                 $dependent->first_name = $request->input("dependent_first_name")[$index];
                 $dependent->last_name = $request->input("dependent_last_name")[$index];
@@ -251,13 +268,19 @@ class PoliciesController extends Controller
             }
         }
 
-
+        Utils::createLog(
+            "The user has created a new policy with ID: " . $policy->id,
+            "policies.policies",
+            "create"
+        );
+        
         return redirect(route('policies.show'))->with('message', 'Policy created successfully');
-    }   
+    }
 
-    public function showUpdateForm($id){
+    public function showUpdateForm($id)
+    {
         $policy = PoliciesModel::find($id);
-        $agentNumbers = AgentNumbersModel::with(["agent_status" => function ($query) { 
+        $agentNumbers = AgentNumbersModel::with(["agent_status" => function ($query) {
             $query->whereRaw("LOWER(name) = 'Active'");
         }])->get();
 
@@ -266,8 +289,12 @@ class PoliciesController extends Controller
         $enrollment_methods = EnrollmentMethodsModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $counties = CountiesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $policy_statuses = PolicyStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        $relationships = RelationshipsModel::select("id","name")->where("status", "=", "1")->orderBy("sort_order", "ASC")->get()->makeHidden(['txt_status']);
-        
+        $relationships = RelationshipsModel::select("id", "name")->where("status", "=", "1")->orderBy("sort_order", "ASC")->get()->makeHidden(['txt_status']);
+        Utils::createLog(
+            "The user has entered the form to update policies with ID: ".$policy->id,
+            "policies.policies",
+            "show"
+        );
         return view('policies.update', [
             "policy" => $policy,
             "agentNumbers" => $agentNumbers,
@@ -277,8 +304,6 @@ class PoliciesController extends Controller
             "policy_statuses" => $policy_statuses,
             "relationships" => $relationships
         ]);
-
-
     }
 
     public function update($id, UpdatePolicyRequest $request)
@@ -310,23 +335,22 @@ class PoliciesController extends Controller
 
 
         $arrDependentIds = [];
-        if($request->has("dependent_ids")){
+        if ($request->has("dependent_ids")) {
             $arrDependentIds = $request->input("dependent_ids");
         }
-        foreach($policy->dependents as $dependent){
-            if(!in_array($dependent->id, $arrDependentIds)){
+        foreach ($policy->dependents as $dependent) {
+            if (!in_array($dependent->id, $arrDependentIds)) {
                 $dependent->delete();
             }
         }
 
 
-        if($request->has("dependent_first_name")){
-            foreach($request->input("dependent_first_name") as $index => $first_name){
+        if ($request->has("dependent_first_name")) {
+            foreach ($request->input("dependent_first_name") as $index => $first_name) {
                 $dependentID = $arrDependentIds[$index] ?? null;
-                if($dependentID == null){
+                if ($dependentID == null) {
                     $dependent = new DependentsModel();
-                }
-                else{
+                } else {
                     $dependent = DependentsModel::find($dependentID);
                 }
                 $dependent->first_name = $request->input("dependent_first_name")[$index];
@@ -338,6 +362,12 @@ class PoliciesController extends Controller
                 $dependent->save();
             }
         }
+
+        Utils::createLog(
+            "The user has modified the policy with ID: ".$policy->id,
+            "policies.policies",
+            "update"
+        );
 
         return redirect(route('policies.show'))->with('message', 'Policy updated successfully');
     }

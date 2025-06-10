@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Leads;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Leads\CreateLeadRequest;
 use App\Http\Requests\Leads\UpdateDetailsRequest;
 use App\Http\Requests\Leads\UpdateLeadRequest;
@@ -27,46 +28,12 @@ use Illuminate\Support\ViewErrorBag;
 class LeadsController extends Controller
 {
     public function show(Request $request)
-    {
+    {        
         $agent_user = Auth::user();
         $agent = AgentsModel::where("fk_user","=",$agent_user->id)->first();
         $agentId = $agent->id ?? '0';
 
-
-        $leads = CustomersModel::select("customers.*")->where("fk_agent","=",$agentId);
-        if ($request->has("first_name") && !empty($request->input("first_name"))) {
-            $leads = $leads->where("first_name", "LIKE", "%" . $request->input("first_name") . "%");
-        }
-
-        if ($request->has("last_name") && !empty($request->input("last_name"))) {
-            $leads = $leads->where("last_name", "LIKE", "%" . $request->input("last_name") . "%");
-        }
-        
-        if ($request->has("date_birth") && !empty($request->input("date_birth"))) {
-            $leads = $leads->where("date_birth", "LIKE", "%" . $request->input("date_birth") . "%");
-        }
-
-        if ($request->has("email") && !empty($request->input("email"))) {
-            $leads = $leads->where("email", "LIKE", "%" . $request->input("email") . "%");
-        }
-
-        if ($request->has("phone") && !empty($request->input("phone"))) {
-            $leads = $leads->where("phone", "LIKE", "%" . $request->input("phone") . "%");
-        }
-
-        if ($request->has("status") && !empty($request->input("status"))) {
-            $leads = $leads->where("fk_status", "=", $request->input("status"));
-        }
-
-        if ($request->has("phase") && !empty($request->input("phase"))) {
-            $leads = $leads->where("fk_phase", "=", $request->input("phase"));
-        }
-
-        if ($request->has("legal_basis") && !empty($request->input("legal_basis"))) {
-            $leads = $leads->where("fk_legal_basis", "=", $request->input("legal_basis"));
-        }
-
-        $leads = $leads->get();
+        $leads = []; //Datatable
 
         session()->flashInput($request->all());
 
@@ -74,7 +41,11 @@ class LeadsController extends Controller
         $phases = PhasesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $legal_basis_m = LegalBasisModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
-        
+        Utils::createLog(
+            "The user entered the leads list.",
+            "leads",
+            "show"
+        );
 
         return view('leads.show', [
             "leads" => $leads,
@@ -194,6 +165,13 @@ class LeadsController extends Controller
         $phases = PhasesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $legal_basis_m = LegalBasisModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
+        Utils::createLog(
+            "The user has entered the form to create leads",
+            "leads",
+            "show"
+        );
+
+
         return view('leads.create', [
             "registration_sources" => $registration_sources,
             "customer_statuses" => $customer_statuses,
@@ -226,6 +204,12 @@ class LeadsController extends Controller
         $lead->fk_agent = $agentId; 
         $lead->fk_entry_user = $entry_user->id;
         $lead->save();
+
+        Utils::createLog(
+            "The user has created a new lead with ID: ".$lead->id,
+            "leads",
+            "create"
+        );
 
         return redirect(route('leads.show'))->with('message', 'Lead created successfully');
     }
@@ -282,7 +266,11 @@ class LeadsController extends Controller
 
         }
         
-
+        Utils::createLog(
+            "The user has entered the lead details with ID: ".$id,
+            "leads",
+            "show"
+        );
 
         return view('leads.details', [
             "lead" => $lead,
@@ -305,6 +293,11 @@ class LeadsController extends Controller
         $lead->fk_legal_basis = $request->input("legal_basis");
         $lead->save();
              
+        Utils::createLog(
+            "The user has updated the basic lead fields with ID: ".$id,
+            "leads",
+            "update"
+        );
         return redirect(route('leads.details',['id' => $id]))->with('message', 'Lead updated successfully');
     }
 
@@ -319,6 +312,12 @@ class LeadsController extends Controller
         $customer_statuses = CustomerStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $phases = PhasesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $legal_basis_m = LegalBasisModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+
+        Utils::createLog(
+            "The user has entered the form to update lead with ID: ".$id,
+            "leads",
+            "show"
+        );
 
         return view('leads.update', [
             'lead' => $lead,
@@ -360,6 +359,12 @@ class LeadsController extends Controller
         $lead->fk_legal_basis = $request->input("legal_basis");
         
         $lead->save();
+
+        Utils::createLog(
+            "The user has updated the lead with ID: ".$id,
+            "leads",
+            "update"
+        );
 
         return redirect(route('leads.details',['id' => $id]))->with('message', 'Lead updated successfully');
     }

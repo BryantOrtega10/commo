@@ -23,19 +23,24 @@ class UserRoleMiddleware
                     return $next($request);
             }
         }
+        
         switch(strtolower(Auth::user()->role)){
+            case 'supervisor':
+                return redirect(route('supervisor.leads.show'));
+                break;
+
+            case 'superadmin':
+                return redirect(route('home'));
+                break;
+
             case 'admin':
-                return redirect(route('client-sources.show'));
+                return redirect(route('home'));
                 break;
 
             case 'agent':
                 return redirect(route('leads.show'));
-                break;
-
-            default:
-                return redirect(route('home'));
-                break;
+                break;            
         }
-        return redirect('/');
+        return redirect(route('home'));
     }
 }

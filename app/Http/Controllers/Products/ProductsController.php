@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Products;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Products\CreateProductModel;
 use App\Http\Requests\Products\UpdateProductModel;
 use App\Models\MultiTable\BusinessSegmentsModel;
@@ -20,43 +21,18 @@ class ProductsController extends Controller
 {
     public function show(Request $request){
 
-        $products = ProductsModel::select("products.*");
-
-        if($request->has("plan_type") && !empty($request->input('plan_type'))){
-            $products->join("plan_types","plan_types.id", "=", "products.fk_plan_type");
-        }
-
-        if($request->has("product_type") && !empty($request->input('product_type'))){
-            $products->join("product_types","product_types.id", "=", "products.fk_product_type");
-        }
-
-
-        if($request->has("description") && !empty($request->input('description'))){
-
-            $products->where("description","LIKE","%".$request->input('description')."%");
-        }
-        if($request->has("carrier") && !empty($request->input('carrier'))){
-            $products->where("fk_carrier","=",$request->input('carrier'));
-        }
-        if($request->has("business_type") && !empty($request->input('business_type'))){
-            $products->where("fk_business_type","=",$request->input('business_type'));
-        }
-
-        if($request->has("plan_type") && !empty($request->input('plan_type'))){
-            $products->where("plan_types.name", "LIKE","%".$request->input('plan_type')."%");
-        }
-
-        if($request->has("product_type") && !empty($request->input('product_type'))){
-            $products->where("product_types.name", "LIKE","%".$request->input('product_type')."%");
-        }
-        
-        $products = $products->get();
+        $products = []; //Datatable
 
         session()->flashInput($request->all());
 
         $business_types = BusinessTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $carriers = CarriersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
+        Utils::createLog(
+            "The user entered the products list.",
+            "products.products",
+            "show"
+        );
         
         return view('products.show', [
             "products" => $products,
@@ -178,6 +154,12 @@ class ProductsController extends Controller
         $plan_types = PlanTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $tiers = TiersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         
+        Utils::createLog(
+            "The user has entered the form to create products",
+            "products.products",
+            "show"
+        );
+
         return view('products.create', [
             "carriers" => $carriers,
             "business_segments" => $business_segments,
@@ -212,6 +194,12 @@ class ProductsController extends Controller
             }
         }
 
+        Utils::createLog(
+            "The user has created a new agent with ID: ".$product->id,
+            "products.products",
+            "create"
+        );
+
         return redirect(route('products.show'))->with('message', 'Product created successfully');
     }
 
@@ -225,6 +213,11 @@ class ProductsController extends Controller
         $plan_types = PlanTypesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $tiers = TiersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
+        Utils::createLog(
+            "The user has entered the form to update products with ID: ".$product->id,
+            "products.products",
+            "show"
+        );
 
         return view('products.update', [
             "product" => $product,
@@ -276,6 +269,12 @@ class ProductsController extends Controller
             }
         }
 
+        Utils::createLog(
+            "The user has modified the product with ID: ".$product->id,
+            "products.products",
+            "update"
+        );        
+        
         return redirect(route('products.show'))->with('message', 'Product updated successfully');
     }
 

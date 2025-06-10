@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Commissions;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\StatementsItemModel;
 use App\Models\MultiTable\AgencyCodesModel;
@@ -16,7 +17,7 @@ class AgentReportController extends Controller
     {
         $agent_titles = AgentTitlesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-
+        
         return view('commissions.showAgentReport', [
             "agency_codes" => $agency_codes,
             "agent_titles" => $agent_titles
@@ -94,6 +95,11 @@ class AgentReportController extends Controller
         $canvas = $dompdf->get_canvas();
         $canvas->page_text(15, 540, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 10, [0, 0, 0]);
 
+        Utils::createLog(
+            "The user has created a agent report",
+            "commissions.agent-report",
+            "create"
+        );
 
         return $pdf->download('AgentReport' . date("Y-m-d") . '.pdf'); // O ->stream('archivo.pdf');
     }

@@ -31,6 +31,13 @@ class CommissionsController extends Controller
         $carriers = CarriersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $templates = TemplatesModel::where("id", ">", "1")->get();
         $commissionUploads = CommissionUploadsModel::orderBy("created_at", "DESC")->get();
+        
+        Utils::createLog(
+            "The user entered the commission calculation list.",
+            "commissions.calculation",
+            "show"
+        );
+
         return view('commissions.calculation', [
             "carriers" => $carriers,
             "templates" => $templates,
@@ -69,12 +76,15 @@ class CommissionsController extends Controller
         $commissionUpload->save();
         $filePath = Storage::disk('public')->path('commissions/' . $fileName);
 
-        //dump($filePath);
-
         $commissionUploadId = $commissionUpload->id;
 
         Excel::queueImport(new CommissionRowImport($commissionUploadId), $filePath);
 
+        Utils::createLog(
+            "The user has created a new commission upload with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+            "commissions.calculation",
+            "create"
+        );
         return redirect(route('commissions.calculation.showImport', ['id' => $commissionUpload->id]))->with('message', 'The commission file is uploading');
     }
 
@@ -96,6 +106,12 @@ class CommissionsController extends Controller
         $percentageLinked = round($commissionUpload->processed_rows * 100 / $commissionUpload->uploaded_rows, 2);
         $percentageError = round($commissionUpload->error_rows * 100 / $commissionUpload->uploaded_rows, 2);
         $percentageUploaded = 100 - $percentageLinked - $percentageError;
+
+        Utils::createLog(
+            "The user has entered commission upload details with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+            "commissions.calculation",
+            "show"
+        );
 
         return view('commissions.showImport', [
             "commissionUpload" => $commissionUpload,
@@ -220,9 +236,7 @@ class CommissionsController extends Controller
 
     public function linkAllCommissions($id)
     {
-
-
-
+        $entry_user = Auth::user();
         $commissionRows = CommissionUploadRowsModel::select("commission_upload_rows.*")
             ->where("fk_commission_upload", "=", $id)
             ->where("status", "=", 0)
@@ -238,7 +252,7 @@ class CommissionsController extends Controller
             $jobs = array_map(fn($commissionRow) => new LinkCommissionUploadsJob($commissionRow['id']), $commissionRows);
 
             Bus::batch($jobs)
-                ->finally(function ($batch) use ($id) {
+                ->finally(function ($batch) use ($id, $entry_user) {
                     $commissionUpload = CommissionUploadsModel::find($id);
                     $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
                         ->where("fk_commission_upload", "=", $id)
@@ -252,16 +266,28 @@ class CommissionsController extends Controller
                         $commissionUpload->status = 4;
                     }
                     $commissionUpload->save();
+                    Utils::createLog(
+                        "The user has completed the commission link with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+                        "commissions.calculation",
+                        "create",
+                        $entry_user
+                    );
                 })
                 ->dispatch();
         }
 
+        Utils::createLog(
+            "The user has initiated the commission link with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+            "commissions.calculation",
+            "create"
+        );
 
         return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
     }
 
     public function linkCommissions(Request $request)
     {
+        $entry_user = Auth::user();
 
         $commissionRowsDB = CommissionUploadRowsModel::select("commission_upload_rows.*")
             ->whereIn("id", $request->input("commissionRow"));
@@ -285,7 +311,7 @@ class CommissionsController extends Controller
             $id = $commissionRows[0]['fk_commission_upload'];
 
             Bus::batch($jobs)
-                ->finally(function ($batch) use ($ids, $id) {
+                ->finally(function ($batch) use ($ids, $id, $entry_user) {
                     $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
                         ->whereIn("id", $ids)
                         ->where("status", "=", 1)
@@ -300,16 +326,27 @@ class CommissionsController extends Controller
                         $commissionUpload->status = 4;
                     }
                     $commissionUpload->save();
+                    Utils::createLog(
+                        "The user has completed the commission link with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+                        "commissions.calculation",
+                        "create",
+                        $entry_user
+                    );
                 })
                 ->dispatch();
         }
-
+        Utils::createLog(
+            "The user has initiated the commission link with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+            "commissions.calculation",
+            "create"
+        );
 
         return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
     }
 
     public function linkErrors($id)
     {
+        $entry_user = Auth::user();
 
         $commissionUpload = CommissionUploadsModel::find($id);
         $commissionUpload->status = 2;
@@ -330,7 +367,7 @@ class CommissionsController extends Controller
                 Log::info("Todas las filas fueron procesadas");
             })
             ->catch(fn($batch, $e) => Log::error("Error al procesar: " . $e->getMessage()))
-            ->finally(function ($batch) use ($id) {
+            ->finally(function ($batch) use ($id, $entry_user) {
                 $commissionUpload = CommissionUploadsModel::find($id);
                 $commissionRowsUpdated = CommissionUploadRowsModel::select("commission_upload_rows.*")
                     ->where("fk_commission_upload", "=", $id)
@@ -344,8 +381,20 @@ class CommissionsController extends Controller
                     $commissionUpload->status = 4;
                 }
                 $commissionUpload->save();
+                Utils::createLog(
+                    "The user has completed the commission link of errors with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+                    "commissions.calculation",
+                    "create",
+                    $entry_user
+                );
             })
             ->dispatch();
+
+        Utils::createLog(
+            "The user has initiated the commission link of errors with ID: " . $commissionUpload->id." and file name: ".$commissionUpload->name,
+            "commissions.calculation",
+            "create"
+        );
 
         return redirect(route('commissions.calculation.showImport', ['id' => $id]))->with('message', 'Commision upladoad is linking');
     }
@@ -356,6 +405,12 @@ class CommissionsController extends Controller
             ->join("commission_transactions", "commission_transactions.id", "=", "statement_items.fk_commission_transaction")
             ->where("commission_transactions.fk_comm_upload_row", "=", $id)
             ->get();
+
+        Utils::createLog(
+            "The user has entered the statement modal to commission row: ".$id,
+            "commissions.calculation",
+            "show"
+        );
 
         return view('commissions.partials.showStatementsModal', [
             "statementItems" => $statementItems
@@ -371,6 +426,11 @@ class CommissionsController extends Controller
             $formattedData[$index] = Utils::dbFormat($index, $item);
         }
 
+        Utils::createLog(
+            "The user has entered the update modal to commission row: ".$id,
+            "commissions.calculation",
+            "show"
+        );
 
         return view("commissions.partials.updateUploadRowModal",[
             "commissionRow" => $commissionRow,
@@ -398,6 +458,12 @@ class CommissionsController extends Controller
         $commissionRow->data = json_encode($data);
         $commissionRow->save();
 
+        Utils::createLog(
+            "The user has updated the commission row: ".$id,
+            "commissions.calculation",
+            "update"
+        );
+
         return redirect(route('commissions.calculation.showImport', ['id' => $commissionRow->fk_commission_upload]))->with('message', 'Commision row updated');
     }
 
@@ -423,6 +489,12 @@ class CommissionsController extends Controller
         }
         $commissionUpload->save();
         $commissionRow->delete();
+
+        Utils::createLog(
+            "The user has deleted the commission row: ".$id,
+            "commissions.calculation",
+            "delete"
+        );
         return redirect(route('commissions.calculation.showImport', ['id' => $commissionUpload->id]))->with('message', "The row deleted");
 
     }
