@@ -54,7 +54,7 @@
                     </div>
                     <div class="col-md-3 col-12">
                         <div class="form-group">
-                            <label for="city">Date of Birth End :</label>
+                            <label for="city">City:</label>
                             <input type="text" class="form-control @error('city') is-invalid @enderror" id="city"
                                 name="city" value="{{ old('city') }}">
                             @error('city')

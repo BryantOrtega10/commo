@@ -19,7 +19,7 @@ return new class extends Migration
             DECLARE f_number_policies DECIMAL(10,2);
             DECLARE f_total DECIMAL(10,2);
 
-            SELECT COUNT(*), COALESCE(SUM(total), 0) INTO f_number_policies, f_total
+            SELECT COUNT(*), COALESCE(SUM(comp_amount), 0) INTO f_number_policies, f_total
             FROM statement_items
             WHERE fk_statement = NEW.fk_statement;
 
@@ -36,7 +36,7 @@ return new class extends Migration
             DECLARE f_number_policies DECIMAL(10,2);
             DECLARE f_total DECIMAL(10,2);
 
-            SELECT COUNT(*), COALESCE(SUM(total), 0) INTO f_number_policies, f_total
+            SELECT COUNT(*), COALESCE(SUM(comp_amount), 0) INTO f_number_policies, f_total
             FROM statement_items
             WHERE fk_statement = OLD.fk_statement;
     

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Utils\Utils;
 use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\StatementsItemModel;
+use App\Models\MultiTable\AgenciesModel;
 use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\MultiTable\AgentTitlesModel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -17,10 +18,12 @@ class AgentReportController extends Controller
     {
         $agent_titles = AgentTitlesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
-        
+        $agencies = AgenciesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+
         return view('commissions.showAgentReport', [
             "agency_codes" => $agency_codes,
-            "agent_titles" => $agent_titles
+            "agent_titles" => $agent_titles,
+            "agencies" => $agencies
         ]);
     }
 

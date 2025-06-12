@@ -506,8 +506,8 @@
                     @foreach ($cuids as $cuid)
                     <tr>
                         <td>{{ $cuid->name }}</td>
-                        <td>{{ $cuid->carrier->name }}</td>
-                        <td>{{ $cuid->business_segment->name }}</td>
+                        <td>{{ $cuid->carrier?->name }}</td>
+                        <td>{{ $cuid->business_segment?->name }}</td>
                         <td> @isset($cuid->validation_date)
                                 {{ date('m/d/Y', strtotime($cuid->validation_date)) }}
                             @endisset

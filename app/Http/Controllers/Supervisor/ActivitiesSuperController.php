@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Leads\CreateActivityRequest;
 use App\Http\Requests\Leads\UpdateActivityRequest;
+use App\Mail\ActivitiesMail;
 use App\Models\Customers\ActivitiesModel;
 use App\Models\Customers\ActivityLogsModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ActivitiesSuperController extends Controller
 {
@@ -42,13 +44,33 @@ class ActivitiesSuperController extends Controller
         $activity->isDone = false;
         $activity->save();
 
-        //TODO: Enviar correo
+        $mailSent = false;
+        $mailError = "";
+        if ($activity->type == 2) {
+            $mailText = $activity->description;
+            if (filter_var($activity->customer?->email, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    Mail::to($activity->customer?->email)->send(new ActivitiesMail($mailText));
+                    $mailSent = true;
+                } catch (\Exception $e) {
+                    $mailError = $e->getMessage();
+                }
+            } else {
+                $mailError = "The lead's email is not valid";
+            }
+        }
+        
         $logMessage = "";
         if($activity->type <> 2){
             $logMessage = "A ".$activity->txt_type." has been created";
         }
-        else{
-            $logMessage = "An email was sent";
+        else {
+            $logMessage = "An email has been created";
+            if ($mailSent) {
+                $logMessage .= " and sent";
+            } else {
+                $logMessage .= ", but the email could not be sent for this reason: " . $mailError;
+            }
         }
         
         $entry_user = Auth::user();
@@ -65,6 +87,10 @@ class ActivitiesSuperController extends Controller
             "leads.activity",
             "create"
         );
+
+        if ($activity->type == 2 && !$mailSent) {
+            return redirect(route('supervisor.leads.details', ['id' => $idLead]))->with('error', "Activity created successfully, but the email could not be sent for this reason: " . $mailError);
+        }
 
         return redirect(route('supervisor.leads.details',['id' => $idLead]))->with('message', 'Activity created successfully');
     }
@@ -102,6 +128,28 @@ class ActivitiesSuperController extends Controller
         }
         $activity->save();
 
+        if ($request->input("resendMail") == "1") {
+            $mailError = "";
+            if ($activity->type == 2) {
+                $mailText = $activity->description;
+                if (filter_var($activity->customer?->email, FILTER_VALIDATE_EMAIL)) {
+                    try {
+                        Mail::to($activity->customer?->email)->send(new ActivitiesMail($mailText));
+                        $mailSent = true;
+                    } catch (\Exception $e) {
+                        $mailError = $e->getMessage();
+                    }
+                } else {
+                    $mailError = "The lead's email is not valid";
+                }
+            }
+            if ($mailSent) {
+                $logMessage .= ", the email was forwarded";
+            } else {
+                $logMessage .= ", an attempt was made to resend the email but it could not be sent for this reason: " . $mailError;
+            }
+        }
+
         $entry_user = Auth::user();
 
         $log = new ActivityLogsModel();
@@ -110,7 +158,9 @@ class ActivitiesSuperController extends Controller
         $log->fk_entry_user = $entry_user->id;
         $log->save();
 
-        //TODO: Enviar Mail si se dio reenviar
+        if ($activity->type == 2 && $request->input("resendMail") == "1" && !$mailSent) {
+            return redirect(route('leads.details', ['id' => $activity->fk_customer]))->with('error', "Activity updated successfully, but the email could not be sent for this reason: " . $mailError);
+        }
 
         Utils::createLog(
             "The user has updated the activity with ID: ".$id,

@@ -67,6 +67,20 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-3 col-12">
+                        <div class="form-group">
+                            <label for="agency">Pay to Agency:</label>
+                            <select id="agency" name="agency"
+                                class="form-control">
+                                <option value=""></option>
+                                @foreach ($agencies as $agency)
+                                    <option value="{{ $agency->id }}"
+                                        @if (old('agency') == $agency->id) selected @endif>{{ $agency->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="statement_date">Statement Date:</label>

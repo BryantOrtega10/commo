@@ -27,6 +27,7 @@
             {{ session('error') }}
         </div>
     @endif
+    @dump($errors)
     <div class="card">
         <form action="{{ route('leads.update', ['id' => $lead->id]) }}" method="post">
             @csrf

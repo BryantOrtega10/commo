@@ -16,11 +16,18 @@
                         <input type="hidden" id="text_desc" name="description">
                         <div id="description"></div>
                     </div>
+                    <h5>Mail variables</h5>
+                    <ul>
+                        <li>__statement_date__</li>
+                        <li>__first_name__</li>
+                        <li>__last_name__</li>
+                    </ul>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
+
             </form>
         </div>
     </div>

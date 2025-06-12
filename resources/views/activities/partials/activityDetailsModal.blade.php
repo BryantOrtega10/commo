@@ -115,7 +115,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Update {{$activity->txt_type}}</button>
                     @if ($activity->type == 2)
-                        <button type="button" class="btn btn-outline-primary resend-mail">Resend Email</button>
+                        <button type="button" class="btn btn-outline-primary resend-mail">Forward Email</button>
                     @endif
                     
                 </div>

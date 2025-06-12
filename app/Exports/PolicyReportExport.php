@@ -151,6 +151,7 @@ class PolicyReportExport implements FromCollection, WithHeadings, WithMapping
             $row->customer?->first_name,
             $row->customer?->middle_initial,
             $row->customer?->last_name,
+            $row->count_commisions,
         ];
     }
 
@@ -194,6 +195,7 @@ class PolicyReportExport implements FromCollection, WithHeadings, WithMapping
             'First',
             'Middle',
             'Last',
+            'Count Comm.',
         ];
 
 

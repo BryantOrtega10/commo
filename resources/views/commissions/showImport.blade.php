@@ -35,14 +35,19 @@
                     <div class="form-group">
                         <label for="processing_start_date">Processing Start Date:</label>
                         <input type="text" class="form-control" id="processing_start_date" name="processing_start_date"
-                            readonly value="{{ date('m/d/Y H:i:s', strtotime($commissionUpload->processing_start_date)) }}">
+                            readonly @if ($commissionUpload->processing_start_date)
+                                value="{{ date('m/d/Y H:i:s', strtotime($commissionUpload->processing_start_date)) }}"
+                            @endif >
                     </div>
                 </div>
                 <div class="col-md-3 col-12">
                     <div class="form-group">
                         <label for="processing_end_date">Processing End Date:</label>
                         <input type="text" class="form-control" id="processing_end_date" name="processing_end_date"
-                            readonly value="{{ date('m/d/Y H:i:s', strtotime($commissionUpload->processing_end_date)) }}">
+                            readonly 
+                            @if ($commissionUpload->processing_end_date)
+                                value="{{ date('m/d/Y H:i:s', strtotime($commissionUpload->processing_end_date)) }}"
+                            @endif>
                     </div>
                 </div>
                 <div class="col-md-3 col-12">

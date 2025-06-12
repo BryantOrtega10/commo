@@ -8,6 +8,7 @@ use App\Http\Controllers\Utils\Utils;
 use App\Jobs\ProcessAgentReportJob;
 use App\Models\Agents\AgentsModel;
 use App\Models\Commissions\StatementsModel;
+use App\Models\MultiTable\AgenciesModel;
 use App\Models\MultiTable\AgencyCodesModel;
 use App\Models\Reports\AgentBatchReportItemModel;
 use App\Models\Reports\AgentBatchReportModel;
@@ -27,6 +28,8 @@ class AgentReportProcessController extends Controller
         $agents = AgentsModel::orderBy("last_name", "ASC")->orderBy("first_name", "ASC")->get();
         $reports = AgentBatchReportModel::all();
         $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+        $agencies = AgenciesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
+
 
         Utils::createLog(
             "The user has entered the agent report processes form",
@@ -37,7 +40,8 @@ class AgentReportProcessController extends Controller
         return view('commissions.showAgentReportsProcesses', [
             "agents" => $agents,
             'reports' => $reports,
-            "agency_codes" => $agency_codes
+            "agency_codes" => $agency_codes,
+            "agencies" => $agencies
         ]);
     }
 
@@ -80,7 +84,13 @@ class AgentReportProcessController extends Controller
             $logMessage .= " and agency id: ".$input;
             $statements->where('agent_numbers.fk_agency_code', "=", $input);
         }
+        if ($request->has("agency") && !empty($request->input("agency"))) {
+            $input = $request->input("agency");
+            $logMessage .= " and pay to agency id: ".$input;
+            $statements->where('agent_numbers.fk_agency', "=", $input);
+        }
 
+        
         $affected = $statements->count();
 
         $statements->update(["status" => "1"]);
@@ -111,7 +121,10 @@ class AgentReportProcessController extends Controller
             $input = $request->input("agency_code");
             $statements->where('agent_numbers.fk_agency_code', "=", $input);
         }
-
+        if ($request->has("agency") && !empty($request->input("agency"))) {
+            $input = $request->input("agency");
+            $statements->where('agent_numbers.fk_agency', "=", $input);
+        }
 
         $affected = $statements->count();
 
@@ -140,6 +153,10 @@ class AgentReportProcessController extends Controller
         if ($request->has("agency_code") && !empty($request->input("agency_code"))) {
             $input = $request->input("agency_code");
             $statements->where('agent_numbers.fk_agency_code', "=", $input);
+        }
+        if ($request->has("agency") && !empty($request->input("agency"))) {
+            $input = $request->input("agency");
+            $statements->where('agent_numbers.fk_agency', "=", $input);
         }
 
         $affected = $statements->count();
@@ -203,6 +220,11 @@ class AgentReportProcessController extends Controller
             $input = $request->input("agency_code");
             $statements->where('agent_numbers.fk_agency_code', "=", $input);
         }
+        if ($request->has("agency") && !empty($request->input("agency"))) {
+            $input = $request->input("agency");
+            $statements->where('agent_numbers.fk_agency', "=", $input);
+        }
+        
         $affected = $statements->count();
         if ($affected == 0) {
             return redirect(route('commissions.agent-process.show'))->with('error', 'No statements were found for this date and agents');

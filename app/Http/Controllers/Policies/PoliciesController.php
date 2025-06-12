@@ -7,6 +7,7 @@ use App\Http\Controllers\Utils\Utils;
 use App\Http\Requests\Policies\CreatePolicyRequest;
 use App\Http\Requests\Policies\UpdatePolicyRequest;
 use App\Models\Agents\AgentNumbersModel;
+use App\Models\Commissions\CommissionTransactionsModel;
 use App\Models\Customers\CustomersModel;
 use App\Models\MultiTable\CustomerStatusModel;
 use App\Models\MultiTable\EnrollmentMethodsModel;
@@ -290,12 +291,16 @@ class PoliciesController extends Controller
         $counties = CountiesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $policy_statuses = PolicyStatusModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
         $relationships = RelationshipsModel::select("id", "name")->where("status", "=", "1")->orderBy("sort_order", "ASC")->get()->makeHidden(['txt_status']);
+
+        $commissionTransactions = CommissionTransactionsModel::where("fk_policy","=", $id)->get();
+
         Utils::createLog(
             "The user has entered the form to update policies with ID: ".$policy->id,
             "policies.policies",
             "show"
         );
         return view('policies.update', [
+            "commissionTransactions" => $commissionTransactions,
             "policy" => $policy,
             "agentNumbers" => $agentNumbers,
             "products" => $products,

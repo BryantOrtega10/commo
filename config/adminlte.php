@@ -468,7 +468,7 @@ return [
                     'active' => ['admin-fees*'],
                 ],
                 [
-                    'text' => 'Agencies',
+                    'text' => 'Agencies to pay',
                     'route' => 'agencies.show',
                     'can' => 'agencies',
                     'active' => ['agencies*'],

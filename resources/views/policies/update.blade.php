@@ -777,17 +777,34 @@
                 <thead>
                     <tr>
                         <th>Comm Tx Id</th>
-                        <th>Hold</th>
-                        <th>Hold Note</th>
-                        <th>Release Date</th>
-                        <th>Carrier Statem.</th>
+                        <th>Notes</th>
+                        <th>Statement Date</th>
+                        <th>Carrier</th>
                         <th>Check Date</th>
                         <th>Writting Agent</th>
                         <th>Writting Agent #</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- TODO --}}
+                    @foreach ($commissionTransactions as $commissionTransaction)
+                        <tr>
+                            <td>{{$commissionTransaction->id}}</td>
+                            <td>{{$commissionTransaction->notes}}</td>
+                            <td> 
+                                @if ($commissionTransaction->statement_date)
+                                    {{ date('m/d/Y', strtotime($commissionTransaction->statement_date)) }}
+                                @endif
+                            </td>
+                            <td>{{$commissionTransaction->carrier?->name}}</td>
+                            <td>
+                                @if ($commissionTransaction->check_date)
+                                    {{ date('m/d/Y', strtotime($commissionTransaction->check_date)) }}
+                                @endif
+                            </td>
+                            <td>{{$commissionTransaction->agent_number?->agent?->first_name}} {{$commissionTransaction->agent_number?->agent?->last_name}}</td>
+                            <td>{{$commissionTransaction->agent_number?->number}}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
