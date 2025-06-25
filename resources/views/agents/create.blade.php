@@ -335,6 +335,19 @@
                     </div>
                     <div class="col-md-3 col-12">
                         <div class="form-group">
+                            <label for="company_name">Company Name:</label>
+                            <input type="text" class="form-control @error('company_name') is-invalid @enderror"
+                                id="company_name" name="company_name" placeholder="Company Name:"
+                                value="{{ old('company_name') }}">
+                            @error('company_name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <div class="form-group">
                             <label for="company_EIN">Company EIN:</label>
                             <input type="text" class="form-control @error('company_EIN') is-invalid @enderror"
                                 id="company_EIN" name="company_EIN" placeholder="Company EIN:"

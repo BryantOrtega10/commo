@@ -55,6 +55,7 @@ class EditAgentRequest extends FormRequest
             "contract_date" => "nullable",
             "payroll_emp_ID" => "nullable",
             "contract_type" => "nullable",
+            "company_name" => "nullable",
             "company_EIN" => "nullable",
             "agent_notes" => "nullable",
         ];

@@ -39,6 +39,7 @@ class AgentsModel extends Model
         "contract_date",
         "payroll_emp_ID",
         "fk_contract_type",
+        "company_name",
         "company_EIN",
         "agent_notes",
         "fk_entry_user",

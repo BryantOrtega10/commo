@@ -10,6 +10,8 @@ use App\Http\Controllers\Commissions\AgentReportProcessController;
 use App\Http\Controllers\Commissions\AllSalesController;
 use App\Http\Controllers\Commissions\CommissionRatesController;
 use App\Http\Controllers\Commissions\CommissionsController;
+use App\Http\Controllers\Commissions\PayToAgencyReportController;
+use App\Http\Controllers\Commissions\ReferralReportController;
 use App\Http\Controllers\Commissions\StatementBalancesReportController;
 use App\Http\Controllers\Commissions\TemplatesController;
 use App\Http\Controllers\Commissions\UnlinkedErrorReportController;
@@ -316,6 +318,16 @@ Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:su
         Route::get("/", [StatementBalancesReportController::class, 'showStatementBalances'])->name("commissions.statement-balances.show");
         Route::post("/", [StatementBalancesReportController::class, 'generateStatementBalances']);
         
+    });
+
+    Route::group(['prefix' => 'pay-to-agency'], function () {
+        Route::get("/", [PayToAgencyReportController::class, 'show'])->name("commissions.pay-to-agency.show");
+        Route::post("/", [PayToAgencyReportController::class, 'generateReport']);        
+    });
+
+    Route::group(['prefix' => 'referral'], function () {
+        Route::get("/", [ReferralReportController::class, 'show'])->name("commissions.referral.show");
+        Route::post("/", [ReferralReportController::class, 'generateReport']);        
     });
 });
 

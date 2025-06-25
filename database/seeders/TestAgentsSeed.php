@@ -47,7 +47,8 @@ class TestAgentsSeed extends Seeder
             "has_marketplace_cert" => true,
             "marketplace_cert_date" => "2025-01-01",
             "contract_date" => "2023-07-03",
-            "payroll_emp_ID" => "123",
+            "payroll_emp_ID" => "A123",
+            "company_name" => "Test Comp",
             "fk_contract_type" => "1",
             "fk_entry_user" => "1",
             "fk_user" => $userAgent1->id
@@ -69,7 +70,8 @@ class TestAgentsSeed extends Seeder
             "has_marketplace_cert" => true,
             "marketplace_cert_date" => "2024-01-01",
             "contract_date" => "2010-01-01",
-            "payroll_emp_ID" => "1234",
+            "payroll_emp_ID" => "A1238",
+            "company_name" => "MDC",
             "fk_contract_type" => "1",
             "fk_entry_user" => "1",
             "fk_user" => $userAgent2->id

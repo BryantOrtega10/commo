@@ -57,6 +57,7 @@
             <table class="table table-striped datatable min-w-100" data-url="">
                 <thead>
                     <tr>
+                        <th>Agent Number</th>
                         <th>Date</th>
                         <th>Total</th>
                         <th>Number of policies </th>
@@ -66,6 +67,7 @@
                 <tbody>
                     @foreach ($statements as $statement)
                         <tr>
+                            <td>{{$statement->agent_number->number}}</td>
                             <td>{{date("m/d/Y", strtotime($statement->statement_date))}}</td>
                             <td>$ {{number_format($statement->total,2)}}</td>
                             <td>{{$statement->number_policies}}</td>

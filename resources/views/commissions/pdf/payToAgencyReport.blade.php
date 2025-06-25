@@ -107,15 +107,13 @@
         @php
             $count = 0;
         @endphp
-        @foreach ($finalData as $row => $item)
-            @php
-                $count++;
-            @endphp
-            <b style="font-size: 13pt;">Summary - {{ $item['name'] }} </b>
-            <br><br>
+        <b style="font-size: 13pt;">Summary - {{ $agency_name }} </b>
+        <br><br>
+        
             <table>
                 <thead>
                     <tr>
+                        <th>Agent name</th>
                         <th>Carrier</th>
                         <th>Agent Number - Status</th>
                         <th>Transaction Count</th>
@@ -123,48 +121,61 @@
                     </tr>
                 </thead>
                 <tbody>
+                    
                     @php
                         $subTotalTransaction = 0;
                         $subTotal = 0;
+                        $adjustments = 0;
                     @endphp
-                    @foreach ($item['agentNumbers'] as $agentNumberId => $agentNumberItem)
-                        <tr>
-                            <td>{{ $agentNumberItem['carrier'] }}</td>
-                            <td>{{ $agentNumberItem['number'] }} - {{ $agentNumberItem['status'] }}</td>
-                            <td>{{ sizeof($agentNumberItem['statements_items'] ?? []) }}</td>
-                            <td style="text-align: right;">$
-                                {{ number_format($agentNumberItem['commission_amount'] ?? 0, 2) }}</td>
-                        </tr>
+                    @foreach ($finalData as $row => $item)
+                        @foreach ($item['agentNumbers'] as $agentNumberId => $agentNumberItem)
+                            <tr>
+                                <td>{{ $item['name'] }}</td>
+                                <td>{{ $agentNumberItem['carrier'] }}</td>
+                                <td>{{ $agentNumberItem['number'] }} - {{ $agentNumberItem['status'] }}</td>
+                                <td>{{ sizeof($agentNumberItem['statements_items'] ?? []) }}</td>
+                                <td style="text-align: right;">$
+                                    {{ number_format($agentNumberItem['commission_amount'] ?? 0, 2) }}</td>
+                            </tr>
+                            @php
+                                $subTotalTransaction += sizeof($agentNumberItem['statements_items'] ?? []);
+                                $subTotal += $agentNumberItem['commission_amount'] ?? 0;
+                            @endphp
+                        @endforeach
                         @php
-                            $subTotalTransaction += sizeof($agentNumberItem['statements_items'] ?? []);
-                            $subTotal += $agentNumberItem['commission_amount'] ?? 0;
+                            $adjustments += ($item['ammount_adjustments'] ?? 0);
                         @endphp
+
                     @endforeach
                     <tr class="orange">
-                        <td colspan="2">Subtotal</td>
+                        <td colspan="3">Subtotal</td>
                         <td>{{ $subTotalTransaction }}</td>
                         <td style="text-align: right;">$ {{ number_format($subTotal, 2) }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3">Adjustments</td>
-                        <td style="text-align: right;">$ {{ number_format($item['ammount_adjustments'], 2) }}</td>
+                        <td colspan="4">Adjustments</td>
+                        <td style="text-align: right;">$ {{ number_format($adjustments, 2) }}</td>
                     </tr>
                     <tr class="statement-total">
-                        <th colspan="3">Statement Total</th>
+                        <th colspan="4">Statement Total</th>
                         <th style="text-align: right;">$
-                            {{ number_format($subTotal + $item['ammount_adjustments'], 2) }}</th>
+                            {{ number_format($subTotal + $adjustments, 2) }}</th>
                     </tr>
                 </tbody>
             </table>
-            <br>
-            <br>
+        <br>
+        <br>
+        @foreach ($finalData as $row => $item)
+            @php
+                $count++;
+            @endphp
 
             @foreach ($item['agentNumbers'] as $agentNumberId => $agentNumberItem)
                 @isset($agentNumberItem['statements_items'])
                     <b style="font-size: 12pt;">{{ $item['name'] }} </b><br>
                     {{ $agentNumberItem['carrier'] }} - {{ $agentNumberItem['number'] }}
 
-                    <table>
+                    <table style="width: 100%">
                         <thead>
                             <tr>
                                 <th>Subscriber</th>
@@ -230,6 +241,7 @@
             @endforeach
 
             @isset($item['adjustments'])
+                <b style="font-size: 12pt;">{{ $item['name'] }} </b><br>
                 <h3>Adjustments</h3>
                 <table>
                     <thead>

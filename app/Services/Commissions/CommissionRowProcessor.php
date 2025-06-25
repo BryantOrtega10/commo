@@ -971,8 +971,8 @@ class CommissionRowProcessor
         $statementItem->check_date = $this->commissionTransaction->check_date;
         $statementItem->fk_statement = $statement->id;
         $statementItem->agent_type = $agent_type;
-        $statementItem->flat_rate = $this->commissionTransaction->flat_rate;
-        $statementItem->rate_type = $this->commissionTransaction->rate_type;
+        $statementItem->flat_rate = $comissionRate->rate_amount;
+        $statementItem->rate_type = $comissionRate->rate_type;
         $statementItem->comp_amount = $comp_amount;
         $statementItem->fk_commission_rate = $comissionRate->id;
         $statementItem->fk_commission_transaction = $this->commissionTransaction->id;

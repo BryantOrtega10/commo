@@ -619,6 +619,19 @@ return [
                     'active' => ['calculation*'],
                 ],
                 [
+                    'text' => 'Pay to Agency Report',
+                    'route' => 'commissions.pay-to-agency.show',
+                    'can' => 'commissions',
+                    'active' => ['pay-to-agency*', 'commissions/pay-to-agency*'],
+                ], 
+                [
+                    'text' => 'Referral Report',
+                    'route' => 'commissions.referral.show',
+                    'can' => 'commissions',
+                    'active' => ['referral*', 'commissions/referral*'],
+                ],                
+                
+                [
                     'text' => 'Agent Report',
                     'route' => 'commissions.agent-report.show',
                     'can' => 'commissions',

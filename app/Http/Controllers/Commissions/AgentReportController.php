@@ -46,6 +46,11 @@ class AgentReportController extends Controller
             $input = $request->input("agency_code");
             $statementItems->where('agent_numbers.fk_agency_code', "=", $input);
         }
+        if ($request->has("agency") && !empty($request->input("agency"))) {
+            $input = $request->input("agency");
+            $statementItems->where('agent_numbers.fk_agency', "=", $input);
+        }
+
 
         
 

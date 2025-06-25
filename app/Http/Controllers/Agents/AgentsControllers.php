@@ -402,6 +402,7 @@ class AgentsControllers extends Controller
         $agent->contract_date = $request->input("contract_date");
         $agent->payroll_emp_ID = $request->input("payroll_emp_ID");
         $agent->fk_contract_type = $request->input("contract_type");
+        $agent->company_name = $request->input("company_name");
         $agent->company_EIN = $request->input("company_EIN");
         $agent->agent_notes = $request->input("agent_notes");
         $agent->fk_entry_user = $entry_user->id;
@@ -499,6 +500,7 @@ class AgentsControllers extends Controller
         $agent->contract_date = $request->input("contract_date");
         $agent->payroll_emp_ID = $request->input("payroll_emp_ID");
         $agent->fk_contract_type = $request->input("contract_type");
+        $agent->company_name = $request->input("company_name");
         $agent->company_EIN = $request->input("company_EIN");
         $agent->agent_notes = $request->input("agent_notes");
         $agent->save();
