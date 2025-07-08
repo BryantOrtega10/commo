@@ -453,3 +453,7 @@ Route::get("storage-link", function () {
         public_path('storage')
     );
 });
+
+Route::get("phpinfo", function () {
+    phpinfo();
+});
