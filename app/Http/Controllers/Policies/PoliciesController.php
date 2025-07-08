@@ -46,12 +46,33 @@ class PoliciesController extends Controller
             "policies.*"
         )
             ->leftJoin('customers', 'customers.id', '=', 'policies.fk_customer')
+            ->leftJoin('cuids', 'cuids.fk_customer', '=', 'customers.id')
             ->leftJoin('agent_numbers', 'agent_numbers.id', '=', 'policies.fk_agent_number')
             ->leftJoin('agents', 'agents.id', '=', 'agent_numbers.fk_agent')
             ->leftJoin('products', 'products.id', '=', 'policies.fk_product')
             ->leftJoin('policy_status', 'policy_status.id', '=', 'policies.fk_policy_status')
             ->leftJoin('carriers', 'carriers.id', '=', 'products.fk_carrier')
             ->leftJoin('product_types', 'product_types.id', '=', 'products.fk_product_type');
+
+        if($request->filled("agent_number")){
+            $policies->where("agent_numbers.number","=",$request->input("agent_number"));
+        }
+        if($request->filled("cuid")){
+            $policies->where("cuids.name","=",$request->input("cuid"));
+        }
+        if($request->filled("product_type")){
+            $policies->where("product_types.id","=",$request->input("product_type"));
+        }
+        if($request->filled("num_contract")){
+            $policies->where("policies.contract_id","=",$request->input("num_contract"));
+        }
+        if($request->filled("application_id")){
+            $policies->where("policies.application_id","=",$request->input("application_id"));
+        }
+        if($request->filled("status")){
+            $policies->where("policy_status.id","=",$request->input("status"));
+        }
+
 
         if ($request->has('search') && $request->input('search')['value']) {
             $searchTxt = $request->input('search')['value'];
