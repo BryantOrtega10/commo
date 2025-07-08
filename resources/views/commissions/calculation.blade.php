@@ -1,5 +1,6 @@
 @extends('adminlte::page')
 @section('plugins.Datatables', true)
+@section('plugins.Sweetalert2', true)
 @section('title', 'Commission Calculation')
 
 @section('content_header')
@@ -172,6 +173,13 @@
                 }
 
             });
+
+            $("body").on("click","#download-template", function(e) {
+                if ($("#template").val() == "") {
+                    e.preventDefault();
+                    alertSwal("Select a template to continue");
+                }
+            })
 
         })
     </script>

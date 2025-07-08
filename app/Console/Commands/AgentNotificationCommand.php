@@ -33,8 +33,8 @@ class AgentNotificationCommand extends Command
             ->join("customers","customers.id","=","activities.fk_customer")
             ->join("agents","agents.id","=","customers.fk_agent")
             ->join("users","users.id","=","agents.fk_user")
-            ->whereRaw("TIMESTAMPDIFF(MINUTE, CURDATE(), expiration_date) <= 10")
-            //->whereRaw("TIMESTAMPDIFF(MINUTE, CURDATE(), expiration_date) > 0")
+            ->whereRaw("TIMESTAMPDIFF(MINUTE, NOW(), expiration_date) <= 10")
+            //->whereRaw("TIMESTAMPDIFF(MINUTE, NOW(), expiration_date) > 0")
             ->whereNotNull("expiration_date")
             ->where("isDone", "=", false)
             ->get();

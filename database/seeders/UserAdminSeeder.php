@@ -20,5 +20,27 @@ class UserAdminSeeder extends Seeder
             'password' => Hash::make("1900"),
             'role' => 'superadmin'
         ]);
+
+        User::create([
+            'name' => 'Jorge',
+            'email' => 'jorge@siempreseguro.com',
+            'password' => Hash::make("J0rg3*"),
+            'role' => 'superadmin'
+        ]);
+
+        User::create([
+            'name' => 'Noel',
+            'email' => 'Noel@siempreseguro.com',
+            'password' => Hash::make("No3l*"),
+            'role' => 'superadmin'
+        ]);
+
+        User::create([
+            'name' => 'Mauricio',
+            'email' => 'mauricio@siempreseguro.com',
+            'password' => Hash::make("Maur1c10*"),
+            'role' => 'superadmin'
+        ]);
+
     }
 }

@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             UserAdminSeeder::class,
             CustomerTablesSeeder::class,
             AgentsSeeder::class,
-            TestAgentsSeed::class,
+            //TestAgentsSeed::class,
             TemplateSeeder::class,
             CompensationTypeSeeder::class,
             EmailTemplateSeed::class,

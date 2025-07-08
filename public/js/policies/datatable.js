@@ -19,7 +19,12 @@ $(document).ready(function () {
             url: $(".datatable").data("url"),
             type: "POST",
             data: function (d) {
-                //d.business_type = $("#business_type").val();
+                d.agent_number = $("#agent_number").val();
+                d.cuid = $("#cuid").val();
+                d.product_type = $("#product_type").val();
+                d.num_contract = $("#num_contract").val();
+                d.application_id = $("#application_id").val();
+                d.status = $("#status").val();
             },
         },
         columns: [

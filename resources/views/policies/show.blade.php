@@ -145,5 +145,5 @@
 
 @section('js')
     <script src="/js/utils/show-more.js"></script>
-    <script src="/js/policies/datatable.js"></script>
+    <script src="/js/policies/datatable.js?v=1.1"></script>
 @stop

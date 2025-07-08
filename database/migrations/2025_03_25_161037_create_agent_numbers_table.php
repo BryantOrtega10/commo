@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('agent_numbers', function (Blueprint $table) {
             $table->id();
 
-            $table->integer("number");
+            $table->string("number",50);
             
             $table->bigInteger("fk_agency_code")->unsigned()->nullable();
             $table->foreign('fk_agency_code')->references('id')->on('agency_codes');

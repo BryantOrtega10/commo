@@ -18,7 +18,7 @@
         <select id="business_type" name="business_type" class="form-control @if ($errors->editRate->has('business_type')) is-invalid @endif">
             <option value=""></option>
             @foreach ($business_types as $business_type)
-                <option value="{{ $business_segment->id }}" @if (old('business_type', $commissionRate->fk_business_type) == $business_type->id) selected @endif>
+                <option value="{{ $business_type->id }}" @if (old('business_type', $commissionRate->fk_business_type) == $business_type->id) selected @endif>
                     {{ $business_type->name }}</option>
             @endforeach
         </select>
