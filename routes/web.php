@@ -46,7 +46,7 @@ use App\Http\Controllers\Leads\ActivitiesController;
 use App\Http\Controllers\Leads\LeadsController;
 use App\Http\Controllers\Leads\MyStatementsController;
 use App\Http\Controllers\MultiTable\AdminFeesController;
-
+use App\Http\Controllers\MultiTable\CompensationTypesController;
 use App\Http\Controllers\Policies\CountiesController;
 use App\Http\Controllers\Policies\PoliciesController;
 use App\Http\Controllers\Products\ProductsController;
@@ -61,6 +61,7 @@ use App\Http\Controllers\Supervisor\LogsController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Utils\FilesController;
 use App\Http\Controllers\Utils\HomeController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -90,7 +91,9 @@ $crudRoutes = [
         'agent-status' => AgentStatusController::class,
         'agent-titles' => AgentTitlesController::class,
         'sales-regions' => SalesRegionController::class,
-        'admin-fees' => AdminFeesController::class
+        'admin-fees' => AdminFeesController::class,
+        'compensation-types' => CompensationTypesController::class,
+        
     ],
     "products" => [
         'business-segments' => BusinessSegmentsController::class,

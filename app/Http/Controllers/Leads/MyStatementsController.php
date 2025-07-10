@@ -71,7 +71,8 @@ class MyStatementsController extends Controller
             $finalData[$agentID]['agentNumbers'][$agentNumberID]['carrier'] = $statementItem->statement->agent_number?->carrier?->name ?? "";
             $finalData[$agentID]['agentNumbers'][$agentNumberID]['status'] = $statementItem->statement->agent_number?->agent_status?->name ?? "";
             $finalData[$agentID]['agentNumbers'][$agentNumberID]['number'] = $statementItem->statement->agent_number->number ?? "";
-
+            $finalData[$agentID]['agentNumbers'][$agentNumberID]['pay_agency'] = $statementItem->statement->agent_number->agency?->name ?? "";
+            
             if (!in_array($transaction->compensation_type?->name, $arrAdjustCompType)) {
                 $finalData[$agentID]['agentNumbers'][$agentNumberID]['commission_amount'] = $finalData[$agentID]['agentNumbers'][$agentNumberID]['commission_amount'] ?? 0;
                 $finalData[$agentID]['agentNumbers'][$agentNumberID]['commission_amount'] += $statementItem->comp_amount;

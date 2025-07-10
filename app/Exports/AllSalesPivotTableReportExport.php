@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Commissions\CommissionTransactionsModel;
 use App\Models\Commissions\StatementsItemModel;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -199,14 +200,15 @@ class AllSalesPivotTableReportExport
             $this->sheet->setCellValueExplicit([33, $row], $item["payrollEmpId"], DataType::TYPE_INLINE);
             $row++;
         }
-    } 
+    }
 
     private function autosizeColumns()
     {
         $highestColumnLetter = $this->sheet->getHighestColumn();
-
-        foreach (range('A', $highestColumnLetter) as $column) {
-            $this->sheet->getColumnDimension($column)->setAutoSize(true);
+        $highestColumnIndex = Coordinate::columnIndexFromString($highestColumnLetter);
+        for ($col = 1; $col <= $highestColumnIndex; $col++) {
+            $columnLetter = Coordinate::stringFromColumnIndex($col); 
+            $this->sheet->getColumnDimension($columnLetter)->setAutoSize(true);
         }
     }
 

@@ -502,7 +502,14 @@ return [
                     'route' => 'sales-regions.show',
                     'can' => 'sales-regions',
                     'active' => ['sales-regions*'],
-                ]
+                ],
+                [
+                    'text' => 'Compensation Types',
+                    'route' => 'compensation-types.show',
+                    'can' => 'compensation-types',
+                    'active' => ['compensation-types*'],
+                ],
+                
             ]
 
         ],

@@ -161,7 +161,7 @@
 
             @foreach ($item['agentNumbers'] as $agentNumberId => $agentNumberItem)
                 @isset($agentNumberItem['statements_items'])
-                    <b style="font-size: 12pt;">{{ $item['name'] }} </b><br>
+                    <b style="font-size: 12pt;">{{ $item['name'] }}  - {{ $agentNumberItem['pay_agency'] }} </b><br>
                     {{ $agentNumberItem['carrier'] }} - {{ $agentNumberItem['number'] }}
 
                     <table>

@@ -80,7 +80,8 @@ class AppServiceProvider extends ServiceProvider
             'plan-types',
             'product-tiers',
             'product-types',
-            'admin-fees'
+            'admin-fees',
+            'compensation-types'
         ];
         
         foreach ($admin_permissions as $admin_permission) {
