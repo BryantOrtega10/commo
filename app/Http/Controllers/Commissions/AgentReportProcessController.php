@@ -101,7 +101,7 @@ class AgentReportProcessController extends Controller
             "commissions.agent-process",
             "create"
         );
-        //TODO: Enviar mails
+        //TODO: Agregar el JOB
         if ($affected == 0) {
             return redirect(route('commissions.agent-process.show'))->with('error', 'No statements were found for this date');
         } else {
@@ -129,7 +129,7 @@ class AgentReportProcessController extends Controller
         $affected = $statements->count();
 
         $statements->update(["status" => "1"]);
-        //TODO: Enviar mails
+        //TODO: Agregar el JOB
         Utils::createLog(
             "The user has sent the email to certain agents with statement date: ".$request->input('statement_date'),
             "commissions.agent-process",

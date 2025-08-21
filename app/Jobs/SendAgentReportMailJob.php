@@ -77,7 +77,7 @@ class SendAgentReportMailJob implements ShouldQueue
 
         $generatedPdf = $pdf->output();
         
-
+        //TODO: Enviar Mail
         
     }
 }
