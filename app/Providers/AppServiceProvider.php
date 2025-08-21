@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
@@ -22,7 +23,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        HeadingRowFormatter::extend('custom',function($heading) {
+
+        if ($this->app->environment('production')) {
+            // Forzar HTTPS en todas las URLs generadas
+            URL::forceScheme('https');
+        }
+
+        HeadingRowFormatter::extend('custom', function ($heading) {
             $heading = strtolower($heading);
             $heading = trim($heading);
             $heading = str_replace(' ', '_', $heading);
@@ -83,7 +90,7 @@ class AppServiceProvider extends ServiceProvider
             'admin-fees',
             'compensation-types'
         ];
-        
+
         foreach ($admin_permissions as $admin_permission) {
             Gate::define($admin_permission, function (User $user) {
                 return (strtolower($user->role) == 'admin' || strtolower($user->role) == 'superadmin');
@@ -101,7 +108,5 @@ class AppServiceProvider extends ServiceProvider
                 return (strtolower($user->role) == 'supervisor');
             });
         }
-
-        
     }
 }
