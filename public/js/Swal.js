@@ -41,7 +41,7 @@ function alertSwal(message){
         type: 'info',
         text: `${message}`,
         showCloseButton: true,
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Confirm'
     });
 }
 
@@ -51,6 +51,6 @@ function errorSwal(title, message){
         type: 'warning',
         text: `${message}`,
         showCloseButton: true,
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Confirm'
     });
 }

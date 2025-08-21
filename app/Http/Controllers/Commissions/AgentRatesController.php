@@ -20,14 +20,15 @@ use Illuminate\Support\Facades\Auth;
 
 class AgentRatesController extends Controller
 {
-    public function showAgentRates(Request $request){
+    public function showAgentRates(Request $request)
+    {
         session()->flashInput($request->all());
         $agentNumbers = AgentNumbersModel::select("agent_numbers.*")
-                                         ->join("agents", "agents.id", "=","agent_numbers.fk_agent")
-                                         ->orderBy("agents.last_name", "ASC")
-                                         ->orderBy("agents.first_name", "ASC")
-                                         ->orderBy("agent_numbers.id", "ASC")
-                                         ->get();
+            ->join("agents", "agents.id", "=", "agent_numbers.fk_agent")
+            ->orderBy("agents.last_name", "ASC")
+            ->orderBy("agents.first_name", "ASC")
+            ->orderBy("agent_numbers.id", "ASC")
+            ->get();
         $agency_codes = AgencyCodesModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
 
         $genders = GendersModel::where("status", "=", "1")->orderBy("sort_order", "ASC")->get();
@@ -60,7 +61,8 @@ class AgentRatesController extends Controller
         ]);
     }
 
-    public function datatable(Request $request){
+    public function datatable(Request $request)
+    {
 
         //DB::enableQueryLog(); 
         $agents = AgentsModel::select(
@@ -275,17 +277,18 @@ class AgentRatesController extends Controller
         ]);
     }
 
-    public function appendRates(Request $request){
-        
+    public function appendRates(Request $request)
+    {
+
         $entry_user = Auth::user();
 
-        $ratesBase = CommissionRatesModel::where("fk_agent_number","=",$request->input("agentNumberBase"))->get();
+        $ratesBase = CommissionRatesModel::where("fk_agent_number", "=", $request->input("agentNumberBase"))->get();
 
         CommissionRatesModel::whereIn("fk_agent_number", $request->input("agentNumberID"))
-                            ->increment('order', sizeof($ratesBase));
+            ->increment('order', sizeof($ratesBase));
 
-        foreach($ratesBase as $rateBase){
-            foreach($request->input("agentNumberID") as $agentNumberID){
+        foreach ($ratesBase as $rateBase) {
+            foreach ($request->input("agentNumberID") as $agentNumberID) {
                 $commissionRate = new CommissionRatesModel();
                 $commissionRate->fk_agent_number = $agentNumberID;
                 $commissionRate->fk_business_segment = $rateBase->fk_business_segment;
@@ -300,6 +303,7 @@ class AgentRatesController extends Controller
                 $commissionRate->fk_region = $rateBase->fk_region;
                 $commissionRate->policy_contract_id = $rateBase->policy_contract_id;
                 $commissionRate->fk_tx_type = $rateBase->fk_tx_type;
+                $commissionRate->agent_type = $rateBase->agent_type;
                 $commissionRate->submit_from = $rateBase->submit_from;
                 $commissionRate->submit_to = $rateBase->submit_to;
                 $commissionRate->statement_from = $rateBase->statement_from;
@@ -315,32 +319,32 @@ class AgentRatesController extends Controller
                 $commissionRate->fk_entry_user = $entry_user->id;
                 $commissionRate->save();
             }
-            
         }
 
         Utils::createLog(
-            "The user append agent rates from Agent Number ID: ".$request->input("agentNumberBase")." to Agent Number IDs: ".implode(",",$request->input("agentNumberID",[])),
+            "The user append agent rates from Agent Number ID: " . $request->input("agentNumberBase") . " to Agent Number IDs: " . implode(",", $request->input("agentNumberID", [])),
             "commissions.agent-rates",
             "create"
         );
         return redirect(route('commissions.agent-rates.show'))->with('message', 'Commission rates append successfully');
     }
 
-    public function replicateRates(Request $request){
-        
-        $ratesToDelete = CommissionRatesModel::leftJoin("statement_items","statement_items.fk_commission_rate", "=", "commission_rates.id")
-                                         ->whereIn("commission_rates.fk_agent_number",$request->input("agentNumberID"))
-                                         ->whereNull("statement_items.id")
-                                         ->delete();
+    public function replicateRates($id, Request $request)
+    {
+
+        $ratesToDelete = CommissionRatesModel::leftJoin("statement_items", "statement_items.fk_commission_rate", "=", "commission_rates.id")
+            ->whereIn("commission_rates.fk_agent_number", $request->input("agentNumberID"))
+            ->whereNull("statement_items.id")
+            ->delete();
         $entry_user = Auth::user();
 
-        $ratesBase = CommissionRatesModel::where("fk_agent_number","=",$request->input("agentNumberBase"))->get();
+        $ratesBase = CommissionRatesModel::where("fk_agent_number", "=", $request->input("agentNumberBase"))->get();
 
         CommissionRatesModel::whereIn("fk_agent_number", $request->input("agentNumberID"))
-                            ->increment('order', sizeof($ratesBase));
+            ->increment('order', sizeof($ratesBase));
 
-        foreach($request->input("agentNumberID") as $agentNumberID){
-            foreach($ratesBase as $rateBase){
+        foreach ($request->input("agentNumberID") as $agentNumberID) {
+            foreach ($ratesBase as $rateBase) {
                 $commissionRate = new CommissionRatesModel();
                 $commissionRate->fk_agent_number = $agentNumberID;
                 $commissionRate->fk_business_segment = $rateBase->fk_business_segment;
@@ -355,6 +359,7 @@ class AgentRatesController extends Controller
                 $commissionRate->fk_region = $rateBase->fk_region;
                 $commissionRate->policy_contract_id = $rateBase->policy_contract_id;
                 $commissionRate->fk_tx_type = $rateBase->fk_tx_type;
+                $commissionRate->agent_type = $rateBase->agent_type;
                 $commissionRate->submit_from = $rateBase->submit_from;
                 $commissionRate->submit_to = $rateBase->submit_to;
                 $commissionRate->statement_from = $rateBase->statement_from;
@@ -369,28 +374,136 @@ class AgentRatesController extends Controller
                 $commissionRate->order = $rateBase->order;
                 $commissionRate->fk_entry_user = $entry_user->id;
                 $commissionRate->save();
-            }         
+            }
             $usedRates = CommissionRatesModel::whereIn("fk_agent_number", "=", $agentNumberID)
-                                             ->where("order", ">=", sizeof($ratesBase))
-                                             ->get();
-            
+                ->where("order", ">=", sizeof($ratesBase))
+                ->get();
+
             $order = sizeof($ratesBase);
-            foreach($usedRates as $usedRate){
+            foreach ($usedRates as $usedRate) {
                 $usedRate->order = $order;
                 $usedRate->update();
                 $order++;
             }
-        
         }
         Utils::createLog(
-            "The user replicated agent rates from Agent Number ID: ".$request->input("agentNumberBase")." to Agent Number IDs: ".implode(",",$request->input("agentNumberID",[])),
+            "The user replicated agent rates from Agent Number ID: " . $request->input("agentNumberBase") . " to Agent Number IDs: " . implode(",", $request->input("agentNumberID", [])),
             "commissions.agent-rates",
             "create"
         );
-        
+
 
         return redirect(route('commissions.agent-rates.show'))->with('message', 'Commission rates replicated successfully');
     }
 
 
+    public function appendOneRate($id, Request $request)
+    {
+        $entry_user = Auth::user();
+
+        $ratesBase = CommissionRatesModel::where("fk_agent_number", "=", $request->input("agentNumberBase"))->get();
+
+        CommissionRatesModel::where("fk_agent_number", $id)->increment('order', sizeof($ratesBase));
+
+        foreach ($ratesBase as $rateBase) {
+            $commissionRate = new CommissionRatesModel();
+            $commissionRate->fk_agent_number = $id;
+            $commissionRate->fk_business_segment = $rateBase->fk_business_segment;
+            $commissionRate->fk_business_type = $rateBase->fk_business_type;
+            $commissionRate->fk_compensation_type = $rateBase->fk_compensation_type;
+            $commissionRate->fk_amf_compensation_type = $rateBase->fk_amf_compensation_type;
+            $commissionRate->fk_plan_type = $rateBase->fk_plan_type;
+            $commissionRate->fk_product = $rateBase->fk_product;
+            $commissionRate->fk_product_type = $rateBase->fk_product_type;
+            $commissionRate->fk_tier = $rateBase->fk_tier;
+            $commissionRate->fk_county = $rateBase->fk_county;
+            $commissionRate->fk_region = $rateBase->fk_region;
+            $commissionRate->policy_contract_id = $rateBase->policy_contract_id;
+            $commissionRate->fk_tx_type = $rateBase->fk_tx_type;
+            $commissionRate->agent_type = $rateBase->agent_type;
+            $commissionRate->submit_from = $rateBase->submit_from;
+            $commissionRate->submit_to = $rateBase->submit_to;
+            $commissionRate->statement_from = $rateBase->statement_from;
+            $commissionRate->statement_to = $rateBase->statement_to;
+            $commissionRate->original_effective_from = $rateBase->original_effective_from;
+            $commissionRate->original_effective_to = $rateBase->original_effective_to;
+            $commissionRate->benefit_effective_from = $rateBase->benefit_effective_from;
+            $commissionRate->benefit_effective_to = $rateBase->benefit_effective_to;
+            $commissionRate->flat_rate = $rateBase->flat_rate;
+            $commissionRate->rate_type = $rateBase->rate_type;
+            $commissionRate->rate_amount = $rateBase->rate_amount;
+            $commissionRate->order = $rateBase->order;
+            $commissionRate->fk_entry_user = $entry_user->id;
+            $commissionRate->save();        
+        }
+
+        Utils::createLog(
+            "The user append agent rates from Agent Number ID: " . $request->input("agentNumberBase") . " to Agent Number ID: ". $id,
+            "agents.agents-numbers.agent-rates",
+            "update"
+        );
+        return redirect(route('agent_numbers.update', ['id' => $id]))->with('message', 'Commission rates append successfully');
+    }
+    public function replicateOneRate($id, Request $request)
+    {
+        $ratesToDelete = CommissionRatesModel::leftJoin("statement_items", "statement_items.fk_commission_rate", "=", "commission_rates.id")
+            ->where("commission_rates.fk_agent_number", "=", $id)
+            ->whereNull("statement_items.id")
+            ->delete();
+        $entry_user = Auth::user();
+
+        $ratesBase = CommissionRatesModel::where("fk_agent_number", "=", $request->input("agentNumberBase"))->get();
+
+        CommissionRatesModel::where("fk_agent_number", "=" , $id)->increment('order', sizeof($ratesBase));
+       
+        foreach ($ratesBase as $rateBase) {
+            $commissionRate = new CommissionRatesModel();
+            $commissionRate->fk_agent_number = $id;
+            $commissionRate->fk_business_segment = $rateBase->fk_business_segment;
+            $commissionRate->fk_business_type = $rateBase->fk_business_type;
+            $commissionRate->fk_compensation_type = $rateBase->fk_compensation_type;
+            $commissionRate->fk_amf_compensation_type = $rateBase->fk_amf_compensation_type;
+            $commissionRate->fk_plan_type = $rateBase->fk_plan_type;
+            $commissionRate->fk_product = $rateBase->fk_product;
+            $commissionRate->fk_product_type = $rateBase->fk_product_type;
+            $commissionRate->fk_tier = $rateBase->fk_tier;
+            $commissionRate->fk_county = $rateBase->fk_county;
+            $commissionRate->fk_region = $rateBase->fk_region;
+            $commissionRate->policy_contract_id = $rateBase->policy_contract_id;
+            $commissionRate->fk_tx_type = $rateBase->fk_tx_type;
+            $commissionRate->agent_type = $rateBase->agent_type;
+            $commissionRate->submit_from = $rateBase->submit_from;
+            $commissionRate->submit_to = $rateBase->submit_to;
+            $commissionRate->statement_from = $rateBase->statement_from;
+            $commissionRate->statement_to = $rateBase->statement_to;
+            $commissionRate->original_effective_from = $rateBase->original_effective_from;
+            $commissionRate->original_effective_to = $rateBase->original_effective_to;
+            $commissionRate->benefit_effective_from = $rateBase->benefit_effective_from;
+            $commissionRate->benefit_effective_to = $rateBase->benefit_effective_to;
+            $commissionRate->flat_rate = $rateBase->flat_rate;
+            $commissionRate->rate_type = $rateBase->rate_type;
+            $commissionRate->rate_amount = $rateBase->rate_amount;
+            $commissionRate->order = $rateBase->order;
+            $commissionRate->fk_entry_user = $entry_user->id;
+            $commissionRate->save();
+        }
+        $usedRates = CommissionRatesModel::where("fk_agent_number", "=", $id)
+            ->where("order", ">=", sizeof($ratesBase))
+            ->get();
+
+        $order = sizeof($ratesBase);
+        foreach ($usedRates as $usedRate) {
+            $usedRate->order = $order;
+            $usedRate->update();
+            $order++;
+        }
+        
+        Utils::createLog(
+            "The user replicated agent rates from Agent Number ID: " . $request->input("agentNumberBase") . " to Agent Number ID: ".$id,
+            "agents.agents-numbers.agent-rates",
+            "update"
+        );
+
+        return redirect(route('agent_numbers.update', ['id' => $id]))->with('message', 'Commission rates replicated successfully');
+    }
 }

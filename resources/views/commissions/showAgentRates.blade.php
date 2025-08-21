@@ -50,6 +50,11 @@
                 </div>
             </div>
         </div>
+        <div class="text-right mb-3">
+            Remember to select the target agents in the table below
+            <input type="button" class="btn btn-outline-primary append-rates" value="Append Rates" />
+            <input type="button" class="btn btn-primary replicate-rates" value="Replicate Rates" />
+        </div>
         <div class="card card-light">
             <div class="card-header">
                 Search filters
@@ -283,10 +288,7 @@
                 </table>
             </div>
         </div>
-        <div class="text-right">
-            <input type="button" class="btn btn-outline-primary append-rates" value="Append Rates" />
-            <input type="button" class="btn btn-primary replicate-rates" value="Replicate Rates" />
-        </div>
+       
     </form>
 @stop
 
@@ -321,7 +323,7 @@
                 } else {
                     $("#form-rates").prop(
                         "action",
-                        $("#urlAppendRates").val()
+                        $("#urlReplicateRates").val()
                     );
                     $("#form-rates").trigger("submit");
                 }

@@ -191,7 +191,8 @@
                                     @foreach ($agents as $agent)
                                         <option value="{{ $agent->id }}"
                                             @if (old('mentor_agent_' . $i, $mentorAgents[$i - 1]['id'] ?? null) == $agent->id) selected @endif>
-                                            {{ $agent->number }} - {{ $agent->agent->first_name }} {{ $agent->agent->last_name }}
+                                            {{ $agent->number }} - {{ $agent->agent->first_name }}
+                                            {{ $agent->agent->last_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -248,7 +249,8 @@
                                     @foreach ($agents as $agent)
                                         <option value="{{ $agent->id }}"
                                             @if (old('override_agent_' . $i, $overrideAgents[$i - 1]['id'] ?? null) == $agent->id) selected @endif>
-                                            {{ $agent->number }} - {{ $agent->agent->first_name }} {{ $agent->agent->last_name }}
+                                            {{ $agent->number }} - {{ $agent->agent->first_name }}
+                                            {{ $agent->agent->last_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -312,7 +314,7 @@
             </div>
         </form>
     </div>
-    
+
     <form action="#" id="form-commission-rates" method="post">
         @csrf
         <input type="hidden" name="idAgentNumber" value="{{ $agent_number->id }}" />
@@ -373,7 +375,6 @@
                             ])
                         @endif
                         @foreach ($commissionRates as $commissionRate)
-
                             @if ($errors->editRate->any() && isset($selectedCommissionRate) && $selectedCommissionRate->id == $commissionRate->id)
                                 @include('agent_numbers.partials.commissionRateEditRow', [
                                     'commissionRate' => $selectedCommissionRate,
@@ -467,15 +468,50 @@
                                             data-id="{{ $commissionRate->id }}" class="btn btn-primary mr-3 update-row">
                                             <i class="fas fa-pen"></i> Update
                                         </a>
-                                        <a href="{{ route('commissions.rate.delete', ['id' => $commissionRate->id]) }}" class="btn btn-outline-danger delete-row ask" data-message="Delete this commission rate">
+                                        <a href="{{ route('commissions.rate.delete', ['id' => $commissionRate->id]) }}"
+                                            class="btn btn-outline-danger delete-row ask"
+                                            data-message="Delete this commission rate">
                                             <i class="fas fa-trash"></i> Delete
-                                        </button>
+                                            </button>
                                     </td>
                                 </tr>
                             @endif
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </form>
+    <form action="" method="POST" id="form-rates">
+        @csrf
+        <input type="hidden" id="urlAppendRates" value="{{ route('commissions.agent-rates.appendOne', ['id' => $agent_number->id]) }}" />
+        <input type="hidden" id="urlReplicateRates" value="{{ route('commissions.agent-rates.replicateOne', ['id' => $agent_number->id]) }}" />
+        <div class="card card-light">
+            <div class="card-header">
+                Replicate or Append Agent Rates
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="agentNumberBase">Replicate or Append Agent Rates from an Existing Agent
+                                Number:</label><br>
+                            <select id="agentNumberBase" name="agentNumberBase" class="form-control" required>
+                                <option value=""></option>
+                                @foreach ($agents as $agentNumber)
+                                    <option value="{{ $agentNumber->id }}">{{ $agentNumber->number }} -
+                                        {{ $agentNumber->agent->last_name }} {{ $agentNumber->agent->first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer text-right">
+                <input type="button" class="btn btn-outline-primary append-rates" value="Append Rates" />
+                <input type="button" class="btn btn-primary replicate-rates" value="Replicate Rates" />
             </div>
         </div>
     </form>
@@ -505,5 +541,33 @@
 
 @section('js')
     <script src="/js/agent-numbers/commission-rates.js"></script>
+    <script>
+        $(document).ready(function(e) {
+            $(".append-rates").click(function(e) {
+                if ($("#agentNumberBase").val() == "") {
+                    e.preventDefault();
+                    alertSwal("Select at least one agent number base");
+                } else {
+                    $("#form-rates").prop(
+                        "action",
+                        $("#urlAppendRates").val()
+                    );
+                    $("#form-rates").trigger("submit");
+                }
+            })
 
+            $(".replicate-rates").click(function(e) {
+                if ($("#agentNumberBase").val() == "") {
+                    e.preventDefault();
+                    alertSwal("Select at least one agent number base");
+                } else {
+                    $("#form-rates").prop(
+                        "action",
+                        $("#urlReplicateRates").val()
+                    );
+                    $("#form-rates").trigger("submit");
+                }
+            })
+        })
+    </script>
 @stop

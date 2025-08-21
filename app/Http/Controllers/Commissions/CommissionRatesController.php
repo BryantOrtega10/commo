@@ -79,6 +79,7 @@ class CommissionRatesController extends Controller
         $commissionRate->fk_region = $request->input("region");
         $commissionRate->policy_contract_id = $request->input("policy_contract_id");
         $commissionRate->fk_tx_type = $request->input("tx_type");
+        $commissionRate->agent_type = $request->input("agentType");
         $commissionRate->submit_from = $request->input("submit_from");
         $commissionRate->submit_to = $request->input("submit_to");
         $commissionRate->statement_from = $request->input("statement_from");
@@ -152,6 +153,7 @@ class CommissionRatesController extends Controller
         $commissionRate->fk_region = $request->input("region");
         $commissionRate->policy_contract_id = $request->input("policy_contract_id");
         $commissionRate->fk_tx_type = $request->input("tx_type");
+        $commissionRate->agent_type = $request->input("agentType");
         $commissionRate->submit_from = $request->input("submit_from");
         $commissionRate->submit_to = $request->input("submit_to");
         $commissionRate->statement_from = $request->input("statement_from");

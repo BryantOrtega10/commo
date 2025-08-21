@@ -303,6 +303,9 @@ Route::group([ 'prefix' => 'commissions', 'middleware' => ['auth', 'user-role:su
         Route::post("/datatable", [AgentRatesController::class, 'datatable'])->name("commissions.agent-rates.datatable");
         Route::post("/append", [AgentRatesController::class, 'appendRates'])->name("commissions.agent-rates.append");
         Route::post("/replicate", [AgentRatesController::class, 'replicateRates'])->name("commissions.agent-rates.replicate");
+
+        Route::post("/append/{id}", [AgentRatesController::class, 'appendOneRate'])->name("commissions.agent-rates.appendOne");
+        Route::post("/replicate/{id}", [AgentRatesController::class, 'replicateOneRate'])->name("commissions.agent-rates.replicateOne");
     });
 
     Route::group(['prefix' => 'all-sales'], function () {
